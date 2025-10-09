@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-__pycache__/
+__ pycache__/
 *.pyc
 .vscode/
 .DS_Store
 Thumbs.db
-=======
-
->>>>>>> main
