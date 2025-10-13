@@ -9,3 +9,7 @@ def index():
 @main.route('/about')
 def about():
     return render_template('about.html')
+
+@main.route('/catalog')
+def about():
+    return render_template('catalog.html')
