@@ -11,3 +11,41 @@
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
 }
+
+/* Для плавності переходу теми */
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Анімація іконки */
+.rotate-icon {
+  animation: rotate 0.6s linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ripple-ефект */
+.theme-ripple {
+  position: fixed;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleExpand 0.6s forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  to {
+    transform: scale(100);
+    opacity: 1;
+  }
+}

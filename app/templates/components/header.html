@@ -44,8 +44,18 @@
   themeToggle.addEventListener('click', () => {
     const current = body.getAttribute('data-bs-theme');
     const next = current === 'light' ? 'dark' : 'light';
+
+    // Додай клас для обертання іконки
+    themeToggle.classList.add('rotate-icon');
+
+    // Після завершення анімації — прибери клас, щоб можна було повторно анімувати
+    themeToggle.addEventListener('animationend', () => {
+      themeToggle.classList.remove('rotate-icon');
+    }, { once: true });
+
     body.setAttribute('data-bs-theme', next);
     localStorage.setItem('theme', next);
     themeToggle.textContent = next === 'light' ? '🌙' : '☀️';
   });
 </script>
+
