@@ -11,5 +11,5 @@ def about():
     return render_template('about.html')
 
 @main.route('/catalog')
-def about():
+def catalog():
     return render_template('catalog.html')
