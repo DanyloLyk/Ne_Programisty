@@ -17,3 +17,7 @@ def catalog():
 @main.route('/contacts')
 def contacts():
     return render_template('contacts.html')
+
+@main.route('/news')
+def news():
+    return render_template('news.html')

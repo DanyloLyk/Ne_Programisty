@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Новини - Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Новини -->
+    <section class="row text-center border-top pt-4 mb-5">
+        <div class="col-12">
+            <h2 class="fw-bold text-warning mb-3">Останні новини</h2>
+            <p class="fs-5 mb-4">
+                Дізнавайтесь першими про нові настільні ігри, акції та події від "Гральна Комора"! 🎲📰
+            </p>
+        </div>
+    </section>
+
+    <section class="row mb-5">
+        <!-- Новина 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning shadow-sm h-100">
+                <img src="{{ url_for('static', filename='images/news1.jpg') }}" class="card-img-top" alt="Стратегія 2025">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-warning">Новинка: Гра “Стратегія 2025”</h5>
+                    <p class="card-text fs-6">Нова настільна гра вже у продажу! Випробуйте свої стратегічні навички та насолоджуйтесь ігровим процесом.</p>
+                    <a href="/news/strategy-2025" class="btn btn-outline-warning">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Новина 2 -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning shadow-sm h-100">
+                <img src="{{ url_for('static', filename='images/news2.jpg') }}" class="card-img-top" alt="Акція на ігри">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-warning">Акція: -40% на популярні ігри</h5>
+                    <p class="card-text fs-6">Протягом тижня знижки на найпопулярніші настільні ігри. Не пропустіть шанс оновити колекцію!</p>
+                    <a href="/news/sale" class="btn btn-outline-warning">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Новина 3 -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning shadow-sm h-100">
+                <img src="{{ url_for('static', filename='images/news3.jpg') }}" class="card-img-top" alt="Майстер-клас">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-warning">Майстер-клас для гравців</h5>
+                    <p class="card-text fs-6">Запрошуємо на безкоштовний майстер-клас з популярної гри. Навчіться новим тактикам та знайдіть друзів-геймерів!</p>
+                    <a href="/news/masterclass" class="btn btn-outline-warning">Детальніше</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
