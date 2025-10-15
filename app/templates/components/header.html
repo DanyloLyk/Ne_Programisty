@@ -18,6 +18,7 @@
         <li class="nav-item"><a href="/" class="nav-link active">Головна</a></li>
         <li class="nav-item"><a href="/about" class="nav-link">Про нас</a></li>
         <li class="nav-item"><a href="/catalog" class="nav-link">Каталог</a></li>
+        <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
 
         <!-- Кнопка перемикання теми -->
         <li class="nav-item ms-3">
@@ -44,8 +45,18 @@
   themeToggle.addEventListener('click', () => {
     const current = body.getAttribute('data-bs-theme');
     const next = current === 'light' ? 'dark' : 'light';
+
+    // Додай клас для обертання іконки
+    themeToggle.classList.add('rotate-icon');
+
+    // Після завершення анімації — прибери клас, щоб можна було повторно анімувати
+    themeToggle.addEventListener('animationend', () => {
+      themeToggle.classList.remove('rotate-icon');
+    }, { once: true });
+
     body.setAttribute('data-bs-theme', next);
     localStorage.setItem('theme', next);
     themeToggle.textContent = next === 'light' ? '🌙' : '☀️';
   });
 </script>
+

@@ -3,3 +3,4 @@ __ pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+.idea/
