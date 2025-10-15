@@ -5,14 +5,48 @@
 {% block content %}
 <div class="container mt-5">
 
-    <section class="row text-center border-top pt-4">
+    <!-- Контактна інформація -->
+    <section class="row text-center border-top pt-4 mb-5">
         <div class="col-12">
             <h2 class="fw-bold text-warning mb-3">Завітай до нас!</h2>
             <p class="fs-5">
-                📍 проспект Соборності, 43, м. Луцьк <br>
-                ☎️ +380 68 123 45 67 <br>
-                💌 info@komora.ua
+                📍 проспект Соборності, 43, м. Луцьк (Port City) <br>
+                ☎️ <a href="tel:+380681234567">+380 68 123 45 67</a> <br>
+                💌 <a href="mailto:info@komora.ua">info@komora.ua</a>
             </p>
+        </div>
+    </section>
+
+    <!-- Google Maps з маркером на Port City -->
+    <section class="row mb-5">
+        <div class="col-12">
+            <div class="ratio ratio-16x9">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2609.123456789!2d25.345678!3d50.745678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47245b123456789%3A0xabcdef123456789!2sPort%20City%2C%20Lutsk!5e0!3m2!1suk!2sua!4v1690000000000!5m2!1suk!2sua" 
+                    width="600" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Соціальні мережі -->
+    <section class="row text-center">
+        <div class="col-12">
+            <h3 class="fw-bold text-warning mb-3">Ми в соцмережах</h3>
+            <a href="https://facebook.com/komora" target="_blank" class="mx-2">
+                <img src="{{ url_for('static', filename='icons/facebook.svg') }}" alt="Facebook" width="40">
+            </a>
+            <a href="https://instagram.com/komora" target="_blank" class="mx-2">
+                <img src="{{ url_for('static', filename='icons/instagram.svg') }}" alt="Instagram" width="40">
+            </a>
+            <a href="https://t.me/komora" target="_blank" class="mx-2">
+                <img src="{{ url_for('static', filename='icons/telegram.svg') }}" alt="Telegram" width="40">
+            </a>
         </div>
     </section>
 
