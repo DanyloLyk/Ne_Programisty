@@ -9,20 +9,33 @@
     <section class="row mb-5">
         <div class="col-12">
             <div class="p-5 mb-4 rounded-3 border border-warning shadow-sm bg-body-tertiary">
-                {# bg-body-tertiary автоматично підлаштовується під темну/світлу тему Bootstrap 5.3 #}
-                <div class="container-fluid py-5">
-                    <h1 class="display-4 fw-bold text-warning">Ласкаво просимо до "Гральна Комора"</h1>
-                    <p class="col-md-8 fs-5">
+                <div class="container-fluid py-5 text-center">
+                    <h1 class="display-4 fw-bold text-warning mb-4 animate__animated animate__fadeInDown">
+                        Ласкаво просимо до "Гральна Комора"
+                    </h1>
+                    <p class="col-md-8 fs-5 mx-auto mb-4 animate__animated animate__fadeInUp">
                         Настільні ігри для друзів, родини та справжніх стратегів ☕🎲  
                         Відпочинь, кинь кубика та обери свою наступну гру!
                     </p>
-                    <a href="/catalog" class="btn btn-warning btn-lg px-4 mt-3" style="background-color: #EF8354; border: none;">
-                        Переглянути каталог
-                    </a>
+
+                    <div class="d-flex justify-content-center flex-wrap gap-3">
+                        <a href="/catalog" class="btn btn-outline-warning btn-lg px-4">
+                            Переглянути каталог
+                        </a>
+                        <a href="/contacts" class="btn btn-outline-warning btn-lg px-4">
+                            Контакти
+                        </a>
+                        <a href="/about" class="btn btn-outline-warning btn-lg px-4">
+                            Про нас
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 {% endblock %}
