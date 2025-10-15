@@ -1,4 +1,7 @@
 from flask import Blueprint, render_template
+from .models.desktop import Desktop
+from . import db
+from .utils import download_image
 
 main = Blueprint('main', __name__)
 
@@ -12,18 +15,23 @@ def about():
 
 @main.route('/catalog')
 def catalog():
-    cards = [
-        {
-            "image_url": "https://via.placeholder.com/300x200",
-            "title": "iPad Pro",
-            "description": "Для творчості та навчання",
-            "price": "35000 грн"
-        },
-        {
-            "image_url": "https://via.placeholder.com/300x200",
-            "title": "Xiaomi Pad 6",
-            "description": "Баланс ціни та потужності",
-            "price": "15000 грн"
-        }
+    initial_cards = [
+        {"name": "iPad Pro", "description": "Для творчості", "price": 35000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Xiaomi Pad 6", "description": "Баланс потужності", "price": 15000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
     ]
-    return render_template("catalog.html", cards=cards)
+
+    for card in initial_cards:
+        exists = Desktop.query.filter_by(name=card["name"]).first()
+        if not exists:
+            local_image = download_image(card["image"])
+            new_desktop = Desktop(
+                name=card["name"],
+                description=card["description"],
+                price=card["price"],
+                image=local_image
+            )
+            db.session.add(new_desktop)
+
+    db.session.commit()
+    desktops = Desktop.query.all()
+    return render_template("catalog.html", desktops=desktops)

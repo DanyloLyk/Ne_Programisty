@@ -1,6 +1,6 @@
 <div class="col">
   <div class="card h-100 shadow-sm">
-    <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.title }}">
+    <img src="{{ url_for('static', filename=item.image) }}" class="card-img-top" alt="{{ item.title }}">
     <div class="card-body">
       <h5 class="card-title">{{ item.title }}</h5>
       <h3 class="card-subtitle mb-2 text-muted">{{ item.price }} ₴</h3>
