@@ -12,6 +12,67 @@
   --bs-primary: #EF8354;
 }
 
+/* Анімація появи navbar */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.animate-navbar {
+  animation: fadeIn 1.2s ease-out, slideDown 1.2s ease-out;
+}
+
+/* Анімація underline при hover */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #ffc107; 
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: #ffc107 !important;  
+  font-weight: bold;
+}
+
+.fade-left {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+.fade-right {
+  transform: translateX(30px);
+  opacity: 0;
+}
+.fade-up {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+/* Анімація появи елементів при скролі */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: none;
+}
+
 /* Для плавності переходу теми */
 body {
   transition: background-color 0.5s ease, color 0.5s ease;
@@ -78,3 +139,22 @@ body {
 .social-icons i {
   pointer-events: none; /* icon only decorative inside link */
 }
+.card-hover-animate {
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+.card-hover-animate:hover {
+    background-color: #ffc107 !important; /* жовтий фон */
+    border-color: #ffc107 !important;
+    color: #212529 !important; /* чорний текст по дефолту */
+}
+
+.card-hover-animate:hover .card-title,
+.card-hover-animate:hover .card-text {
+    color: #212529 !important; /* чорний текст */
+}
+.card-hover-animate:hover {
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
