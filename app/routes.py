@@ -13,3 +13,7 @@ def about():
 @main.route('/catalog')
 def catalog():
     return render_template('catalog.html')
+
+@main.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
