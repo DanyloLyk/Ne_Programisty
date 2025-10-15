@@ -12,4 +12,18 @@ def about():
 
 @main.route('/catalog')
 def catalog():
-    return render_template('catalog.html')
+    cards = [
+        {
+            "image_url": "https://via.placeholder.com/300x200",
+            "title": "iPad Pro",
+            "description": "Для творчості та навчання",
+            "price": "35000 грн"
+        },
+        {
+            "image_url": "https://via.placeholder.com/300x200",
+            "title": "Xiaomi Pad 6",
+            "description": "Баланс ціни та потужності",
+            "price": "15000 грн"
+        }
+    ]
+    return render_template("catalog.html", cards=cards)

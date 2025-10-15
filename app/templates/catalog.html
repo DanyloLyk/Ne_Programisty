@@ -3,13 +3,13 @@
 {% block title %}Каталог ігор{% endblock %}
 
 {% block content %}
-    <h1>Каталог ігор</h1>
-    <p>Ось список наших ігор:</p>
-    <ul>
-        <li>Catan</li>
-        <li>Carcassonne</li>
-        <li>Ticket to Ride</li>
-        <li>7 Wonders</li>
-        <li>Dixit</li>
-    </ul>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Каталог товарів</h1>
+    {# === Сюда будуть підставлятися набір components/catalog-card.html через бекенд === #}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for item in cards %}
+        {% include "components/catalog-card.html" %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
