@@ -49,3 +49,32 @@ body {
     opacity: 1;
   }
 }
+
+/* Social icons styling */
+.social-icons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem; /* more space between icons */
+  margin-bottom: 0.75rem; /* space under icons */
+}
+.social-icons a {
+  color: #888888; /* neutral gray */
+  font-size: 2.75rem; /* ~44px, increased */
+  transition: color 0.2s ease, transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* remove underline */
+}
+.social-icons a:hover {
+  color: #6b6b6b; /* slightly darker gray on hover */
+  transform: translateY(-2px);
+}
+.social-icons a:focus {
+  outline: 3px solid rgba(0,0,0,0.08);
+  outline-offset: 4px;
+}
+.social-icons i {
+  pointer-events: none; /* icon only decorative inside link */
+}

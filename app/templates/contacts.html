@@ -21,15 +21,15 @@
     <section class="row mb-5">
         <div class="col-12">
             <div class="ratio ratio-16x9">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2609.123456789!2d25.345678!3d50.745678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47245b123456789%3A0xabcdef123456789!2sPort%20City%2C%20Lutsk!5e0!3m2!1suk!2sua!4v1690000000000!5m2!1suk!2sua" 
-                    width="600" 
-                    height="450" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2609.123456789!2d25.345678!3d50.745678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47245b123456789%3A0xabcdef123456789!2s%D0%9F%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D1%81%D1%82%D1%96%2043%2C%20%D0%9B%D1%83%D1%86%D1%8C%D0%BA!5e0!3m2!1suk!2sua!4v1690000000000!5m2!1suk!2sua"
+                        width="600"
+                        height="450"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
             </div>
         </div>
     </section>
@@ -38,15 +38,17 @@
     <section class="row text-center">
         <div class="col-12">
             <h3 class="fw-bold text-warning mb-3">Ми в соцмережах</h3>
-            <a href="https://facebook.com/komora" target="_blank" class="mx-2">
-                <img src="{{ url_for('static', filename='icons/facebook.svg') }}" alt="Facebook" width="40">
-            </a>
-            <a href="https://instagram.com/komora" target="_blank" class="mx-2">
-                <img src="{{ url_for('static', filename='icons/instagram.svg') }}" alt="Instagram" width="40">
-            </a>
-            <a href="https://t.me/komora" target="_blank" class="mx-2">
-                <img src="{{ url_for('static', filename='icons/telegram.svg') }}" alt="Telegram" width="40">
-            </a>
+            <div class="social-icons justify-content-center">
+                <a href="https://facebook.com/komora" target="_blank" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+                <a href="https://instagram.com/komora" target="_blank" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://t.me/komora" target="_blank" aria-label="Telegram">
+                    <i class="fa-brands fa-telegram"></i>
+                </a>
+            </div>
         </div>
     </section>
 
