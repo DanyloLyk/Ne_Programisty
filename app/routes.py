@@ -13,17 +13,16 @@ def index():
 def about():
     return render_template('about.html')
 
-@main.route('/catalog')
-def catalog():
-    return render_template('catalog.html')
+@main.route('/news')
+def news():
+    return render_template('news.html')
 
 @main.route('/contacts')
 def contacts():
     return render_template('contacts.html')
 
-@main.route('/news')
-def news():
-    return render_template('news.html')
+@main.route('/catalog')
+def catalog():
     initial_cards = [
         {"name": "Гра1", "description": "Опис гри 1", "price": 35000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
         {"name": "Гра2", "description": "Опис гри 2", "price": 15000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
