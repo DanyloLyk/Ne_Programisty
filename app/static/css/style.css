@@ -27,6 +27,10 @@
   animation: fadeIn 1.2s ease-out, slideDown 1.2s ease-out;
 }
 
+.navbar.fixed-top {
+  z-index: 1050; /* або навіть більше, якщо треба */
+}
+
 /* Анімація underline при hover */
 .nav-link {
   position: relative;
@@ -75,6 +79,7 @@
 
 /* Для плавності переходу теми */
 body {
+  padding-top: 60px;
   transition: background-color 0.5s ease, color 0.5s ease;
   position: relative;
   overflow-x: hidden;
