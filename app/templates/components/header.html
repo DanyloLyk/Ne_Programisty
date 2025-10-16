@@ -1,7 +1,7 @@
-<header class="navbar navbar-expand-lg border-bottom bg-body-tertiary shadow-sm">
+<header class="navbar navbar-expand-lg border-bottom bg-body-tertiary shadow-sm animate-navbar">
   <div class="container-fluid">
     <!-- ЛОГО -->
-    <a href="/" class="navbar-brand d-flex align-items-center">
+    <a href="/" class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" style="animation-delay: 0.5s; animation-fill-mode: both;">
       <img src="https://cdn-icons-png.flaticon.com/512/2729/2729007.png" alt="Logo" width="32" height="32" class="me-2">
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
@@ -15,9 +15,11 @@
     <!-- Меню -->
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center mb-2 mb-lg-0">
-        <li class="nav-item"><a href="/" class="nav-link active">Головна</a></li>
+        <li class="nav-item"><a href="/" class="nav-link">Головна</a></li>
         <li class="nav-item"><a href="/about" class="nav-link">Про нас</a></li>
         <li class="nav-item"><a href="/catalog" class="nav-link">Каталог</a></li>
+        <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
+        <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
 
         <!-- Кнопка перемикання теми -->
         <li class="nav-item ms-3">
@@ -32,6 +34,20 @@
 </header>
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      
+      // Активуємо лінку, якщо шлях збігається або (особливий випадок — / vs /index.html)
+      if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
+        link.classList.add('active');
+      }
+    });
+  });
+  
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
 
@@ -44,8 +60,18 @@
   themeToggle.addEventListener('click', () => {
     const current = body.getAttribute('data-bs-theme');
     const next = current === 'light' ? 'dark' : 'light';
+
+    // Додай клас для обертання іконки
+    themeToggle.classList.add('rotate-icon');
+
+    // Після завершення анімації — прибери клас, щоб можна було повторно анімувати
+    themeToggle.addEventListener('animationend', () => {
+      themeToggle.classList.remove('rotate-icon');
+    }, { once: true });
+
     body.setAttribute('data-bs-theme', next);
     localStorage.setItem('theme', next);
     themeToggle.textContent = next === 'light' ? '🌙' : '☀️';
   });
 </script>
+

@@ -11,3 +11,156 @@
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
 }
+
+<<<<<<< HEAD
+/* Анімація появи navbar */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.animate-navbar {
+  animation: fadeIn 1.2s ease-out, slideDown 1.2s ease-out;
+}
+
+/* Анімація underline при hover */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #ffc107; 
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: #ffc107 !important;  
+  font-weight: bold;
+}
+
+.fade-left {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+.fade-right {
+  transform: translateX(30px);
+  opacity: 0;
+}
+.fade-up {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+/* Анімація появи елементів при скролі */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: none;
+}
+
+=======
+>>>>>>> main
+/* Для плавності переходу теми */
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Анімація іконки */
+.rotate-icon {
+  animation: rotate 0.6s linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ripple-ефект */
+.theme-ripple {
+  position: fixed;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleExpand 0.6s forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  to {
+    transform: scale(100);
+    opacity: 1;
+  }
+}
+<<<<<<< HEAD
+
+/* Social icons styling */
+.social-icons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem; /* more space between icons */
+  margin-bottom: 0.75rem; /* space under icons */
+}
+.social-icons a {
+  color: #888888; /* neutral gray */
+  font-size: 2.75rem; /* ~44px, increased */
+  transition: color 0.2s ease, transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* remove underline */
+}
+.social-icons a:hover {
+  color: #6b6b6b; /* slightly darker gray on hover */
+  transform: translateY(-2px);
+}
+.social-icons a:focus {
+  outline: 3px solid rgba(0,0,0,0.08);
+  outline-offset: 4px;
+}
+.social-icons i {
+  pointer-events: none; /* icon only decorative inside link */
+}
+.card-hover-animate {
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+.card-hover-animate:hover {
+    background-color: #ffc107 !important; /* жовтий фон */
+    border-color: #ffc107 !important;
+    color: #212529 !important; /* чорний текст по дефолту */
+}
+
+.card-hover-animate:hover .card-title,
+.card-hover-animate:hover .card-text {
+    color: #212529 !important; /* чорний текст */
+}
+.card-hover-animate:hover {
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
+=======
+>>>>>>> main
