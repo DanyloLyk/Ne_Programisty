@@ -1,0 +1,21 @@
+.card {
+  height: 100%;                /* усі картки однакові по висоті */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-img-top {
+  height: 220px;               /* фіксована висота для фото */
+  object-fit: cover;           /* фото обрізається пропорційно, щоб не спотворюватися */
+}
+
+.card-body {
+  flex-grow: 1;                /* тіло картки займає решту висоти */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-text {
+  flex-grow: 1;                /* текст рівномірно розтягується */
+}
