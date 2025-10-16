@@ -1,21 +1,21 @@
 .card {
-  height: 100%;                /* усі картки однакові по висоті */
-  display: flex;
-  flex-direction: column;
+    height: 100%;                /* всі картки однакової висоти */
+    display: flex;
+    flex-direction: column;
 }
 
 .card-img-top {
-  height: 220px;               /* фіксована висота для фото */
-  object-fit: cover;           /* фото обрізається пропорційно, щоб не спотворюватися */
+    height: 200px;               /* фіксована висота для фото */
+    object-fit: cover;           /* обрізає зайве, зберігаючи пропорції */
 }
 
 .card-body {
-  flex-grow: 1;                /* тіло картки займає решту висоти */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    flex-grow: 1;                /* тіло картки займає решту висоти */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .card-text {
-  flex-grow: 1;                /* текст рівномірно розтягується */
+    flex-grow: 1;                /* текст розтягується по вертикалі */
 }
