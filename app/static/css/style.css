@@ -12,7 +12,6 @@
   --bs-primary: #EF8354;
 }
 
-<<<<<<< HEAD
 /* Анімація появи navbar */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -74,8 +73,6 @@
   transition: none;
 }
 
-=======
->>>>>>> main
 /* Для плавності переходу теми */
 body {
   transition: background-color 0.5s ease, color 0.5s ease;
@@ -113,7 +110,6 @@ body {
     opacity: 1;
   }
 }
-<<<<<<< HEAD
 
 /* Social icons styling */
 .social-icons {
@@ -162,5 +158,3 @@ body {
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
 }
 
-=======
->>>>>>> main
