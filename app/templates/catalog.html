@@ -3,13 +3,25 @@
 {% block title %}Каталог ігор{% endblock %}
 
 {% block content %}
-    <h1>Каталог ігор</h1>
-    <p>Ось список наших ігор:</p>
-    <ul>
-        <li>Catan</li>
-        <li>Carcassonne</li>
-        <li>Ticket to Ride</li>
-        <li>7 Wonders</li>
-        <li>Dixit</li>
-    </ul>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Каталог товарів</h1>
+
+    {# === СЕКЦІЯ ДЛЯ ПК/ПЛАНШЕТІВ (СІТКА) === #}
+    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex" data-masonry='{"percentPosition": true }'>
+        {% for item in desktops %}
+        {# Тут повертаємо .col та простішу картку #}
+        {% include "components/catalog-card-pc.html" %}
+        {% endfor %}
+    </div>
+
+    {# === СЕКЦІЯ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ (СПИСОК) === #}
+    <div class="row d-block d-md-none">
+        <div class="col">
+            {% for item in desktops %}
+            {#--- Включаємо шаблон для відображення елемента у списку ---#}
+            {% include "components/catalog-card-mb.html" %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
