@@ -1,0 +1,17 @@
+<div class="card mb-2 shadow-sm bg-body-tertiary">
+    <div class="row g-0 align-items-center">
+        {# Зображення зліва #}
+        <div class="col-4">
+            <img src="{{ url_for('static', filename=item.image) }}" class="img-fluid rounded-start" alt="{{ item.title }}" style="max-height: 100px; object-fit: cover;">
+        </div>
+        
+        {# Контент справа #}
+        <div class="col-8">
+            <div class="card-body py-2 pe-3">
+                <h6 class="card-title mb-1 text-truncate">{{ item.name }}</h6>
+                <p class="card-subtitle mb-1 text-warning fw-bold">{{ item.price }} ₴</p>
+                <p class="card-text small text-muted">{{ item.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>

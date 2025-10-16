@@ -5,11 +5,23 @@
 {% block content %}
 <div class="container py-5">
     <h1 class="text-center mb-4">Каталог товарів</h1>
-    {# === Сюда будуть підставлятися набір components/catalog-card.html через бекенд === #}
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+    {# === СЕКЦІЯ ДЛЯ ПК/ПЛАНШЕТІВ (СІТКА) === #}
+    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex" data-masonry='{"percentPosition": true }'>
         {% for item in desktops %}
-        {% include "components/catalog-card.html" %}
+        {# Тут повертаємо .col та простішу картку #}
+        {% include "components/catalog-card-pc.html" %}
         {% endfor %}
+    </div>
+
+    {# === СЕКЦІЯ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ (СПИСОК) === #}
+    <div class="row d-block d-md-none">
+        <div class="col">
+            {% for item in desktops %}
+            {#--- Включаємо шаблон для відображення елемента у списку ---#}
+            {% include "components/catalog-card-mb.html" %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

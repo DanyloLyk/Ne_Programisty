@@ -16,8 +16,12 @@ def about():
 @main.route('/catalog')
 def catalog():
     initial_cards = [
-        {"name": "iPad Pro", "description": "Для творчості", "price": 35000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
-        {"name": "Xiaomi Pad 6", "description": "Баланс потужності", "price": 15000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра1", "description": "Опис гри 1", "price": 35000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра2", "description": "Опис гри 2", "price": 15000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра3", "description": "Опис гри 3", "price": 25000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра4", "description": "Опис гри 4", "price": 45000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра5", "description": "Опис гри 5", "price": 55000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
+        {"name": "Гра6", "description": "Опис гри 6", "price": 65000, "image": "https://geekach.com.ua/content/uploads/images/nastolnye-strategii.jpg"},
     ]
 
     for card in initial_cards:
