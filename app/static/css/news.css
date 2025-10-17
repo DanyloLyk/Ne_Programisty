@@ -19,3 +19,12 @@
 .card-text {
     flex-grow: 1;                /* текст розтягується по вертикалі */
 }
+
+/* робить білу "сяйливу" обводку */
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: drop-shadow(0 0 6px rgb(0, 0, 0));
+  width: 3.2rem;
+  height: 3.2rem;
+  background-size: 100% 100% !important;
+}
