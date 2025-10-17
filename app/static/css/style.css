@@ -143,13 +143,13 @@ body {
 
 .hero-card::before {
   /* dark gradient (used for dark theme) */
-  background: linear-gradient(135deg, #2c2c2c 0%, #ffcc00 100%);
+  background: linear-gradient(160deg, #2c2c2c 30%, #fde803ea 80%, #ffcc00dc 100%);
   opacity: 1;
 }
 
 .hero-card::after {
   /* light gradient (used for light theme) */
-  background: linear-gradient(135deg, #fdf403 0%, #ffffff 100%);
+  background: linear-gradient(160deg, #fff200f4 0%, #fde803ea 20%, #ffffff 100%);
   opacity: 0;
 }
 
