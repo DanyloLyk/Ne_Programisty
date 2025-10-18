@@ -116,6 +116,55 @@ body {
   }
 }
 
+/* Градієнтний фон з паралакс-ефектом */
+.hero-section {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* The inner hero card that holds content and shows gradient backgrounds */
+.hero-card {
+  position: relative;
+  border-radius: 0.75rem; /* matches rounded-3 */
+  overflow: hidden; /* clip pseudo-element to rounded corners */
+  background: transparent;
+}
+
+/* Two gradient layers: dark (default) and light (overlay) */
+.hero-card::before,
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: opacity 600ms ease;
+}
+
+.hero-card::before {
+  /* dark gradient (used for dark theme) */
+  background: linear-gradient(160deg, #2c2c2c 30%, #fde803ea 80%, #ffcc00dc 100%);
+  opacity: 1;
+}
+
+.hero-card::after {
+  /* light gradient (used for light theme) */
+  background: linear-gradient(160deg, #fff200f4 0%, #fde803ea 20%, #ffffff 100%);
+  opacity: 0;
+}
+
+/* When body switches theme to light, fade the after layer in */
+[data-bs-theme="light"] .hero-card::after {
+  opacity: 1;
+}
+
+/* And in light theme, hide the dark layer slightly */
+[data-bs-theme="light"] .hero-card::before {
+  opacity: 0.12;
+}
+
+
+
 /* Social icons styling */
 .social-icons {
   display: inline-flex;
