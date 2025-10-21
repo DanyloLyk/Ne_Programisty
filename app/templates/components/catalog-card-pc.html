@@ -1,11 +1,12 @@
- <div class="col">
-    <div class="card shadow-sm bg-body-tertiary">
+<div class="col">
+    <div class="card shadow-sm bg-body-tertiary shadow-sm border border-warning animate__animated card-hover-animate">
         <img src="{{ url_for('static', filename=item.image) }}" class="card-img-top" alt="{{ item.name }}">
-        
+
         <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
-            <h3 class="card-subtitle mb-2 text-warning fw-bold">{{ item.price }} ₴</h3>
+            <h3 class="card-subtitle mb-2 text-warning fw-bold">💰 {{ item.price }} ₴</h3>
             <p class="card-text">{{ item.description }}</p>
+            <button class="btn btn-outline-warning w-100 fw-bold buy-btn">🛒 Купити</button>
         </div>
     </div>
 </div>

@@ -3,7 +3,7 @@
   --bs-body-bg: #f8f9fa;
   --bs-body-color: #212529;
   --bs-primary: #EF8354;
-  --bs-secondary: #6c757d;
+  --bs-secondary: #4e555b;
 }
 
 [data-bs-theme="dark"] {
@@ -194,21 +194,70 @@ body {
   pointer-events: none; /* icon only decorative inside link */
 }
 .card-hover-animate {
-    transition: all 0.1s ease;
-    cursor: pointer;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.card-hover-animate:hover {
-    background-color: #ffc107 !important; /* жовтий фон */
-    border-color: #ffc107 !important;
-    color: #212529 !important; /* чорний текст по дефолту */
+/* ефект при наведенні — застосовується тільки коли кнопка всередині НЕ наведена
+   (клас .btn-hover додається JS при наведені на .buy-btn) */
+.card-hover-animate:not(.btn-hover):hover {
+  background-color: #ffc107 !important; /* жовтий фон */
+  border-color: #ffc107 !important;
+  color: #212529 !important; /* чорний колір для всього тексту */
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
 }
 
-.card-hover-animate:hover .card-title,
-.card-hover-animate:hover .card-text {
-    color: #212529 !important; /* чорний текст */
+/* щоб усередині картки весь текст став чорним */
+.card-hover-animate:not(.btn-hover):hover .card-title,
+.card-hover-animate:not(.btn-hover):hover .card-text,
+.card-hover-animate:not(.btn-hover):hover .card-subtitle,
+.card-hover-animate:not(.btn-hover):hover p {
+  color: #212529 !important;
 }
-.card-hover-animate:hover {
-    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+
+/* опціонально — щоб ціна теж стала контрастною */
+.card-hover-animate:not(.btn-hover):hover .text-warning {
+  color: #212529 !important;
+  font-weight: 700;
 }
+
+/* Забезпечити, що hover картки НЕ змінює фон кнопки — кнопка має свій власний hover */
+.card-hover-animate:not(.btn-hover):hover .buy-btn:not(:hover) {
+  /* не змінюємо фон кнопки при hover картки, але дозволяємо кнопці мати свій hover */
+  background: transparent !important;
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Якщо потрібно — зробити кнопку темною при hover картки (навіть коли сама кнопка не наведена) */
+.card-hover-animate:hover .buy-btn {
+  background-color: black !important;
+  color: white !important;
+  border-color: black !important;
+}
+
+/* Коли кнопка наведена — додається клас .btn-hover на картку (JS).
+   Це не дозволяє картці застосовувати hover-ефект, тому карта "повертається" в попередній стан */
+.card-hover-animate.btn-hover {
+  background: transparent !important;
+  border-color: initial !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+.buy-btn {
+    transition: all 0.3s ease;
+}
+
+/* Коли наводимо на кнопку */
+.buy-btn:hover {
+    background-color: black; /* чорний фон */
+    color: white; /* білий текст */
+    border-color: black; /* обводка чорна, щоб виглядало цілісно */
+}
+
+
+
+
+
 
