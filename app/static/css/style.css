@@ -163,6 +163,242 @@ body {
   opacity: 0.12;
 }
 
+/* Мобільна кнопка — кругла, чорний фон, жовта іконка */
+.login-btn.mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: #212121; /* чорний фон */
+    color: #ffc107; /* жовта іконка */
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.login-btn.mobile svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffc107;
+    transition: transform 0.3s ease, fill 0.25s ease;
+}
+
+.login-btn.mobile:hover {
+    background-color: #ffc107; /* фон стає жовтим */
+    color: #212121; /* іконка чорна */
+}
+
+.login-btn.mobile:hover svg {
+    fill: #212121;
+    transform: scale(1.2);
+}
+
+.login-btn.mobile:active {
+    transform: scale(0.95);
+}
+
+/* ПК кнопка — прямокутна з текстом, чорний фон, жовтий текст */
+.login-btn.desktop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em 1em;
+    border-radius: 15px;
+    border: none;
+    background-color: #212121; /* чорний фон */
+    color: #ffc107; /* жовтий текст */
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.login-btn.desktop svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffc107; /* жовта іконка */
+    margin-right: 0.5em;
+    transition: transform 0.3s ease, fill 0.25s ease;
+}
+
+.login-btn.desktop:hover {
+    background-color: #ffc107; /* фон жовтий */
+    color: #212121; /* текст чорний */
+}
+
+.login-btn.desktop:hover svg {
+    fill: #212121;
+    transform: translateX(5px) rotate(20deg); /* анімація руху іконки */
+}
+
+.login-btn.desktop:active {
+    transform: scale(0.95);
+}
+
+
+/* From Uiverse.io by bociKond */ 
+/* Основний фон і кольори сайту */
+.form {
+  --background: #212121;       /* чорний фон */
+  --input-focus: #ffc107;      /* жовтий контур при фокусі */
+  --font-color: #ffc107;       /* жовтий текст */
+  --font-color-sub: #e0e0e0;   /* світлий сірий для підписів */
+  --bg-color: #323232;         /* фон input */
+  --main-color: #ffc107;       /* акцент жовтий */
+  padding: 20px;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 4px 4px #00000080;
+}
+
+/* Заголовок форми */
+.form > p {
+  color: var(--font-color);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.form > p > span {
+  color: var(--font-color-sub);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Input fields */
+.input-span {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-span input[type="email"],
+.input-span input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  color: var(--font-color-sub);
+  outline: none;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.input-span input[type="email"]:focus,
+.input-span input[type="password"]:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 8px var(--input-focus);
+}
+
+/* Labels */
+.label {
+  color: var(--font-color);
+  font-weight: 600;
+}
+
+/* Submit button */
+.oauthButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0 15px;
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--main-color); /* Жовтий фон спочатку */
+  color: #212121; /* Чорний текст спочатку */
+  box-shadow: 7px 7px #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 250ms;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.oauthButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #212121; /* Чорний для ефекту hover */
+  z-index: -1;
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+}
+
+.oauthButton:hover {
+  color: var(--main-color); /* Текст стає жовтим */
+}
+
+.oauthButton:hover::before {
+  width: 100%;
+}
+
+.oauthButton.submit:hover svg {
+  transform: translateX(5px) rotate(20deg);
+  fill: var(--main-color); /* Іконка теж міняє колір */
+}
+
+
+.login-modal {
+  display: none; /* прихована спочатку */
+  position: fixed;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-modal.show {
+  display: block;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.login-modal-content {
+  background-color: var(--background);
+  padding: 25px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--font-color);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--main-color);
+}
+
 
 
 /* Social icons styling */
