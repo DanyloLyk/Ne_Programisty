@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Про нас - Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    {# === 1. Історія === #}
+    <section class="row align-items-center mb-5">
+        <div class="col-md-6 scroll-animate fade-left">
+            <img src="/static/images/about1.jpg" 
+                 alt="Історія крамниці" class="img-fluid rounded shadow-sm border border-warning">
+        </div>
+        <div class="col-md-6 scroll-animate fade-right">
+            <h2 class="fw-bold text-warning mb-3">Наша історія</h2>
+            <p class="fs-5">
+                Все почалося з невеликого клубу настільних ігор, де збиралися друзі після роботи.  
+                З часом ми перетворили це захоплення у справжню крамницю,  
+                щоб кожен міг знайти гру до душі — від стратегій до веселих вечірок.
+            </p>
+        </div>
+    </section>
+
+    {# === 2. Що ми пропонуємо === #}
+    <section class="row text-center mb-5 border-top pt-4 scroll-animate fade-up" data-delay="0.5s">
+        <h2 class="fw-bold text-warning mb-4">Що ми пропонуємо</h2>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 bg-body-secondary border border-warning animate__animated card-hover-animate">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">🎯 Великий вибір</h5>
+                    <p class="card-text">Більше 300 настільних ігор — для будь-якої компанії та настрою.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 bg-body-secondary border border-warning animate__animated card-hover-animate">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">☕ Ігрова зона</h5>
+                    <p class="card-text">Затишне місце, де можна спробувати гру перед покупкою.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 bg-body-secondary border border-warning animate__animated card-hover-animate">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">🎁 Подарунки</h5>
+                    <p class="card-text">Сертифікати та коробкові набори для друзів і близьких.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# === 3. Наші цінності === #}
+    <section class="row align-items-center mb-5 border-top pt-4" data-delay="0.5s">
+        <div class="col-md-6 scroll-animate fade-left">
+            <h2 class="fw-bold text-warning mb-3">Наші цінності</h2>
+            <p class="fs-5">
+                Ми віримо, що настільні ігри — це більше, ніж розвага.  
+                Це можливість спілкуватися, сміятися, мислити стратегічно і просто бути поруч.  
+                Кожна партія — це нова історія, яку ти створюєш разом з іншими 💛
+            </p>
+        </div>
+        <div class="col-md-6 scroll-animate fade-right">
+            <img src="/static/images/about2.jpg" 
+                 alt="Настільні ігри та команда" class="img-fluid rounded shadow-sm border border-warning">
+        </div>
+    </section>
+
+    <!-- Анімація при скролі -->
+    <script>
+        
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                const el = entry.target;
+                el.classList.add('animate__animated');
+                el.classList.add(`animate__${el.dataset.animName}`);
+                el.style.animationDelay = el.dataset.delay || '0s';
+                el.style.animationFillMode = 'both';
+                observer.unobserve(el); // запустити анімацію лише один раз
+                }
+            });
+            }, {
+            threshold: 0.1 // коли хоча б 10% блоку видно
+            });
+            const animationMap = {
+                'fade-left': 'fadeInLeft',
+                'fade-right': 'fadeInRight',
+                'fade-up': 'fadeInUp'
+            };  
+            document.querySelectorAll('.scroll-animate').forEach((el) => {
+                const animClass = [...el.classList].find(cls => animationMap[cls]) || 'fade-up';
+                const animName = animationMap[animClass] || 'fadeInUp';
+
+                const parentDelay = el.closest('section')?.dataset.delay || '0s';
+                el.dataset.delay = parentDelay;
+
+                el.dataset.animName = animName;
+                observer.observe(el);
+            });
+        });
+        </script>
+</div>
+{% endblock %}

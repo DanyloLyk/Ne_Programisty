@@ -1,0 +1,30 @@
+.card {
+    height: 100%;                /* всі картки однакової висоти */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-img-top {
+    height: 200px;               /* фіксована висота для фото */
+    object-fit: cover;           /* обрізає зайве, зберігаючи пропорції */
+}
+
+.card-body {
+    flex-grow: 1;                /* тіло картки займає решту висоти */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-text {
+    flex-grow: 1;                /* текст розтягується по вертикалі */
+}
+
+/* робить білу "сяйливу" обводку */
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: drop-shadow(0 0 6px rgb(0, 0, 0));
+  width: 3.2rem;
+  height: 3.2rem;
+  background-size: 100% 100% !important;
+}
