@@ -1,0 +1,263 @@
+:root,
+[data-bs-theme="light"] {
+  --bs-body-bg: #f8f9fa;
+  --bs-body-color: #212529;
+  --bs-primary: #EF8354;
+  --bs-secondary: #4e555b;
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #2D3142;
+  --bs-body-color: #f8f9fa;
+  --bs-primary: #EF8354;
+}
+
+/* Анімація появи navbar */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.animate-navbar {
+  animation: fadeIn 1.2s ease-out, slideDown 1.2s ease-out;
+}
+
+.navbar.fixed-top {
+  z-index: 1050; /* або навіть більше, якщо треба */
+}
+
+/* Анімація underline при hover */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #ffc107; 
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: #ffc107 !important;  
+  font-weight: bold;
+}
+
+.fade-left {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+.fade-right {
+  transform: translateX(30px);
+  opacity: 0;
+}
+.fade-up {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+/* Анімація появи елементів при скролі */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: none;
+}
+
+/* Для плавності переходу теми */
+body {
+  padding-top: 60px;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Анімація іконки */
+.rotate-icon {
+  animation: rotate 0.6s linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ripple-ефект */
+.theme-ripple {
+  position: fixed;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleExpand 0.6s forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  to {
+    transform: scale(100);
+    opacity: 1;
+  }
+}
+
+/* Градієнтний фон з паралакс-ефектом */
+.hero-section {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* The inner hero card that holds content and shows gradient backgrounds */
+.hero-card {
+  position: relative;
+  border-radius: 0.75rem; /* matches rounded-3 */
+  overflow: hidden; /* clip pseudo-element to rounded corners */
+  background: transparent;
+}
+
+/* Two gradient layers: dark (default) and light (overlay) */
+.hero-card::before,
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: opacity 600ms ease;
+}
+
+.hero-card::before {
+  /* dark gradient (used for dark theme) */
+  background: linear-gradient(160deg, #2c2c2c 30%, #fde803ea 80%, #ffcc00dc 100%);
+  opacity: 1;
+}
+
+.hero-card::after {
+  /* light gradient (used for light theme) */
+  background: linear-gradient(160deg, #fff200f4 0%, #fde803ea 20%, #ffffff 100%);
+  opacity: 0;
+}
+
+/* When body switches theme to light, fade the after layer in */
+[data-bs-theme="light"] .hero-card::after {
+  opacity: 1;
+}
+
+/* And in light theme, hide the dark layer slightly */
+[data-bs-theme="light"] .hero-card::before {
+  opacity: 0.12;
+}
+
+
+
+/* Social icons styling */
+.social-icons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem; /* more space between icons */
+  margin-bottom: 0.75rem; /* space under icons */
+}
+.social-icons a {
+  color: #888888; /* neutral gray */
+  font-size: 2.75rem; /* ~44px, increased */
+  transition: color 0.2s ease, transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* remove underline */
+}
+.social-icons a:hover {
+  color: #6b6b6b; /* slightly darker gray on hover */
+  transform: translateY(-2px);
+}
+.social-icons a:focus {
+  outline: 3px solid rgba(0,0,0,0.08);
+  outline-offset: 4px;
+}
+.social-icons i {
+  pointer-events: none; /* icon only decorative inside link */
+}
+.card-hover-animate {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* ефект при наведенні — застосовується тільки коли кнопка всередині НЕ наведена
+   (клас .btn-hover додається JS при наведені на .buy-btn) */
+.card-hover-animate:not(.btn-hover):hover {
+  background-color: #ffc107 !important; /* жовтий фон */
+  border-color: #ffc107 !important;
+  color: #212529 !important; /* чорний колір для всього тексту */
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
+/* щоб усередині картки весь текст став чорним */
+.card-hover-animate:not(.btn-hover):hover .card-title,
+.card-hover-animate:not(.btn-hover):hover .card-text,
+.card-hover-animate:not(.btn-hover):hover .card-subtitle,
+.card-hover-animate:not(.btn-hover):hover p {
+  color: #212529 !important;
+}
+
+/* опціонально — щоб ціна теж стала контрастною */
+.card-hover-animate:not(.btn-hover):hover .text-warning {
+  color: #212529 !important;
+  font-weight: 700;
+}
+
+/* Забезпечити, що hover картки НЕ змінює фон кнопки — кнопка має свій власний hover */
+.card-hover-animate:not(.btn-hover):hover .buy-btn:not(:hover) {
+  /* не змінюємо фон кнопки при hover картки, але дозволяємо кнопці мати свій hover */
+  background: transparent !important;
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Якщо потрібно — зробити кнопку темною при hover картки (навіть коли сама кнопка не наведена) */
+.card-hover-animate:hover .buy-btn {
+  background-color: black !important;
+  color: white !important;
+  border-color: black !important;
+}
+
+/* Коли кнопка наведена — додається клас .btn-hover на картку (JS).
+   Це не дозволяє картці застосовувати hover-ефект, тому карта "повертається" в попередній стан */
+.card-hover-animate.btn-hover {
+  background: transparent !important;
+  border-color: initial !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+.buy-btn {
+    transition: all 0.3s ease;
+}
+
+/* Коли наводимо на кнопку */
+.buy-btn:hover {
+    background-color: black; /* чорний фон */
+    color: white; /* білий текст */
+    border-color: black; /* обводка чорна, щоб виглядало цілісно */
+}
+
+
+
+
+
+
