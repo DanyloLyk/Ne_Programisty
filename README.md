@@ -106,7 +106,7 @@
 
 3) Встановлення залежностей
 
-      pip install -r requirements.txt 
+       pip install -r requirements.txt 
 
 4) Запуск Flask-сервера
 
