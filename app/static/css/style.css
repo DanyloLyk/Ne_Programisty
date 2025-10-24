@@ -4,12 +4,14 @@
   --bs-body-color: #212529;
   --bs-primary: #EF8354;
   --bs-secondary: #4e555b;
+  --nav-btn-hover-bg: #4e555b;
 }
 
 [data-bs-theme="dark"] {
   --bs-body-bg: #2D3142;
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
+  --nav-btn-hover-bg: #ffc107;
 }
 
 /* Анімація появи navbar */
@@ -201,40 +203,61 @@ body {
 
 /* ПК кнопка — прямокутна з текстом, чорний фон, жовтий текст */
 .login-btn.desktop {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5em 1em;
-    border-radius: 15px;
-    border: none;
-    background-color: #212121; /* чорний фон */
-    color: #ffc107; /* жовтий текст */
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.25s ease;
+  font-family: inherit;
+  font-size: 16px;              /* було 20px */
+  background: #212121;          /* темний фон */
+  color: #ffc107;               /* жовтий текст */
+  fill: #ffc107;                /* жовта іконка */
+  padding: 0.5em 0.8em;         /* трохи менше */
+  padding-left: 0.7em;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;          /* замість 15px */
+  font-weight: 700;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-btn.desktop span {
+  display: block;
+  margin-left: 0.25em;          /* трохи менший відступ */
+  transition: all 0.3s ease-in-out;
 }
 
 .login-btn.desktop svg {
-    width: 20px;
-    height: 20px;
-    fill: #ffc107; /* жовта іконка */
-    margin-right: 0.5em;
-    transition: transform 0.3s ease, fill 0.25s ease;
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out, fill 0.3s ease-in-out;
 }
 
+/* Ефект наведення */
 .login-btn.desktop:hover {
-    background-color: #ffc107; /* фон жовтий */
-    color: #212121; /* текст чорний */
+  background: #ffc107;
+  color: #212121;
+  fill: #212121;
+  box-shadow: 0 0 10px #ffc107; /* трохи менше світіння */
+}
+
+/* Анімація руху іконки */
+.login-btn.desktop:hover .svg-wrapper {
+  transform: scale(1.25);
+  transition: 0.4s linear;
 }
 
 .login-btn.desktop:hover svg {
-    fill: #212121;
-    transform: translateX(5px) rotate(20deg); /* анімація руху іконки */
+  transform: translateX(1em) scale(1.1);
 }
 
+/* Зникнення тексту при наведенні */
+.login-btn.desktop:hover span {
+  opacity: 0;
+  transition: 0.4s linear;
+}
+
+/* При натисканні — легке зменшення */
 .login-btn.desktop:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 
@@ -257,7 +280,6 @@ body {
   border-radius: 10px;
   width: 100%;
   max-width: 350px;
-  box-shadow: 4px 4px #00000080;
 }
 
 /* Заголовок форми */
@@ -494,6 +516,157 @@ body {
 
 
 
+/* Логін модалка */
+.login-modal {
+  display: none; /* прихована спочатку */
+  position: fixed;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
 
+/* Активна (показана) */
+.login-modal.show {
+  display: block;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
 
+/* Вміст модалки */
+.login-modal-content {
+  background-color: #212121; /* чисто чорний фон */
+  padding: 40px; /* більше внутрішніх відступів */
+  border-radius: 15px; /* більш округлі кути */
+  width: 100%;
+  max-width: 500px; /* більша ширина */
+  box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
+  position: relative;
+  border: none; /* без будь-якої рамки чи прозорої обводки */
+}
+
+/* Кнопка закриття */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #ffc107;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close:hover {
+  color: #ffffff; /* при наведенні біла */
+}
+
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;          /* прибираємо рамку */
+  background: none;      /* прибираємо стандартний фон */
+  box-shadow: none;      /* початково без тіні */
+  
+}
+
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;          
+  background: none;      
+  box-shadow: none;      
+  cursor: pointer;
+  border-radius: 50%;    /* щоб кругла була */
+  transition: 
+    background 0.3s ease-in-out, 
+    box-shadow 0.3s ease-in-out, 
+    transform 0.2s ease-in-out;
+}
+
+.nav-btn:hover {
+  background: var(--nav-btn-hover-bg);            
+  box-shadow: 0 0 30px var(--nav-btn-hover-bg);
+  transform: scale(1.1); /* трохи збільшуємо */
+}
+
+.nav-btn:focus {
+  outline: none; 
+  box-shadow: 0 0 30px var(--nav-btn-hover-bg);
+}
+
+/* Щоб при відведенні мишки ефект плавно зникав */
+.nav-btn:not(:hover) {
+  transition: 
+    background 0.4s ease-in-out, 
+    box-shadow 0.4s ease-in-out, 
+    transform 0.3s ease-in-out;
+  background: none;
+  box-shadow: none;
+  transform: scale(1);
+}
+/* Мобільна кнопка — зміна кольорів і плавна анімація */
+.nav-btn.mobile {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ffc107; /* жовтий фон за замовчуванням */
+  color: #212121;             /* чорна іконка */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 
+    background 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
+  box-shadow: none;
+}
+
+.nav-btn.mobile svg {
+  width: 22px;
+  height: 22px;
+  fill: #212121; /* чорна іконка */
+  transition: transform 0.3s ease, fill 0.3s ease;
+}
+
+/* Hover / натискання */
+.nav-btn.mobile:hover {
+  background-color: #212121;  /* чорний фон */
+  color: #ffc107;             /* жовта іконка */
+  box-shadow: 0 0 25px #ffc107; /* жовте сяйво */
+  transform: scale(1.15);        /* легке збільшення */
+}
+
+.nav-btn.mobile:hover svg {
+  fill: #ffc107;               /* іконка стає жовтою */
+  transform: scale(1.2);
+}
+
+.nav-btn.mobile:active {
+  transform: scale(0.95);      /* натискання */
+  box-shadow: 0 0 15px #ffc107;
+}
+
+.nav-btn.mobile:focus {
+  outline: none;
+  box-shadow: 0 0 25px #ffc107;
+}
+
+/* Плавне повернення до звичайного стану */
+.nav-btn.mobile:not(:hover) {
+  transition: 
+    background 0.4s ease-in-out, 
+    color 0.4s ease-in-out, 
+    box-shadow 0.4s ease-in-out, 
+    transform 0.3s ease-in-out;
+  background-color: #ffc107;
+  color: #212121;
+  box-shadow: none;
+  transform: scale(1);
+}
 
