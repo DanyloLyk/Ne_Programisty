@@ -1,26 +1,79 @@
+<!-- Модалка Вхід -->
 <div id="login-modal" class="login-modal">
-    <div class="login-modal-content">
-        <span id="close-login" class="close">&times;</span>
-        <form action="" class="form">
-            <p>Welcome, <span>sign in to continue</span></p>
-            <span class="input-span">
-                <label for="email" class="label">Email</label>
-                <input type="email" name="email" id="email" placeholder="Enter your email">
-            </span>
-            <span class="input-span">
-                <label for="password" class="label">Password</label>
-                <input type="password" name="password" id="password" placeholder="Enter your password">
-            </span>
-            <span class="span"><a href="#">Forgot password?</a></span>
-            <button type="submit" class="oauthButton submit">
-                Log in
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 17 5-5-5-5"></path>
-                    <path d="m13 17 5-5-5-5"></path>
-                </svg>
-            </button>
-            <span class="span">Don't have an account? <a href="#">Sign up</a></span>
-        </form>
-    </div>
+  <div class="login-modal-content">
+    <span id="close-login" class="close">&times;</span>
+    <form action="" class="form">
+      <p>Ласкаво просимо, <span>увійдіть, щоб продовжити</span></p>
+
+      <span class="input-span">
+        <label for="login-email" class="label">Електронна пошта</label>
+        <input type="email" name="email" id="login-email" placeholder="Введіть вашу електронну пошту">
+      </span>
+
+      <span class="input-span">
+        <label for="login-password" class="label">Пароль</label>
+        <input type="password" name="password" id="login-password" placeholder="Введіть ваш пароль">
+      </span>
+
+      <button type="submit" class="oauthButton submit">
+        Увійти
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 17 5-5-5-5"></path>
+          <path d="m13 17 5-5-5-5"></path>
+        </svg>
+      </button>
+
+      <span class="span">
+        Немає облікового запису?
+        <a href="#" id="open-signup">Зареєструватися</a>
+      </span>
+    </form>
+  </div>
+</div>
+
+<!-- Модалка Реєстрація -->
+<div id="signup-modal" class="login-modal">
+  <div class="login-modal-content">
+    <span id="close-signup" class="close">&times;</span>
+    <form action="" class="form">
+      <p>Ласкаво просимо, <span>створіть свій обліковий запис</span></p>
+
+      <span class="input-span">
+        <label for="signup-name" class="label">Ім’я користувача</label>
+        <input type="text" name="name" id="signup-name" placeholder="Введіть ім’я користувача">
+      </span>
+
+      <span class="input-span">
+        <label for="signup-email" class="label">Електронна пошта</label>
+        <input type="email" name="email" id="signup-email" placeholder="Введіть вашу електронну пошту">
+      </span>
+
+      <span class="input-span">
+        <label for="signup-password" class="label">Пароль</label>
+        <input type="password" name="password" id="signup-password" placeholder="Введіть пароль">
+      </span>
+
+      <span class="input-span">
+        <label for="signup-confirm" class="label">Підтвердіть пароль</label>
+        <input type="password" name="confirm" id="signup-confirm" placeholder="Повторіть пароль">
+      </span>
+
+      <button type="submit" class="oauthButton submit">
+        Зареєструватися
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 17 5-5-5-5"></path>
+          <path d="m13 17 5-5-5-5"></path>
+        </svg>
+      </button>
+
+      <span class="span">
+        Вже маєте обліковий запис?
+        <a href="#" id="open-login">Увійти</a>
+      </span>
+    </form>
+  </div>
 </div>

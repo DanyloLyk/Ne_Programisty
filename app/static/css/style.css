@@ -305,6 +305,7 @@ body {
   gap: 5px;
 }
 
+.input-span input[type="text"],
 .input-span input[type="email"],
 .input-span input[type="password"] {
   width: 100%;
@@ -318,11 +319,13 @@ body {
   transition: all 0.25s ease;
 }
 
+.input-span input[type="text"]:focus,
 .input-span input[type="email"]:focus,
 .input-span input[type="password"]:focus {
   border-color: var(--input-focus);
   box-shadow: 0 0 8px var(--input-focus);
 }
+
 
 /* Labels */
 .label {
