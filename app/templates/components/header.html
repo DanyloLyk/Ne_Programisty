@@ -1,16 +1,31 @@
 <header class="navbar fixed-top navbar-expand-lg border-bottom bg-body-tertiary shadow-sm animate-navbar">
   <div class="container-fluid">
     <!-- ЛОГО -->
-    <a href="/" class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" style="animation-delay: 0.5s; animation-fill-mode: both;">
+    <a href="/" class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft"
+      style="animation-delay: 0.5s; animation-fill-mode: both;">
       <img src="static/images/logo.png" alt="Logo" width="32" height="32" class="me-2">
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
 
-    <button id="theme-toggle-mobile" class="btn btn-outline-secondary rounded-circle border-0 p-2 d-lg-none me-2"
+    <!-- Мобільна кнопка Вхід (кругла) -->
+    <button id="login-mobile" class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none">
+      <div class="svg-wrapper-1">
+        <div class="svg-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+            <path
+              d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+          </svg>
+        </div>
+      </div>
+    </button>
+    </ul>
+    <!-- Кнопка перемикання теми мобільна -->
+    <button id="theme-toggle-mobile" class="nav-btn rounded-circle border-0 p-2 d-lg-none ms-2"
       type="button" style="width: 40px; height: 40px;">
       🌙
     </button>
 
+    <!-- Hamburger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -24,72 +39,71 @@
         <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
 
-      <button id="theme-toggle-desktop"
-        class="btn btn-outline-secondary rounded-circle border-0 p-2 ms-lg-3 d-none d-lg-block"
-        style="width: 40px; height: 40px;">
-        🌙
-      </button>
+        <!-- ПК кнопка Вхід після Новини -->
+        <button id="login-desktop"
+          class="login-btn desktop d-none d-lg-flex align-items-center justify-content-center ms-3">
+          <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+                <path
+                  d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+              </svg>
+            </div>
+          </div>
+          <span>Вхід</span>
+        </button>
+      </ul>
+      <!-- ПК кнопка перемикання теми -->
+      <li class="nav-item d-none d-lg-block ms-2">
+        <button id="theme-toggle-desktop" class="nav-btn rounded-circle border-0 p-2"
+          style="width: 40px; height: 40px;">
+          🌙
+        </button>
+      </li>
+      </ul>
     </div>
   </div>
 </header>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-  const currentPath = window.location.pathname;
-  const navLinks = document.querySelectorAll('.nav-link');
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
 
-  navLinks.forEach(link => {
-    const linkPath = link.getAttribute('href');
-
-    // Активуємо лінку, якщо шлях збігається
-    // або (особливий випадок — / vs /index.html)
-    if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
-      link.classList.add('active');
-    }
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
+        link.classList.add('active');
+      }
+    });
   });
-});
 
-// ======== Темна / Світла тема ========
+  const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+  const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
+  const body = document.body;
 
-const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
-const body = document.body;
+  function updateTheme(theme) {
+    body.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+    const icon = theme === 'light' ? '🌙' : '☀️';
+    if (themeToggleMobile) themeToggleMobile.textContent = icon;
+    if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
+  }
 
-// Функція для оновлення теми
-function updateTheme(theme) {
-  body.setAttribute('data-bs-theme', theme);
-  localStorage.setItem('theme', theme);
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  updateTheme(savedTheme);
 
-  const icon = theme === 'light' ? '🌙' : '☀️';
+  function toggleTheme(event) {
+    const current = body.getAttribute('data-bs-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    const themeToggle = event.currentTarget;
+    themeToggle.classList.add('rotate-icon');
+    themeToggle.addEventListener('animationend', () => {
+      themeToggle.classList.remove('rotate-icon');
+    }, { once: true });
+    updateTheme(next);
+  }
 
-  if (themeToggleMobile) themeToggleMobile.textContent = icon;
-  if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
-}
-
-// Зчитуємо тему з localStorage або встановлюємо 'light'
-const savedTheme = localStorage.getItem('theme') || 'light';
-updateTheme(savedTheme);
-
-// Функція перемикання теми
-function toggleTheme(event) {
-  const current = body.getAttribute('data-bs-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-
-  // Знайти кнопку, яка була натиснута
-  const themeToggle = event.currentTarget;
-
-  // Анімація обертання іконки
-  themeToggle.classList.add('rotate-icon');
-  themeToggle.addEventListener('animationend', () => {
-    themeToggle.classList.remove('rotate-icon');
-  }, { once: true });
-
-  updateTheme(next);
-}
-
-// Призначаємо обробники подій для перемикачів
-if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
-
+  if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+  if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
 </script>
-
