@@ -20,9 +20,19 @@
     </button>
     </ul>
     <!-- Кнопка перемикання теми мобільна -->
-    <button id="theme-toggle-mobile" class="nav-btn rounded-circle border-0 p-2 d-lg-none ms-2"
-      type="button" style="width: 40px; height: 40px;">
+    <button id="theme-toggle-mobile" class="nav-btn rounded-circle border-0 p-2 d-lg-none ms-2">
       🌙
+    </button>
+    <button id="cart-button-mobile"
+      class="btn btn-outline-primary rounded-circle border-0 p-2 d-lg-none me-2 position-relative" type="button"
+      data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="Відкрити кошик" style="width: 40px; height: 40px;">
+      🛒
+      <span id="cart-badge-mobile"
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+        style="font-size:0.6rem; line-height:1;">
+        0
+        <span class="visually-hidden">товари в кошику</span>
+      </span>
     </button>
 
     <!-- Hamburger -->
@@ -61,9 +71,25 @@
         </button>
       </li>
       </ul>
+        <button id="cart-button-desktop"
+          class="btn btn-outline-primary rounded-circle border-0 p-2 d-none d-lg-inline-flex ms-lg-2 position-relative"
+          type="button" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="Відкрити кошик"
+          style="width: 40px; height: 40px;">
+          🛒
+          <span id="cart-badge-desktop"
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            style="font-size:0.6rem; line-height:1;">
+            0
+            <span class="visually-hidden">товари в кошику</span>
+          </span>
+        </button>
     </div>
   </div>
 </header>
+
+<div id="cartModal" class="modal" tabindex="-1">
+  {% include "components/cart.html" %}
+</div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -72,38 +98,76 @@
 
     navLinks.forEach(link => {
       const linkPath = link.getAttribute('href');
+
+      // Активуємо лінку, якщо шлях збігається
+      // або (особливий випадок — / vs /index.html)
       if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
         link.classList.add('active');
       }
     });
   });
 
+  // ======== Темна / Світла тема ========
+
   const themeToggleMobile = document.getElementById('theme-toggle-mobile');
   const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
   const body = document.body;
 
+  // Функція для оновлення теми
   function updateTheme(theme) {
     body.setAttribute('data-bs-theme', theme);
     localStorage.setItem('theme', theme);
+
     const icon = theme === 'light' ? '🌙' : '☀️';
+
     if (themeToggleMobile) themeToggleMobile.textContent = icon;
     if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
   }
 
+  // Зчитуємо тему з localStorage або встановлюємо 'light'
   const savedTheme = localStorage.getItem('theme') || 'light';
   updateTheme(savedTheme);
 
+  // Функція перемикання теми
   function toggleTheme(event) {
     const current = body.getAttribute('data-bs-theme');
     const next = current === 'light' ? 'dark' : 'light';
+
+    // Знайти кнопку, яка була натиснута
     const themeToggle = event.currentTarget;
+
+    // Анімація обертання іконки
     themeToggle.classList.add('rotate-icon');
     themeToggle.addEventListener('animationend', () => {
       themeToggle.classList.remove('rotate-icon');
     }, { once: true });
+
     updateTheme(next);
   }
 
+  // Функція для відкриття кошика
+  function openCartModal() {
+    const modalEl = document.getElementById('cartModal');
+    if (!modalEl) return;
+    const cartModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    cartModal.show();
+  }
+
+  // Прив'язуємо кнопки до функції відкриття (на випадок, якщо data-bs-* не спрацьовує)
+  const cartBtnMobile = document.getElementById('cart-button-mobile');
+  const cartBtnDesktop = document.getElementById('cart-button-desktop');
+  if (cartBtnMobile) cartBtnMobile.addEventListener('click', openCartModal);
+  if (cartBtnDesktop) cartBtnDesktop.addEventListener('click', openCartModal);
+
+  // Якщо відкрита сторінка кошика (наприклад /cart або /cart.html), автоматично відкриваємо модал
+  const path = window.location.pathname;
+  if (path.endsWith('/cart') || path.endsWith('/cart.html') || location.hash === '#cart' || new URLSearchParams(location.search).get('cart') === 'open') {
+    // Невелика пауза, щоб Bootstrap встиг ініціалізуватися
+    window.requestAnimationFrame(() => setTimeout(openCartModal, 50));
+  }
+
+  // Призначаємо обробники подій для перемикачів
   if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
   if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+
 </script>
