@@ -21,6 +21,7 @@
 **Базюк Максим Володимирович**
     **Backend** Developer 
     - Розробка логіки Flask-додатку, підключення БД, API для каталогу
+    
 **Кондратюк Дмитро Анатолійович**
     **QA** / Fullstack Developer 
     - Тестування коду, перевірка функціональності, сторінка “Новини” і “Про нас”, участь у фронтенд-розробці
@@ -33,63 +34,63 @@
    - SQLite — база даних каталогу
 
 ## 📁 Структура проєкту
-
-      project/
-      │
-      ├── .idea/
-      │   ├── ...
-      │
-      ├── app/                      # Основний код сайту
-      │   │
-      │   ├── __pycache__/
-      │   │   └── ...
-      │   │
-      │   ├── models/               # Код для підключення до БД
-      │   │   │
-      │   │   ├── __pycache__/
-      │   │   │   └── ...
-      │   │   │
-      │   │   ├── desktop.py
-      │   │   └── news.py
-      │   │
-      │   ├── static/               # Стилі CSS та зображення
-      │   │   │
-      │   │   ├── css/
-      │   │   │   ├── news.css
-      │   │   │   └── style.css
-      │   │   │
-      │   │   └── images/
-      │   │       └── ...
-      │   │
-      │   ├── templates/            # HTML-шаблони
-      │   │   │
-      │   │   ├── components/       # Компоненти кожної сторінки
-      │   │   │   ├── catalog-card-mb.html
-      │   │   │   ├── catalog-card-pc.html
-      │   │   │   ├── footer.html
-      │   │   │   └── header.html
-      │   │   │
-      │   │   ├── about.html
-      │   │   ├── base.html
-      │   │   ├── catalog.html
-      │   │   ├── contacts.html
-      │   │   ├── index.html
-      │   │   └── news.html
-      │   │
-      │   ├── __init__.py
-      │   ├── routes.py            # Маршрути
-      │   └── utils.py
-      │
-      ├── instance/
-      │   │
-      │   └── mydatabase.db
-      │
-      ├── .gitignore               # Ігноровані файли Git
-      ├── app.py                   # Файл для запуску Flask-додатку
-      ├── CHANGELOG.md             # Журнал змін проєкту
-      ├── README.md                # Цей файл
-      └── requirements.txt         # Список залежностей Python
-
+```
+project/
+│
+├── .idea/
+│   ├── ...
+│
+├── app/                      # Основний код сайту
+│   │
+│   ├── __pycache__/
+│   │   └── ...
+│   │
+│   ├── models/               # Код для підключення до БД
+│   │   │
+│   │   ├── __pycache__/
+│   │   │   └── ...
+│   │   │
+│   │   ├── desktop.py
+│   │   └── news.py
+│   │
+│   ├── static/               # Стилі CSS та зображення
+│   │   │
+│   │   ├── css/
+│   │   │   ├── news.css
+│   │   │   └── style.css
+│   │   │
+│   │   └── images/
+│   │       └── ...
+│   │
+│   ├── templates/            # HTML-шаблони
+│   │   │
+│   │   ├── components/       # Компоненти кожної сторінки
+│   │   │   ├── catalog-card-mb.html
+│   │   │   ├── catalog-card-pc.html
+│   │   │   ├── footer.html
+│   │   │   └── header.html
+│   │   │
+│   │   ├── about.html
+│   │   ├── base.html
+│   │   ├── catalog.html
+│   │   ├── contacts.html
+│   │   ├── index.html
+│   │   └── news.html
+│   │
+│   ├── __init__.py
+│   ├── routes.py            # Маршрути
+│   └── utils.py
+│
+├── instance/
+│   │
+│   └── mydatabase.db
+│
+├── .gitignore               # Ігноровані файли Git
+├── app.py                   # Файл для запуску Flask-додатку
+├── CHANGELOG.md             # Журнал змін проєкту
+├── README.md                # Цей файл
+└── requirements.txt         # Список залежностей Python
+```
 ## 🚀 Інструкція з запуску проєкту
 
 1) Клонування репозиторію
@@ -105,7 +106,7 @@
 
 3) Встановлення залежностей
 
-pip install -r requirements.txt 
+       pip install -r requirements.txt 
 
 4) Запуск Flask-сервера
 

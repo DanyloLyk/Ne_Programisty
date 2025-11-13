@@ -7,6 +7,22 @@
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
 
+    <!-- Мобільна кнопка Вхід (кругла) -->
+    <button id="login-mobile" class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none">
+      <div class="svg-wrapper-1">
+        <div class="svg-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+            <path
+              d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+          </svg>
+        </div>
+      </div>
+    </button>
+    </ul>
+    <!-- Кнопка перемикання теми мобільна -->
+    <button id="theme-toggle-mobile" class="nav-btn rounded-circle border-0 p-2 d-lg-none ms-2">
+      🌙
+    </button>
     <button id="cart-button-mobile"
       class="btn btn-outline-primary rounded-circle border-0 p-2 d-lg-none me-2 position-relative" type="button"
       data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="Відкрити кошик" style="width: 40px; height: 40px;">
@@ -19,11 +35,7 @@
       </span>
     </button>
 
-    <button id="theme-toggle-mobile" class="btn btn-outline-secondary rounded-circle border-0 p-2 d-lg-none me-2"
-      type="button" style="width: 40px; height: 40px;">
-      🌙
-    </button>
-
+    <!-- Hamburger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -37,6 +49,28 @@
         <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
 
+        <!-- ПК кнопка Вхід після Новини -->
+        <button id="login-desktop"
+          class="login-btn desktop d-none d-lg-flex align-items-center justify-content-center ms-3">
+          <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+                <path
+                  d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+              </svg>
+            </div>
+          </div>
+          <span>Вхід</span>
+        </button>
+      </ul>
+      <!-- ПК кнопка перемикання теми -->
+      <li class="nav-item d-none d-lg-block ms-2">
+        <button id="theme-toggle-desktop" class="nav-btn rounded-circle border-0 p-2"
+          style="width: 40px; height: 40px;">
+          🌙
+        </button>
+      </li>
+      </ul>
         <button id="cart-button-desktop"
           class="btn btn-outline-primary rounded-circle border-0 p-2 d-none d-lg-inline-flex ms-lg-2 position-relative"
           type="button" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="Відкрити кошик"
@@ -48,12 +82,6 @@
             0
             <span class="visually-hidden">товари в кошику</span>
           </span>
-        </button>
-
-        <button id="theme-toggle-desktop"
-          class="btn btn-outline-secondary rounded-circle border-0 p-2 ms-lg-3 d-none d-lg-block"
-          style="width: 40px; height: 40px;">
-          🌙
         </button>
     </div>
   </div>
