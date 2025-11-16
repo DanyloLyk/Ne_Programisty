@@ -3,11 +3,11 @@
 {% block title %}Каталог ігор{% endblock %}
 
 {% block content %}
+
 <div class="container py-5">
     <h1 class="text-center text-warning mb-4">Каталог товарів</h1>
 
-    {# === СЕКЦІЯ ДЛЯ ПК/ПЛАНШЕТІВ (СІТКА) === #}
-    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex" data-masonry='{"percentPosition": true }'>
+    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex">
         {% for item in desktops %}
         {# Тут повертаємо .col та простішу картку #}
         {% include "components/catalog-card-pc.html" %}
