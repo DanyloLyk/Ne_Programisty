@@ -1,18 +1,30 @@
 window.onload = function() {
-
-    // Знаходимо лоадер і контент
     const loaderWrapper = document.getElementById('loader-wrapper');
     const content = document.getElementById('page-content');
+    const masonryGrid = document.querySelector('.row-cols-md-3'); // Елемент сітки Masonry
 
-    // 1. Додаємо клас 'hidden', щоб плавно сховати лоадер
-    if (loaderWrapper) {
-        loaderWrapper.classList.add('hidden');
-    }
-
-    // 2. Робимо основний контент видимим
     if (content) {
         content.style.display = 'block';
     }
+    if (masonryGrid && typeof Masonry !== 'undefined') {
+
+        // Ручна ініціалізація Masonry.
+        // Це вирішує проблему з "eval" та неправильним розрахунком при завантаженні.
+        // Це ПОВИННО бути виконано після того, як контент стане видимим.
+        new Masonry(masonryGrid, {
+            itemSelector: '.col-md-4', // Селектор для окремих карток
+            percentPosition: true,
+            gutter: 16 // Проміжок g-4 приблизно дорівнює 16px
+        });
+
+        console.log("Masonry successfully initialized.");
+    }
+    setTimeout(() => {
+        if (loaderWrapper) {
+            // Клас 'hidden' повинен мати CSS-перехід для плавного зникнення
+            loaderWrapper.classList.add('hidden');
+        }
+    }, 100);
 };
 
 document.addEventListener('DOMContentLoaded', function() {

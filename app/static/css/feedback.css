@@ -1,105 +1,55 @@
-.form-container {
-    background: linear-gradient(#212121, #212121) padding-box,
-    linear-gradient(145deg, transparent 35%, #FACC15, #FACC15) border-box;
-    border: 2px solid transparent;
-    padding: 32px 24px;
-    font-size: 14px;
-    font-family: inherit;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    margin-bottom:60px;
+.feedback-form-card.dark-theme {
+    /* Робимо картку чорною */
+    background-color: #212529; /* Дуже темний, майже чорний фон */
+    border-radius: 12px; /* Залишаємо твої закруглені кути */
+    border: 1px solid #ffc107; /* Жовта тонка рамка навколо картки */
+    color: #f8f9fa; /* Світлий текст */
 }
-
-.form-container button:active {
-    scale: 0.98;
+.feedback-header {
+    color: #ffc107 !important; /* Жовтий акцент */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Тінь для кращого вигляду на темному фоні */
 }
-
-.form-container .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.form-container .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.form-container .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #717171;
-    font-weight: 800;
-    font-size: 12px;
-}
-
-.form-container .form-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: #fff;
-    font-family: inherit;
-    background-color: transparent;
-    border: 1px solid #414141;
-    box-sizing: border-box;
-}
-
-.form-container .form-group textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    resize: none;
-    color: #fff;
-    height: 96px;
-    border: 1px solid #414141;
-    background-color: transparent;
-    font-family: inherit;
-    box-sizing: border-box;
-}
-
-.form-container .form-group input::placeholder {
-    opacity: 0.5;
-}
-
-.form-container .form-group input:focus {
-    outline: none;
-    /* ЗМІНЕНО: Колір фокусу на жовтий */
-    border-color: #FACC15;
-}
-
-.form-container .form-group textarea:focus {
-    outline: none;
-
-    border-color: #FACC15;
-}
-
-.form-container .form-submit-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: flex-start;
-    font-family: inherit;
-    color: #717171;
+.form-label {
     font-weight: 600;
-    width: 40%;
-    background: #313131;
-    border: 1px solid #414141;
-    padding: 12px 16px;
-    font-size: inherit;
-    gap: 8px;
-    margin-top: 8px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease-in-out;
+    color: #ffc107; /* Жовтий текст для міток */
+    margin-bottom: 8px;
+    display: block;
+}
+.form-control {
+    padding: 10px 15px;
+    border-radius: 8px;
+    /* Робимо фон полів темним, а текст світлим */
+    background-color: #343a40; /* Темно-сірий фон полів */
+    color: #ffffff; /* Білий текст у полях */
+    border: 1px solid #495057; /* Темна рамка */
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+.form-control:focus {
+    /* Жовта рамка при фокусі */
+    border-color: #ffc107;
+    /* Яскрава жовта тінь при фокусі */
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
+    background-color: #495057; /* Невелике освітлення фону при фокусі */
+}
+.form-submit-btn {
+    /* Використовуємо btn-warning (жовтий) від Bootstrap */
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    /* Текст кнопки чорний для кращого контрасту */
+    color: #212529;
+}
+.form-submit-btn:hover {
+    background-color: #e0a800; /* Темніший жовтий при наведенні */
+    border-color: #e0a800;
 }
 
-.form-container .form-submit-btn:hover {
-    background-color: #FACC15;
-    border-color: #FACC15;
-    color: #212121;
+.form-submit-btn:active {
+    transform: translateY(1px);
+}
+
+/* Стиль для повідомлення про форму (щоб було видно на темному фоні) */
+#form-message {
+    color: #f8f9fa;
 }
