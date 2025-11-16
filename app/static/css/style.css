@@ -672,4 +672,12 @@ body {
   box-shadow: none;
   transform: scale(1);
 }
+.login-modal.show {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000; /* вище за оверлей */
+}
 
