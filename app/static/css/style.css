@@ -672,6 +672,7 @@ body {
   box-shadow: none;
   transform: scale(1);
 }
+
 .dark-card {
     background-color: #212529; /* Чорний або дуже темно-сірий фон */
     color: #f8f9fa; /* Світлий текст */
@@ -697,6 +698,14 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     min-height: 3.6em;
+  
+.login-modal.show {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000; /* вище за оверлей */
 }
 
 /* --- СТИЛІ МОДАЛЬНОГО ВІКНА --- */
