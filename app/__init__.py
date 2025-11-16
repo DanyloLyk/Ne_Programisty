@@ -17,6 +17,12 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    # Імпортуємо всі моделі перед створенням таблиць
+    from app.models.desktop import Desktop
+    from app.models.cart import CartItem
+    from app.models.order import Order
+    from app.models.news import News
+
     from app.routes import main
     app.register_blueprint(main)
 
