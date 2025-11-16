@@ -6,22 +6,25 @@ window.onload = function() {
     if (content) {
         content.style.display = 'block';
     }
+
     if (masonryGrid && typeof Masonry !== 'undefined') {
 
-        // Ручна ініціалізація Masonry.
-        // Це вирішує проблему з "eval" та неправильним розрахунком при завантаженні.
-        // Це ПОВИННО бути виконано після того, як контент стане видимим.
+        // Ручна ініціаліація Masonry
         new Masonry(masonryGrid, {
-            itemSelector: '.col-md-4', // Селектор для окремих карток
-            percentPosition: true,
-            gutter: 16 // Проміжок g-4 приблизно дорівнює 16px
+            // ВИПРАВЛЕНО: Селектор має бути '.col', оскільки батьківський елемент
+            // використовує row-cols-md-3 для керування розміром колонок.
+            itemSelector: '.col',
+            percentPosition: true
+            // gutter не потрібен, оскільки g-4 (gap) з Bootstrap 5
+            // вже коректно обробляється Masonry
         });
 
         console.log("Masonry successfully initialized.");
     }
+
+    // ... (код приховування лоадера) ...
     setTimeout(() => {
         if (loaderWrapper) {
-            // Клас 'hidden' повинен мати CSS-перехід для плавного зникнення
             loaderWrapper.classList.add('hidden');
         }
     }, 100);
@@ -44,13 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const titleInput = document.getElementById('title');
             const descriptionInput = document.getElementById('description');
 
-            const title = titleInput.value;
-            const description = descriptionInput.value;
+            const title = titleInput.value.trim(); // Використовуємо trim() для видалення пробілів
+            const description = descriptionInput.value.trim();
 
             // 2. Проста валідація
             if (!title || !description) {
                 messageDiv.textContent = 'Будь ласка, заповніть усі поля.';
-                messageDiv.style.color = '#FACC15'; // Жовтий (попередження)
+                messageDiv.style.color = '#FACC15';
                 return;
             }
 
@@ -59,9 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'Відправка...';
             messageDiv.textContent = '';
             messageDiv.style.color = '#fff';
-
-            // 4. Асинхронний запит (AJAX) за допомогою Fetch API
-            fetch('/submit_feedback', { // УВАГА: Це ваш URL у Flask!
+            fetch('/submit_feedback', { // URL вашого Flask-роуту
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,23 +72,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     description: description
                 })
             })
-            .then(response => response.json()) // Очікуємо JSON-відповідь
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || 'Помилка на сервері');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    // Успіх!
-                    messageDiv.textContent = 'Відгук успішно надіслано!';
-                    messageDiv.style.color = '#28a745'; // Зелений (успіх)
-                    form.reset(); // Очищуємо поля форми
+                    messageDiv.textContent = '✅ Відгук успішно надіслано!';
+                    messageDiv.style.color = '#28a745';
+                    form.reset();
                 } else {
-                    // Помилка, яку повернув сервер
+                    // Цей шлях малоймовірний, якщо сервер правильно використовує статуси HTTP
                     messageDiv.textContent = 'Помилка: ' + (data.error || 'Невідома помилка.');
-                    messageDiv.style.color = '#dc3545'; // Червоний (помилка)
+                    messageDiv.style.color = '#dc3545';
                 }
             })
             .catch(error => {
-                // Помилка мережі (сервер недоступний тощо)
+                const errorMessage = error.message || 'Помилка мережі. Спробуйте пізніше.';
                 console.error('Fetch Error:', error);
-                messageDiv.textContent = 'Помилка мережі. Спробуйте пізніше.';
+                messageDiv.textContent = `❌ Помилка: ${errorMessage}`;
                 messageDiv.style.color = '#dc3545';
             })
             .finally(() => {

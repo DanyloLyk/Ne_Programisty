@@ -7,8 +7,7 @@
 <div class="container py-5">
     <h1 class="text-center text-warning mb-4">Каталог товарів</h1>
 
-    {# === СЕКЦІЯ ДЛЯ ПК/ПЛАНШЕТІВ (СІТКА) === #}
-    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex" data-masonry='{"percentPosition": true }'>
+    <div class="row row-cols-1 row-cols-md-3 g-4 d-none d-md-flex">
         {% for item in desktops %}
         {# Тут повертаємо .col та простішу картку #}
         {% include "components/catalog-card-pc.html" %}
@@ -25,21 +24,4 @@
         </div>
     </div>
 </div>
-<script>
-    // 1. Чекаємо повного завантаження всіх ресурсів (DOM, зображень тощо)
-    window.addEventListener('load', function () {
-        var masonryGrid = document.querySelector('.row-cols-md-3');
-
-        if (masonryGrid) {
-            // 2. Створюємо та викликаємо подію, яка змусить Bootstrap Masonry перерахувати макет.
-            // Це стандартний спосіб для коректного відображення після завантаження вмісту.
-            masonryGrid.dispatchEvent(new Event('load'));
-
-            // Якщо попереднє не спрацює, можна спробувати ще раз через невелику затримку:
-            setTimeout(function() {
-                masonryGrid.dispatchEvent(new Event('load'));
-            }, 100);
-        }
-    });
-</script>
 {% endblock %}
