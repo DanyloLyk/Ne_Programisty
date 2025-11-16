@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Відгуки - Храм вигідних ігор{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-5 display-4 fw-bold feedback-header">
+        Залиш свій відгук
+    </h1>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            {# Додаємо клас dark-theme для наших нових стилів #}
+            <div class="feedback-form-card dark-theme shadow-lg p-4 p-md-5">
+                <form id="feedback-form">
+                    <div class="form-group mb-4">
+                        <label for="title" class="form-label">Тема / Заголовок</label>
+                        <input name="title" id="title" type="text" class="form-control" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="description" class="form-label">Опис вашого відгуку</label>
+                        <textarea name="description" id="description" rows="5" class="form-control" required></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-warning btn-lg form-submit-btn" type="button" id="submit-btn">
+                            Відправити
+                        </button>
+                    </div>
+
+                    <div id="form-message" class="mt-4 text-center" style="font-size: 1.1rem;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
