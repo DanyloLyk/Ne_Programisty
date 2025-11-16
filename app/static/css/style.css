@@ -690,15 +690,7 @@ body {
     width: 100%;
 }
 
-/* Обмеження тексту в картці до 3 рядків */
-.text-truncate-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 3.6em;
-  
+
 .login-modal.show {
   display: block;
   position: fixed;
