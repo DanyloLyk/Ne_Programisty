@@ -136,3 +136,7 @@ def catalog():
     db.session.commit()
     desktops = Desktop.query.all()
     return render_template("catalog.html", desktops=desktops)
+
+@main.route('/cart')
+def cart():
+    return render_template('cart.html', isFooter=False)
