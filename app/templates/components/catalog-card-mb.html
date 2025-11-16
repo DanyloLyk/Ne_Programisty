@@ -11,7 +11,7 @@
                 <h6 class="card-title mb-1 text-truncate">{{ item.name }}</h6>
                 <p class="card-subtitle mb-1 text-warning fw-bold">{{ item.price }} ₴</p>
                 <p class="card-text small text-muted">{{ item.description }}</p>
-                  <button class="btn btn-outline-warning w-100 fw-bold buy-btn">🛒 Добавити в кошик</button>
+                  <a href="{{ url_for('main.add_to_cart', item_id=item.id) }}" class="btn btn-outline-warning w-100 fw-bold buy-btn">🛒 Добавити в кошик</a>
             </div>
         </div>
     </div>

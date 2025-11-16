@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Замовлення оформлено - Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">✅ Замовлення успішно оформлено!</h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    
+                    <h4 class="mb-3">Дякуємо за ваше замовлення!</h4>
+                    
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Деталі замовлення</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Номер замовлення:</strong> #{{ order.id }}</p>
+                        <p class="mb-1"><strong>Статус:</strong> 
+                            <span class="badge bg-success">{{ order.status }}</span>
+                        </p>
+                        <p class="mb-0"><strong>Загальна сума:</strong> 
+                            <span class="text-warning fw-bold fs-5">{{ "%.2f"|format(order.total_amount) }} ₴</span>
+                        </p>
+                    </div>
+                    
+                    <div class="d-grid gap-2 col-md-6 mx-auto mt-4">
+                        <a href="{{ url_for('main.catalog') }}" class="btn btn-warning btn-lg">
+                            Продовжити покупки
+                        </a>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                            На головну
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

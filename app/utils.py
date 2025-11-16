@@ -19,3 +19,4 @@ def download_image(url, folder="app/static/images"):
 
     # повертаємо шлях для HTML (відносно /static/)
     return f"images/{filename}"
+
