@@ -5,7 +5,7 @@
   --bs-primary: #EF8354;
   --bs-secondary: #4e555b;
   --nav-btn-hover-bg: #4e555b;
-  --login-color: #ebeade;
+  --login-color: #e0e1e3;
   --login-color1: #f8f9fa;
 }
 
@@ -268,11 +268,11 @@ body {
 /* From Uiverse.io by bociKond */ 
 /* Основний фон і кольори сайту */
 .form {
-  --background: #212121;       /* чорний фон */
+  --background: var(--login-color);       /* чорний фон */
   --input-focus: #ffc107;      /* жовтий контур при фокусі */
   --font-color: #ffc107;       /* жовтий текст */
-  --font-color-sub: #e0e0e0;   /* світлий сірий для підписів */
-  --bg-color: #323232;         /* фон input */
+  --font-color-sub: var(--bs-body-color);   /* світлий сірий для підписів */
+  --bg-color: var(--login-color1);         /* фон input */
   --main-color: #ffc107;       /* акцент жовтий */
   padding: 20px;
   background: var(--background);
@@ -386,46 +386,51 @@ body {
   fill: var(--main-color); /* Іконка теж міняє колір */
 }
 
-
+/* Логін модалка */
 .login-modal {
   display: none; /* прихована спочатку */
   position: fixed;
   z-index: 9999;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  transform: translate(-50%, -50%) scale(0.9);
   opacity: 0;
   transition: all 0.3s ease-in-out;
 }
 
+/* Активна (показана) */
 .login-modal.show {
   display: block;
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
 }
 
+/* Вміст модалки */
 .login-modal-content {
-  background-color: var(--background);
-  padding: 25px;
-  border-radius: 10px;
+  background-color: var(--login-color); /* чисто чорний фон */
+  padding: 40px; /* більше внутрішніх відступів */
+  border-radius: 15px; /* більш округлі кути */
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  max-width: 500px; /* більша ширина */
+  box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
   position: relative;
+  border: none; /* без будь-якої рамки чи прозорої обводки */
 }
 
+/* Кнопка закриття */
 .close {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: bold;
-  color: var(--font-color);
+  color: #ffc107;
   cursor: pointer;
+  transition: color 0.2s ease;
 }
 
 .close:hover {
-  color: var(--main-color);
+  color: #ffffff; /* при наведенні біла */
 }
 
 
@@ -523,53 +528,9 @@ body {
 
 
 
-/* Логін модалка */
-.login-modal {
-  display: none; /* прихована спочатку */
-  position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
-}
 
-/* Активна (показана) */
-.login-modal.show {
-  display: block;
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-}
 
-/* Вміст модалки */
-.login-modal-content {
-  background-color: #212121; /* чисто чорний фон */
-  padding: 40px; /* більше внутрішніх відступів */
-  border-radius: 15px; /* більш округлі кути */
-  width: 100%;
-  max-width: 500px; /* більша ширина */
-  box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
-  position: relative;
-  border: none; /* без будь-якої рамки чи прозорої обводки */
-}
-
-/* Кнопка закриття */
-.close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 26px;
-  font-weight: bold;
-  color: #ffc107;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.close:hover {
-  color: #ffffff; /* при наведенні біла */
-}
-
+/* Навігаційні кнопки(кошик та зміна теми) з анімацією */
 .nav-btn {
   width: 40px;
   height: 40px;
@@ -614,7 +575,8 @@ body {
   box-shadow: none;
   transform: scale(1);
 }
-/* Мобільна кнопка — зміна кольорів і плавна анімація */
+
+/* Для мобільних пристроїв */
 .nav-btn.mobile {
   width: 50px;
   height: 50px;
@@ -677,11 +639,6 @@ body {
   transform: scale(1);
 }
 
-.dark-card {
-    background-color: #212529; /* Чорний або дуже темно-сірий фон */
-    color: #f8f9fa; /* Світлий текст */
-}
-
 /* Обгортка зображення картки: Фіксує висоту */
 .card-img-wrapper {
     width: 100%;
@@ -701,28 +658,4 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10000; /* вище за оверлей */
-}
-
-/* --- СТИЛІ МОДАЛЬНОГО ВІКНА --- */
-.dark-modal-content {
-    background-color: #212529; /* Темний фон модального вікна */
-    color: #f8f9fa;
-    border: 1px solid #ffc107; /* Жовта рамка */
-}
-
-.modal-title-warning {
-    color: #ffc107 !important;
-    border-bottom: 2px solid #343a40;
-}
-
-/* Обгортка зображення каруселі: Фіксує висоту */
-.carousel-image-container {
-    width: 100%;
-    height: 450px; /* Приклад висоти. Можна змінити. */
-    overflow: hidden;
-}
-.carousel-image-container img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
 }

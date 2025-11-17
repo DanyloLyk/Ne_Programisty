@@ -19,7 +19,7 @@
     <section class="row mb-5">
      {% for item in news %}
        <div class="col-md-4 mb-4">
-                <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate dark-card">
+                <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
                     <div class="card-img-wrapper">
                         {% if item.images %}
                             <img src="{{ url_for('static', filename=item.images[0].img_url) }}" class="card-img-top"
@@ -31,7 +31,7 @@
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title fw-bold text-warning">{{ item.name }}</h5>
-                        <p class="card-text fs-6 text-light text-truncate-3">{{ item.description }}</p>
+                        <p class="card-text fs-6 text-truncate-3">{{ item.description }}</p>
                         <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
                                 data-bs-target="#newsModal{{ item.id }}">
                             Детальніше
