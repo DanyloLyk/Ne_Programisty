@@ -491,41 +491,29 @@ def register():
     return redirect(url_for('main.index'))
 
 # Авторизація
-@main.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-        # Перевірка користувача за email
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            # Чітке повідомлення, коли користувача з такою поштою немає
-            flash("Користувача з такою поштою не знайдено", "danger")
-            return redirect(url_for('main.index'))
+    user = User.query.filter_by(email=email).first()
+    error = None
 
-        # Перевіряємо пароль окремо, щоб повідомити про неправильний пароль
-        try:
-            password_ok = user.check_password(password)
-        except Exception:
-            # Якщо сталася внутрішня помилка при перевірці пароля
-            flash("Виникла внутрішня помилка під час входу", "danger")
-            return redirect(url_for('main.index'))
+    if not user:
+        error = "Користувача з такою поштою не знайдено"
+    elif not user.check_password(password):
+        error = "Неправильний пароль"
 
-        if password_ok:
-            session.permanent = True
-            session['user_id'] = user.id  # Зберігаємо ID користуна в сесії
-            session['user_nickname'] = user.nickname
-            session['user_status'] = user.status  # Якщо є статус
+    if error:
+        # Передаємо помилку у шаблон
+        return render_template("index.html", login_error=error, email=email)
+    else:
+        session.permanent = True
+        session['user_id'] = user.id
+        session['user_nickname'] = user.nickname
+        session['user_status'] = user.status
+        return redirect(url_for('main.index'))
 
-            flash("Вітаємо, ви увійшли!", "success")
-            return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
-        else:
-            # Конкретне повідомлення про неправильний пароль
-            flash("Неправильний пароль", "danger")
-            return redirect(url_for('main.index'))  # Перенаправлення назад на форму входу
-
-    return redirect(url_for('main.index'))
 
 # Вихід
 @main.route('/logout')
