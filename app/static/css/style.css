@@ -404,46 +404,42 @@ body {
   fill: var(--main-color); /* Іконка теж міняє колір */
 }
 
-/* Логін модалка */
-.login-modal {
-  display: none; /* прихована спочатку */
-  position: fixed; /* фіксуємо до вікна браузера */
-  inset: 0; /* займає весь екран для центрування */
-  z-index: 11000;
-  opacity: 0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  pointer-events: none; /* блокуємо клики коли сховано */
+/* Модалка фонове покриття */
+.login-modal,
+.signup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;       /* займає весь екран */
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.5); /* тьмяне тло */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 11000;
+  transition: opacity 0.2s ease;
 }
 
-/* Активна (показана) */
-.login-modal.show {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  align-items: center;
-  justify-content: center;
-  transform: none;
-  z-index: 11000; /* вище за оверлей */
+/* Активна модалка */
+.login-modal.show,
+.signup-modal.show {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Вміст модалки */
-.login-modal-content {
-  background-color: var(--login-color); /* surface color */
-  padding: 24px; /* внутрішні відступи */
-  border-radius: 10px; /* округлі кути */
-  width: 100%;
-  max-width: 420px; /* вужче, як просили */
+/* Контент модалки */
+.login-modal-content,
+.signup-modal-content {
+  background-color: var(--login-color); /* твій колір поверхні */
+  padding: 24px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;     /* або змінити для великих екранів */
   box-sizing: border-box;
   box-shadow: 0 8px 28px rgba(0,0,0,0.35);
   position: relative;
-  border: none;
-  transition: opacity 180ms ease;
-  opacity: 1;
 }
 
 /* Кнопка закриття */
@@ -457,32 +453,38 @@ body {
   cursor: pointer;
   transition: color 0.2s ease;
 }
-
 .close:hover {
-  color: #ffffff; /* при наведенні біла */
+  color: #ffffff;
+}
+.login-modal-content,
+.signup-modal-content {
+  background-color: var(--login-color);
+  padding: 24px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;
+  box-sizing: border-box;
+  position: relative;
+  border: none;
+
+  /* Підсвітка */
+  box-shadow:
+    0 8px 28px rgba(255, 193, 7, 0.35),   /* теплий жовтий glow */
+    0 0 20px rgba(255, 193, 7, 0.25),      /* м’яка зовнішня підсвітка */
+    0 0 40px rgba(255, 193, 7, 0.15);      /* легкий ореол */
+  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
-/* Responsive adjustments for small screens */
-@media (max-width: 576px) {
-  .login-modal-content {
-    padding: 18px;
-    max-width: 92%;
-    border-radius: 10px;
-  }
-
-  .oauthButton {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .form > p { font-size: 18px; }
-  .oauthButton { height: 44px; }
-  .close { top: 10px; right: 10px; font-size: 22px; }
+/* Плавна анімація при наведенні на контент */
+.login-modal-content:hover,
+.signup-modal-content:hover {
+  transform: scale(1.02); /* трохи збільшення */
+  box-shadow:
+    0 12px 40px rgba(255, 193, 7, 0.45),
+    0 0 30px rgba(255, 193, 7, 0.35),
+    0 0 60px rgba(255, 193, 7, 0.2);
 }
 
-@media (min-width: 1200px) {
-  .login-modal-content { max-width: 640px; }
-}
 
 
 

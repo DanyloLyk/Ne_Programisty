@@ -10,10 +10,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const cartLinks = document.querySelectorAll('[data-cart-link="true"]');
   const isAuthenticated = document.body.dataset.userAuth === "true";
 
-  if (!loginModal && !signupModal) {
-    return;
-  }
+  if (!loginModal && !signupModal) return;
 
+  // Overlay для закриття
   const overlay = document.createElement("div");
   overlay.style.cssText = `
     display:none;
@@ -23,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
     width:100%;
     height:100%;
     background:rgba(0,0,0,0.5);
-    z-index:9999;
+    z-index:10999;
   `;
   document.body.appendChild(overlay);
 
@@ -46,10 +45,9 @@ document.addEventListener("DOMContentLoaded", function() {
     toggleScroll(true);
   };
 
+  // Відкриття модалки
   loginDesktop?.addEventListener("click", () => openModal(loginModal));
   loginMobile?.addEventListener("click", () => openModal(loginModal));
-  closeLogin?.addEventListener("click", closeAll);
-  closeSignup?.addEventListener("click", closeAll);
   openSignup?.addEventListener("click", (e) => {
     e.preventDefault();
     openModal(signupModal);
@@ -59,19 +57,23 @@ document.addEventListener("DOMContentLoaded", function() {
     openModal(loginModal);
   });
 
+  // Закриття модалки
+  closeLogin?.addEventListener("click", closeAll);
+  closeSignup?.addEventListener("click", closeAll);
   overlay.addEventListener("click", closeAll);
-  window.addEventListener("click", (e) => {
-    if (e.target === loginModal || e.target === signupModal) closeAll();
+
+  // Escape key
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAll();
   });
 
+  // Повідомлення про кошик для неавторизованих
   if (!isAuthenticated && cartLinks.length > 0) {
     cartLinks.forEach((link) => {
       link.addEventListener("click", (event) => {
         event.preventDefault();
         alert("Щоб переглянути кошик, будь ласка, увійдіть або зареєструйтесь.");
-        if (loginModal) {
-          openModal(loginModal);
-        }
+        if (loginModal) openModal(loginModal);
       });
     });
   }
