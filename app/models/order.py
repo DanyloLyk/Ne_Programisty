@@ -1,18 +1,18 @@
 from .. import db
 from sqlalchemy.orm import validates
 
+
 class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True)
-    
-    user_id = db.Column(db.Integer, nullable=False)
-    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)  # Загальна сума замовлення
     status = db.Column(db.String(50), default='completed', nullable=False)  # completed, cancelled, etc.
-    
+
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
     items = db.Column(db.JSON, nullable=False, default=list)
+    user = db.relationship('User', backref='orders', lazy=True)
     
     @validates('items')
     def validate_items(self, key, items):

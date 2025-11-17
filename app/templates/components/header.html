@@ -9,6 +9,7 @@
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
     <div class="d-flex justify-content-end align-items-center gap-1">
+      {% if not current_user %}
       <!-- Мобільна кнопка Вхід (кругла) -->
       <button id="login-mobile"
         class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none">
@@ -21,8 +22,17 @@
           </div>
         </div>
       </button>
+      {% else %}
+      <span class="badge text-bg-warning text-dark fw-semibold d-lg-none ms-2">
+        {{ current_user.nickname }}
+      </span>
+      <a href="{{ url_for('main.logout') }}"
+        class="btn btn-outline-light btn-sm text-dark border-0 d-lg-none ms-2">
+        Вийти
+      </a>
+      {% endif %}
       <!-- Мобільна кнопка кошика -->
-      <a href="/cart" class="text-decoration-none">
+      <a href="/cart" class="text-decoration-none" data-cart-link="true">
         <button id="cart-button-mobile"
           class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-lg-none ms-2 position-relative"
           style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
@@ -50,6 +60,7 @@
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
         <li class="nav-item"><a href="/feedback" class="nav-link">Відгуки</a></li>
 
+        {% if not current_user %}
         <!-- ПК кнопка Вхід після Новини -->
         <li class="nav-item d-none d-lg-block ms-2">
           <button id="login-desktop"
@@ -65,9 +76,26 @@
             <span>Вхід</span>
           </button>
         </li>
+        {% else %}
+        <li class="nav-item dropdown d-none d-lg-block ms-3">
+          <a class="nav-link dropdown-toggle fw-semibold text-warning" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {{ current_user.nickname }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Статус: {{ current_user.status }}
+              </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Вийти</a></li>
+          </ul>
+        </li>
+        {% endif %}
         <li class="nav-item d-none d-lg-block ms-2">
           <!-- ПК кнопка кошика -->
-          <a href="/cart" class="text-decoration-none">
+          <a href="/cart" class="text-decoration-none" data-cart-link="true">
             <button id="cart-button-desktop"
               class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-none d-lg-inline-flex ms-lg-2 position-relative"
               style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
@@ -86,8 +114,6 @@
     </div>
   </div>
 </header>
-
-{% include 'components/login-panel.html' %}
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
