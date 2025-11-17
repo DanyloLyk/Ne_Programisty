@@ -1,0 +1,53 @@
+<div class="modal fade" id="viewOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border border-warning">
+
+            <div class="modal-header bg-body-tertiary text-warning">
+                <h5 class="modal-title fw-bold">🧾 Перегляд замовлення</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body bg-body-tertiary ">
+
+                <!-- Основна інформація -->
+                <div class="mb-3">
+                    <h5 class="mb-2">Основна інформація</h5>
+                    <p><strong>ID:</strong> <span id="orderId"></span></p>
+                    <p><strong>Статус:</strong> 
+                        <span id="orderStatus" class="badge bg-info"></span>
+                    </p>
+                </div>
+
+                <!-- Користувач -->
+                <div class="mb-3">
+                    <h5 class="mb-2">Користувач</h5>
+                    <p><strong>Нікнейм:</strong> <span id="orderUserNickname"></span></p>
+                    <p><strong>Email:</strong> <span id="orderUserEmail"></span></p>
+                </div>
+
+                <!-- Товари -->
+                <h5 class="mt-4 mb-2">Товари</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>Назва</th>
+                                <th>Кількість</th>
+                                <th>Ціна</th>
+                                <th>Сума</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderItemsTable"></tbody>
+                    </table>
+                </div>
+
+                <h4 class="text-end mt-3">Разом: <span id="orderTotal"></span> грн</h4>
+            </div>
+
+            <div class="modal-footer bg-body-tertiary" id="orderActions">
+                <!-- Кнопки підтягнуться через JS -->
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -8,9 +8,9 @@
     
     {# Порожній кошик #}
     <div id="cart-empty" style="display: none;">
-        <div class="alert alert-info">
+        <div class="alert-info">
             <h4 class="alert-heading">Ваш кошик порожній</h4>
-            <p class="mb-0">Додайте товари з <a href="{{ url_for('main.catalog') }}" class="alert-link">каталогу</a>.</p>
+            <p class="mb-0">Додайте товари з <a href="{{ url_for('main.catalog') }}" class="icon-link">каталогу</a>.</p>
         </div>
     </div>
 
@@ -55,6 +55,7 @@
 
 <script>
     const cartItems = JSON.parse('{{ carts | tojson | safe }}');
+    const discountMultiplier = Number({{ discount_multiplier | tojson | safe }} || 1.0);
     const emptyContainer = document.getElementById('cart-empty');
     const itemsContainer = document.getElementById('cart-items');
     const itemsList = document.getElementById('cart-items-list');
@@ -79,8 +80,10 @@
             const priceStr = String(item.price).replace(/\s/g, '').replace(',', '.');
             const price = parseFloat(priceStr) || 0;
             const quantity = parseInt(cartItem.quantity) || 0;
-            const itemTotal = price * quantity;
-            
+            // Розрахунок з урахуванням множника знижки
+            const itemTotalOriginal = price * quantity;
+            const itemTotal = itemTotalOriginal * (parseFloat(discountMultiplier) || 1.0);
+
             totalItems += quantity;
             totalPrice += itemTotal;
             
@@ -97,7 +100,10 @@
                             <div class="col-md-6">
                                 <h5 class="card-title mb-1">${item.name}</h5>
                                 <p class="card-text text-muted small mb-1">${item.description}</p>
-                                <p class="text-warning fw-bold mb-0">${price.toFixed(2)} ₴ × ${quantity} = ${itemTotal.toFixed(2)} ₴</p>
+                                <p class="text-warning fw-bold mb-0">
+                                    ${price.toFixed(2)} ₴ × ${quantity} = 
+                                    ${(discountMultiplier < 1) ? `<del class="text-muted">${itemTotalOriginal.toFixed(2)} ₴</del> <span class="ms-2">${itemTotal.toFixed(2)} ₴</span>` : `${itemTotal.toFixed(2)} ₴`}
+                                </p>
                             </div>
                             <div class="col-md-2 text-center">
                                 <div class="btn-group" role="group">
@@ -139,4 +145,27 @@
         itemsContainer.style.display = 'none';
     }
 </script>
+
+{% if orders and orders|length > 0 %}
+<hr class="my-4">
+<div class="container mt-3">
+    <h4 class="fw-bold text-warning mb-3">📦 Ваші замовлення</h4>
+    <div class="list-group">
+        {% for order in orders %}
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Замовлення #{{ order.id }}</h5>
+                <small class="text-muted">Статус: {{ order.status }}</small>
+            </div>
+            <p class="mb-1">Сума: <strong class="text-warning">{{ order.total_amount }} ₴</strong></p>
+            <ul class="mb-0">
+                {% for it in order.order_items %}
+                <li>{{ it.name }} — x{{ it.quantity }} — {{ '%.2f'|format(it.price) }} ₴</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}

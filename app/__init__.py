@@ -13,6 +13,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
 
+    app.config['SECRET_KEY'] = 'your_secret_key_here'
+
+
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -24,7 +27,13 @@ def create_app():
 
     from app.routes import main
     app.register_blueprint(main)
+
     with app.app_context():
         db.create_all()
 
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host="0.0.0.0", port=5000, debug=True)

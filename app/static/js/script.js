@@ -1,34 +1,44 @@
+
 window.onload = function() {
     const loaderWrapper = document.getElementById('loader-wrapper');
     const content = document.getElementById('page-content');
     const masonryGrid = document.querySelector('.row-cols-md-3'); // Елемент сітки Masonry
 
+    // Час затримки перед показом лоадера (мс)
+    const loaderDelay = 150;
+    let loaderTimeout;
+
+    // Показуємо контент
     if (content) {
         content.style.display = 'block';
     }
 
+    // Ініціалізація Masonry
     if (masonryGrid && typeof Masonry !== 'undefined') {
-
-        // Ручна ініціаліація Masonry
         new Masonry(masonryGrid, {
-            // ВИПРАВЛЕНО: Селектор має бути '.col', оскільки батьківський елемент
-            // використовує row-cols-md-3 для керування розміром колонок.
             itemSelector: '.col',
             percentPosition: true
-            // gutter не потрібен, оскільки g-4 (gap) з Bootstrap 5
-            // вже коректно обробляється Masonry
         });
-
         console.log("Masonry successfully initialized.");
     }
 
-    // ... (код приховування лоадера) ...
+    // Встановлюємо таймер для показу лоадера
+    if (loaderWrapper) {
+        loaderTimeout = setTimeout(() => {
+            loaderWrapper.classList.remove('hidden'); // показуємо лоадер, якщо затримка пройшла
+        }, loaderDelay);
+    }
+
+    // Прибрати лоадер після повного завантаження контенту
+    // Якщо завантаження було швидким, лоадер не встигне показатися
     setTimeout(() => {
         if (loaderWrapper) {
-            loaderWrapper.classList.add('hidden');
+            clearTimeout(loaderTimeout); // якщо таймер ще не спрацював — скасувати
+            loaderWrapper.classList.add('hidden'); // ховаємо лоадер
         }
-    }, 100);
+    }, 500); // час для демонстрації, можна регулювати під свій контент
 };
+
 
 document.addEventListener('DOMContentLoaded', function() {
 

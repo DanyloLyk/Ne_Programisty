@@ -1,0 +1,47 @@
+<!-- =============================== -->
+<!--   MODAL: РЕДАГУВАТИ ТОВАР        -->
+<!-- =============================== -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning">
+            <div class="modal-header bg-body-tertiary text-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати товар</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="editItemForm" method="POST">
+                <div class="modal-body bg-body-tertiary text-dark">
+
+                    <input type="hidden" name="id" id="editItemId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Назва товару</label>
+                        <input name="name" id="editItemName" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Опис</label>
+                        <textarea name="description" id="editItemDescription" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ціна (₴)</label>
+                        <input name="price" id="editItemPrice" type="number" step="0.01" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Посилання на зображення</label>
+                        <input name="image" id="editItemImage" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Зберегти зміни</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

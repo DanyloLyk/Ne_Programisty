@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Адмін-панель — Гральна Комора{% endblock %}
+
+{% block content %}
+
+{% include 'components/admin/add_item.html' %}
+{% include 'components/admin/edit_item.html' %}
+{% include 'components/admin/add_news.html' %}
+{% include 'components/admin/edit_news.html' %}
+{% include 'components/admin/edit_user.html' %}
+{% include 'components/admin/order_info.html' %}
+
+<div class="container mt-4">
+
+    <h2 class="fw-bold text-warning mb-4">⚙️ Адмін-панель</h2>
+
+    <!-- NAV TABS -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#items">🎲 Товари</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#news">📰 Новини</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#orders">🧾 Замовлення</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#users">👥 Користувачі</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+    <!-- Modal: Generic confirm action (used for delete item/news/user) -->
+    <div class="modal fade" id="confirmActionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border border-warning">
+                <div class="modal-header bg-body-tertiary text-warning">
+                    <h5 class="modal-title">Підтвердження</h5>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-body-tertiary">
+                    <p id="confirmActionText">Ви впевнені, що хочете виконати цю дію?</p>
+                </div>
+                <div class="modal-footer bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="button" id="confirmActionBtn" class="btn btn-danger">Підтвердити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- ========================= -->
+        <!-- 🎲 ТОВАРИ -->
+        <!-- ========================= -->
+        <div id="items" class="tab-pane fade show active">
+            <h4 class="fw-bold text-warning mb-3">🎲 Товари</h4>
+
+            <button class="btn btn-warning mb-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                ➕ Додати товар
+            </button>
+
+            <div class="row">
+                {% for item in items %}
+                <div class="col-md-4 mb-3">
+                    <div class="card border border-warning shadow-sm">
+                        <img src="{{ url_for('static', filename=item.image) }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning fw-bold">{{ item.name }}</h5>
+                            <p class="card-text small">{{ item.description[:80] }}...</p>
+                            <p class="fw-bold">{{ item.price }} ₴</p>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="#" class="btn btn-outline-warning btn-sm edit-btn" data-id="{{ item.id }}">✏️ Редагувати</a>
+                                <button class="btn btn-outline-danger btn-sm delete-btn" data-id="{{ item.id }}">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted">Немає товарів.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 📰 НОВИНИ -->
+        <!-- ========================= -->
+        <div id="news" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">📰 Новини</h4>
+
+            <button class="btn btn-warning mb-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                ➕ Додати новину
+            </button>
+
+            <ul class="list-group">
+                {% for item in news %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <strong>{{ item.name }}</strong>
+                        <br>
+                        <span class="text-muted small">ID: {{ item.id }}</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-warning btn-sm edit-news-btn" 
+                            data-id="{{ item.id }}">
+                            ✏️ Редагувати
+                        </button>
+
+                        <button class="btn btn-outline-danger btn-sm delete-news-btn"
+                                data-id="{{ item.id }}">🗑️</button>
+                    </div>
+                </li>
+                {% else %}
+                <p class="text-muted">Новин немає.</p>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 🧾 ЗАМОВЛЕННЯ -->
+        <!-- ========================= -->
+        <div class="tab-pane fade" id="orders">
+            <h3 class="text-warning mb-4">🧾 Замовлення</h3>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-warning">
+                        <tr class="text">
+                            <th>ID</th>
+                            <th>Користувач</th>
+                            <th>Статус</th>
+                            <th>Сума</th>
+                            <th>Керування</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+
+                            <td>
+                                {{ order.user.nickname }} Привілегія - <span class="badge bg-warning">{{ order.user.privilege_label }}</span><br>
+                                <small class="text-muted">{{ order.user.email }}</small>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info">{{ order.status }}</span>
+                            </td>
+
+                            <td>{{ order.total_sum }} грн</td>
+
+                            <td>
+                                <button 
+                                    class="btn btn-outline-warning btn-sm view-order-btn"
+                                    data-id="{{ order.id }}">
+                                    🔍 Переглянути
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 👥 КОРИСТУВАЧІ -->
+        <!-- ========================= -->
+        <div id="users" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">👥 Користувачі</h4>
+
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ user.nickname }}</strong> — <span class="text-muted small">{{ user.email }}</span> User ID: {{ user.id }}
+                        <br>
+                        Статус: <span class="badge bg-info">{{ user.status }}</span>,
+                        Привілегія: <span class="badge bg-warning">{{ user.privilege_label }}</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-warning btn-sm edit-user-btn" data-id="{{ user.id }}">
+                            ✏️ Редагувати
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm delete-user-btn" data-id="{{ user.id }}">
+                            🗑️
+                        </button>
+                    </div>
+                </li>
+                {% else %}
+                <p class="text-muted">Користувачів немає.</p>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

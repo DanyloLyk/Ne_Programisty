@@ -27,7 +27,13 @@
                                     <h5 class="card-title mb-1">{{ cart.item.name }}</h5>
                                     <p class="card-text text-muted small mb-1">{{ cart.item.description }}</p>
                                     <p class="text-warning fw-bold mb-0">
-                                        {{ "%.2f"|format(cart.item.price) }} ₴ × {{ cart.quantity }} = {{ "%.2f"|format(cart.total) }} ₴
+                                        {% if discount_percent and discount_percent > 0 %}
+                                            {{ "%.2f"|format(cart.item.price) }} ₴ × {{ cart.quantity }} =
+                                            <del class="text-muted">{{ "%.2f"|format(cart.original_total) }} ₴</del>
+                                            <span class="ms-2">{{ "%.2f"|format(cart.total) }} ₴</span>
+                                        {% else %}
+                                            {{ "%.2f"|format(cart.item.price) }} ₴ × {{ cart.quantity }} = {{ "%.2f"|format(cart.total) }} ₴
+                                        {% endif %}
                                     </p>
                                 </div>
                                 <div class="col-md-2 text-center">
@@ -61,7 +67,7 @@
                     </div>
                     
                     <form method="POST" action="{{ url_for('main.add_order') }}">
-                        <input type="hidden" name="discount" value="1.0">
+                        <input type="hidden" name="discount" value="{{ discount_multiplier }}">
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg fw-bold">
                                 ✅ Підтвердити замовлення
