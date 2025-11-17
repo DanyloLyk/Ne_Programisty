@@ -1,0 +1,46 @@
+<!-- =============================== -->
+<!--   MODAL: ДОДАТИ ТОВАР          -->
+<!-- =============================== -->
+
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title fw-bold">➕ Додати товар</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="addItemForm" method="POST">
+                <div class="modal-body bg-dark text-light">
+
+                    <div class="mb-3">
+                        <label class="form-label">Назва товару</label>
+                        <input name="name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Опис</label>
+                        <textarea name="description" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ціна (₴)</label>
+                        <input name="price" type="number" step="0.01" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">URL зображення</label>
+                        <input name="image" type="url" class="form-control" placeholder="https://example.com/photo.jpg" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-dark">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Зберегти</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

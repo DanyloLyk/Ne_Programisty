@@ -6,6 +6,7 @@ from .models.order import Order
 from . import db
 from .models.feedback import Feedback
 from .models.news import News, NewsImage
+from app.utils import download_image
 
 main = Blueprint('main', __name__)
 
@@ -396,17 +397,74 @@ def admin():
         isFooter=False
     )
 
-@main.route('/add_item')
+@main.route('/add_item', methods=['POST'])
 def add_item():
-    return "Add item page (ще не готово)"
+    try:
+        data = request.get_json()
+        name = data.get('name')
+        description = data.get('description')
+        price = float(data.get('price', 0))
+        image_url = data.get('image')
 
-@main.route('/edit_item/<int:item_id>')
-def edit_item(item_id):
-    return f"Edit item {item_id} page (ще не готово)"
+        image_path = download_image(image_url)
 
-@main.route('/delete_item/<int:item_id>')
+        item = Desktop(name=name, description=description, price=price, image=image_path)
+        db.session.add(item)
+        db.session.commit()
+
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при додаванні товару:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/get_item/<int:item_id>')
+def get_item(item_id):
+    item = Desktop.query.get_or_404(item_id)
+    return jsonify(success=True, item={
+        "name": item.name,
+        "description": item.description,
+        "price": item.price,
+        "image": item.image
+    })
+
+@main.route('/edit_item/<int:item_id>', methods=['POST'])
+def edit_item_post(item_id):
+    try:
+        data = request.get_json()
+        item = Desktop.query.get_or_404(item_id)
+
+        item.name = data.get('name')
+        item.description = data.get('description')
+        item.price = float(data.get('price', 0))
+        item.image = data.get('image')
+
+        db.session.commit()
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при редагуванні товару:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/delete_item/<int:item_id>', methods=['DELETE'])
 def delete_item(item_id):
-    return f"Delete item {item_id} page (ще не готово)"
+    try:
+        item = Desktop.query.get_or_404(item_id)
+
+        db.session.delete(item)
+        db.session.commit()
+
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при видаленні:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+
 
 @main.route('/add_news')
 def add_news():

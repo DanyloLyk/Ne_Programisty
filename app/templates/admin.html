@@ -3,6 +3,10 @@
 {% block title %}Адмін-панель — Гральна Комора{% endblock %}
 
 {% block content %}
+
+{% include 'components/admin/add_item.html' %}
+{% include 'components/admin/edit_item.html' %}
+
 <div class="container mt-4">
 
     <h2 class="fw-bold text-warning mb-4">⚙️ Адмін-панель</h2>
@@ -31,24 +35,25 @@
         <div id="items" class="tab-pane fade show active">
             <h4 class="fw-bold text-warning mb-3">🎲 Товари</h4>
 
-            <a href="{{ url_for('main.add_item') }}" class="btn btn-warning mb-3 fw-bold">
+            <button class="btn btn-warning mb-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addItemModal">
                 ➕ Додати товар
-            </a>
+            </button>
 
             <div class="row">
                 {% for item in items %}
                 <div class="col-md-4 mb-3">
                     <div class="card border border-warning shadow-sm">
-                        <img src="/static/{{ item.image }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <img src="{{ url_for('static', filename=item.image) }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title text-warning fw-bold">{{ item.name }}</h5>
                             <p class="card-text small">{{ item.description[:80] }}...</p>
                             <p class="fw-bold">{{ item.price }} ₴</p>
 
                             <div class="d-flex justify-content-between">
-                                <a href="{{ url_for('main.edit_item', item_id=item.id) }}" class="btn btn-outline-warning btn-sm">✏️ Редагувати</a>
-                                <a href="{{ url_for('main.delete_item', item_id=item.id) }}" class="btn btn-outline-danger btn-sm"
-                                   onclick="return confirm('Видалити товар?')">🗑️</a>
+                                <a href="#" class="btn btn-outline-warning btn-sm edit-btn" data-id="{{ item.id }}">✏️ Редагувати</a>
+                                <button class="btn btn-outline-danger btn-sm delete-btn" data-id="{{ item.id }}">
+                                    🗑️
+                                </button>
                             </div>
                         </div>
                     </div>
