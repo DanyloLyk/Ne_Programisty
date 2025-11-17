@@ -301,7 +301,6 @@ body {
   border-radius: 10px;
   width: 100%;
   max-width: 350px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Заголовок форми */
@@ -432,14 +431,20 @@ body {
 /* Контент модалки */
 .login-modal-content,
 .signup-modal-content {
-  background-color: var(--login-color); /* твій колір поверхні */
-  padding: 24px;
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
   border-radius: 10px;
-  width: 90%;
-  max-width: 420px;     /* або змінити для великих екранів */
+  /* Proportional, not too wide */
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
   box-sizing: border-box;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
   position: relative;
+  border: none;
+  transition: box-shadow 180ms ease, opacity 160ms ease;
 }
 
 /* Кнопка закриття */
@@ -458,31 +463,27 @@ body {
 }
 .login-modal-content,
 .signup-modal-content {
-  background-color: var(--login-color);
-  padding: 24px;
+  /* ensure only one styled modal definition controls sizing/appearance */
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
   border-radius: 10px;
-  width: 90%;
-  max-width: 420px;
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
   box-sizing: border-box;
   position: relative;
   border: none;
-
-  /* Підсвітка */
-  box-shadow:
-    0 8px 28px rgba(255, 193, 7, 0.35),   /* теплий жовтий glow */
-    0 0 20px rgba(255, 193, 7, 0.25),      /* м’яка зовнішня підсвітка */
-    0 0 40px rgba(255, 193, 7, 0.15);      /* легкий ореол */
-  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  transition: box-shadow 180ms ease, opacity 160ms ease;
 }
 
-/* Плавна анімація при наведенні на контент */
+/* hover: subtle shadow only (no scale) */
 .login-modal-content:hover,
 .signup-modal-content:hover {
-  transform: scale(1.02); /* трохи збільшення */
-  box-shadow:
-    0 12px 40px rgba(255, 193, 7, 0.45),
-    0 0 30px rgba(255, 193, 7, 0.35),
-    0 0 60px rgba(255, 193, 7, 0.2);
+  transform: none;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.30);
 }
 
 
