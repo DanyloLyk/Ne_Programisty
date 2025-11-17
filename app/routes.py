@@ -401,7 +401,6 @@ def order_success(order_id):
     if not order:
         abort(404)
     return render_template('order_success.html', order=order, isFooter=False)
-<<<<<<< HEAD
 
 # Реєстрація
 @main.route('/register', methods=['GET', 'POST'])
@@ -473,7 +472,6 @@ def logout():
 @main.route("/test")
 def test(): 
     print(session.get("user_id"))
-=======
     
 @main.route('/admin')
 def admin():
@@ -518,4 +516,3 @@ def delete_news(news_id):
 @main.route('/delete_user/<int:user_id>')
 def delete_user(user_id):
     return f"Delete user {user_id} (ще не готово)"
->>>>>>> 563851826795cfdc56a80f81d5d771a402b90186
