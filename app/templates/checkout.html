@@ -50,18 +50,43 @@
                     <h5 class="mb-0">Підсумок замовлення</h5>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-info border-0">
+                        <div class="d-flex flex-column gap-2">
+                            <div>
+                                <strong>Статус:</strong>
+                                <span class="text-uppercase">{{ user_status }}</span>
+                            </div>
+                            <div>
+                                <strong>Привілегія:</strong>
+                                <span class="badge bg-{{ privilege_info.badge_class }} text-uppercase">{{ privilege_info.label }}</span>
+                                <span class="ms-2 text-muted">знижка -{{ discount_percent }}%</span>
+                            </div>
+                            <small class="text-muted">
+                                {{ 'Знижка застосована автоматично.' if discount_percent else 'Поки що знижка не застосовується.' }}
+                            </small>
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Товарів:</span>
                         <strong>{{ total_items }}</strong>
                     </div>
+                    <div class="d-flex justify-content-between text-muted mb-2">
+                        <span>Проміжна сума:</span>
+                        <strong>{{ "%.2f"|format(subtotal) }} ₴</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Знижка ({{ discount_percent }}%)</span>
+                        <strong class="{{ 'text-success' if discount_amount else 'text-muted' }}">
+                            -{{ "%.2f"|format(discount_amount) }} ₴
+                        </strong>
+                    </div>
                     <hr>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="fs-5">Загальна сума:</span>
+                        <span class="fs-5">До сплати:</span>
                         <strong class="text-warning fs-4">{{ "%.2f"|format(total_amount) }} ₴</strong>
                     </div>
                     
                     <form method="POST" action="{{ url_for('main.add_order') }}">
-                        <input type="hidden" name="discount" value="1.0">
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg fw-bold">
                                 ✅ Підтвердити замовлення
@@ -71,6 +96,18 @@
                             </a>
                         </div>
                     </form>
+
+                    <div class="mt-4">
+                        <p class="text-muted small mb-2">Рівні привілеїв:</p>
+                        <ul class="list-unstyled small mb-0">
+                            {% for key, tier in privilege_tiers.items() %}
+                            <li class="mb-1 d-flex align-items-center">
+                                <span class="badge bg-{{ tier.badge_class }} text-uppercase me-2">{{ tier.label }}</span>
+                                <span>-{{ tier.discount_percent }}%</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

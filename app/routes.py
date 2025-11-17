@@ -23,15 +23,34 @@ def login_required(view_func):
     return wrapper
 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        user = getattr(g, 'current_user', None)
+        if not user or user.status.lower() != 'admin':
+            flash('Недостатньо прав для доступу до адмін-панелі.', 'danger')
+            return redirect(url_for('main.index'))
+        return view_func(*args, **kwargs)
+
+    return wrapper
+
+
 @main.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
     g.current_user = User.query.get(user_id) if user_id else None
+    if g.current_user:
+        if g.current_user.ensure_valid_levels():
+            db.session.commit()
 
 
 @main.app_context_processor
 def inject_current_user():
-    return {'current_user': getattr(g, 'current_user', None)}
+    current_user = getattr(g, 'current_user', None)
+    return {
+        'current_user': current_user,
+        'privilege_tiers': User.PRIVILEGE_TIERS
+    }
 
 @main.route('/')
 def index():
@@ -298,7 +317,8 @@ def checkout():
     """
     Сторінка підтвердження замовлення
     """
-    user_id = g.current_user.id
+    user = g.current_user
+    user_id = user.id
     
     # Отримуємо кошик користувача
     cart_items = CartItem.query.filter_by(user_id=user_id).all()
@@ -308,8 +328,10 @@ def checkout():
     
     # Конвертуємо об'єкти CartItem в словники для відображення
     carts = []
-    total_amount = 0.0
+    subtotal = 0.0
+    discounted_total = 0.0
     total_items = 0
+    discount_multiplier = user.discount_multiplier
     
     for item in cart_items:
         if not item.item:
@@ -319,7 +341,9 @@ def checkout():
         price_str = str(item.item.price).replace(' ', '').replace(',', '.')
         price = float(price_str) if price_str else 0.0
         item_total = price * item.quantity
-        total_amount += item_total
+        subtotal += item_total
+        discounted_value = item_total * discount_multiplier
+        discounted_total += discounted_value
         total_items += item.quantity
         
         cart_dict = {
@@ -334,13 +358,21 @@ def checkout():
                 'price': price,
                 'image': item.item.image
             },
-            'total': item_total
+            'total': item_total,
+            'total_with_discount': discounted_value
         }
         carts.append(cart_dict)
     
+    discount_amount = subtotal - discounted_total
+    
     return render_template('checkout.html', 
                          carts=carts, 
-                         total_amount=round(total_amount, 2),
+                         subtotal=round(subtotal, 2),
+                         total_amount=round(discounted_total, 2),
+                         discount_amount=round(discount_amount, 2),
+                         discount_percent=user.discount_percent,
+                         user_status=user.status,
+                         privilege_info=user.privilege_info,
                          total_items=total_items,
                          user_id=user_id,
                          isFooter=False)
@@ -360,11 +392,10 @@ def add_order():
         if not cart_items or len(cart_items) == 0:
             return redirect(url_for('main.cart'))
         
-        # Отримуємо discount з форми (якщо є)
-        discount = float(request.form.get('discount', 1.0))
+        discount_multiplier = g.current_user.discount_multiplier
         
         # Створюємо замовлення
-        order = Order.add_order(user_id, cart_items, discount)
+        order = Order.add_order(user_id, cart_items, discount_multiplier)
         
         # Зберігаємо замовлення в БД
         db.session.add(order)
@@ -423,7 +454,7 @@ def register():
             return redirect(url_for('main.register'))
 
         # Створення нового користувача
-        new_user = User(nickname=nickname, email=email)
+        new_user = User(nickname=nickname, email=email, status='User', privilege='Default')
         new_user.set_password(password)  # Хешуємо пароль перед збереженням
         db.session.add(new_user)
         db.session.commit()
@@ -474,6 +505,8 @@ def test():
     print(session.get("user_id"))
     
 @main.route('/admin')
+@login_required
+@admin_required
 def admin():
     items = Desktop.query.all()   # список товарів
     news = []                     # поки пусто
