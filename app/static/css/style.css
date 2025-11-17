@@ -13,9 +13,19 @@
   --bs-body-bg: #2D3142;
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
-  --login-color: #212121;
-  --login-color1: #2D3142;
   --nav-btn-hover-bg: #ffc107;
+  --auth-surface-bg: #212121;
+  --auth-surface-text: #f8f9fa;
+  --auth-surface-subtext: #e0e0e0;
+  --auth-input-bg: #323232;
+  --auth-input-text: #f8f9fa;
+  --auth-accent: #ffc107;
+  --auth-button-bg: #212121;
+  --auth-button-color: #ffc107;
+  --auth-button-hover-bg: #ffc107;
+  --auth-button-hover-color: #212121;
+  --loader-bg: rgba(33, 33, 33, 0.95);
+  --loader-bg-hover: rgba(33, 33, 33, 0.85);
 }
 
 /* Анімація появи navbar */
@@ -183,13 +193,14 @@ body {
     background-color: var(--login-color); /* чорний фон */
     color: #ffc107; /* жовта іконка */
     cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    box-shadow: 0 0 0 transparent;
 }
 
 .login-btn.mobile svg {
     width: 20px;
     height: 20px;
-    fill: #ffc107;
+    fill: var(--auth-button-color);
     transition: transform 0.3s ease, fill 0.25s ease;
 }
 
@@ -220,14 +231,15 @@ body {
   align-items: center;
   cursor: pointer;
   border: none;
-  border-radius: 10px;          /* замість 15px */
+  border-radius: 10px;
   font-weight: 700;
   transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0 transparent;
 }
 
 .login-btn.desktop span {
   display: block;
-  margin-left: 0.25em;          /* трохи менший відступ */
+  margin-left: 0.25em;
   transition: all 0.3s ease-in-out;
 }
 
@@ -278,6 +290,7 @@ body {
   --main-color: #ffc107;       /* акцент жовтий */
   padding: 20px;
   background: var(--background);
+  color: var(--font-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -286,6 +299,7 @@ body {
   border-radius: 10px;
   width: 100%;
   max-width: 350px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Заголовок форми */
@@ -319,7 +333,7 @@ body {
   border-radius: 5px;
   border: 2px solid var(--main-color);
   background-color: var(--bg-color);
-  color: var(--font-color-sub);
+  color: var(--auth-input-text);
   outline: none;
   font-weight: 500;
   transition: all 0.25s ease;
@@ -531,7 +545,6 @@ body {
 
 
 
-
 /* Навігаційні кнопки(кошик та зміна теми) з анімацією */
 .nav-btn {
   width: 40px;
@@ -651,6 +664,38 @@ body {
     object-fit: cover; /* Обрізає та зберігає пропорції */
     height: 100%;
     width: 100%;
+}
+
+.mobile-user-info {
+  display: none;
+  background-color: var(--auth-surface-bg);
+  color: var(--auth-surface-text);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.15);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mobile-user-info.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+  gap: 0.75rem;
+}
+
+.mobile-user-row span:last-child {
+  font-weight: 600;
 }
 
 .login-modal.show {

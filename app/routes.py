@@ -1,17 +1,57 @@
-from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
+from functools import wraps
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash, g, abort
 from .models.desktop import Desktop
-from flask import request, jsonify
 from .models.cart import CartItem
 from .models.order import Order
 from . import db
 from .models.feedback import Feedback
 from .models.news import News, NewsImage
 from app.utils import download_image
+from .models.user import User
+
 
 main = Blueprint('main', __name__)
 
-# Константа для дефолтного користувача (оскільки система користувачів не реалізована)
-DEFAULT_USER_ID = 1
+
+def login_required(view_func):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if not getattr(g, 'current_user', None):
+            flash('Увійдіть, щоб продовжити.', 'warning')
+            return redirect(url_for('main.index'))
+        return view_func(*args, **kwargs)
+
+    return wrapper
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        user = getattr(g, 'current_user', None)
+        if not user or user.status.lower() != 'admin':
+            flash('Недостатньо прав для доступу до адмін-панелі.', 'danger')
+            return redirect(url_for('main.index'))
+        return view_func(*args, **kwargs)
+
+    return wrapper
+
+
+@main.before_app_request
+def load_current_user():
+    user_id = session.get('user_id')
+    g.current_user = User.query.get(user_id) if user_id else None
+    if g.current_user:
+        if g.current_user.ensure_valid_levels():
+            db.session.commit()
+
+
+@main.app_context_processor
+def inject_current_user():
+    current_user = getattr(g, 'current_user', None)
+    return {
+        'current_user': current_user,
+        'privilege_tiers': User.PRIVILEGE_TIERS
+    }
 
 @main.route('/')
 def index():
@@ -139,16 +179,14 @@ def submit_feedback():
 
 @main.route('/catalog')
 def catalog():
-    db.session.commit()
     desktops = Desktop.query.all()
-    # Використовуємо дефолтного користувача
-    return render_template("catalog.html", desktops=desktops, user_id=DEFAULT_USER_ID)
+    return render_template("catalog.html", desktops=desktops, user_id=session.get('user_id'))
 
 @main.route('/cart')
+@login_required
 def cart():
-    db.session.commit()
-    # Показуємо тільки товари дефолтного користувача
-    cart_items = CartItem.query.filter_by(user_id=DEFAULT_USER_ID).all()
+    user = g.current_user
+    cart_items = CartItem.query.filter_by(user_id=user.id).all()
     
     # Конвертуємо об'єкти CartItem в словники для JSON серіалізації
     carts = []
@@ -169,17 +207,17 @@ def cart():
         carts.append(cart_dict)
     
     carts = carts if len(carts) != 0 else None
-    return render_template('cart.html', carts=carts, isFooter=False, user_id=DEFAULT_USER_ID)
+    return render_template('cart.html', carts=carts, isFooter=False, user_id=user.id)
 
 @main.route('/add_to_cart/<int:item_id>')
+@login_required
 def add_to_cart(item_id):
     """
     Додає товар в кошик дефолтного користувача
     URL: /add_to_cart/<item_id>?quantity=1
     """
     try:
-        # Використовуємо дефолтного користувача
-        user_id = DEFAULT_USER_ID
+        user_id = g.current_user.id
         quantity = int(request.args.get('quantity', 1))
         
         # Перевіряємо, чи існує товар
@@ -212,14 +250,14 @@ def add_to_cart(item_id):
         return redirect(url_for('main.catalog'))
 
 @main.route('/remove_from_cart/<int:item_id>')
+@login_required
 def remove_from_cart(item_id):
     """
     Видаляє товар з кошика дефолтного користувача
     URL: /remove_from_cart/<item_id>
     """
     try:
-        # Використовуємо дефолтного користувача
-        user_id = DEFAULT_USER_ID
+        user_id = g.current_user.id
         
         # Знаходимо товар в кошику
         cart_item = CartItem.query.filter_by(
@@ -238,14 +276,14 @@ def remove_from_cart(item_id):
         return redirect(url_for('main.cart'))
 
 @main.route('/update_cart/<int:item_id>')
+@login_required
 def update_cart(item_id):
     """
     Змінює кількість товару в кошику
     URL: /update_cart/<item_id>?action=increase або /update_cart/<item_id>?action=decrease
     """
     try:
-        # Використовуємо дефолтного користувача
-        user_id = DEFAULT_USER_ID
+        user_id = g.current_user.id
         action = request.args.get('action', 'increase')  # increase або decrease
         
         # Знаходимо товар в кошику
@@ -275,12 +313,13 @@ def update_cart(item_id):
         return redirect(url_for('main.cart'))
 
 @main.route('/checkout')
+@login_required
 def checkout():
     """
     Сторінка підтвердження замовлення
     """
-    db.session.commit()
-    user_id = DEFAULT_USER_ID
+    user = g.current_user
+    user_id = user.id
     
     # Отримуємо кошик користувача
     cart_items = CartItem.query.filter_by(user_id=user_id).all()
@@ -290,8 +329,10 @@ def checkout():
     
     # Конвертуємо об'єкти CartItem в словники для відображення
     carts = []
-    total_amount = 0.0
+    subtotal = 0.0
+    discounted_total = 0.0
     total_items = 0
+    discount_multiplier = user.discount_multiplier
     
     for item in cart_items:
         if not item.item:
@@ -301,7 +342,9 @@ def checkout():
         price_str = str(item.item.price).replace(' ', '').replace(',', '.')
         price = float(price_str) if price_str else 0.0
         item_total = price * item.quantity
-        total_amount += item_total
+        subtotal += item_total
+        discounted_value = item_total * discount_multiplier
+        discounted_total += discounted_value
         total_items += item.quantity
         
         cart_dict = {
@@ -316,25 +359,33 @@ def checkout():
                 'price': price,
                 'image': item.item.image
             },
-            'total': item_total
+            'total': item_total,
+            'total_with_discount': discounted_value
         }
         carts.append(cart_dict)
     
+    discount_amount = subtotal - discounted_total
+    
     return render_template('checkout.html', 
                          carts=carts, 
-                         total_amount=round(total_amount, 2),
+                         subtotal=round(subtotal, 2),
+                         total_amount=round(discounted_total, 2),
+                         discount_amount=round(discount_amount, 2),
+                         discount_percent=user.discount_percent,
+                         user_status=user.status,
+                         privilege_info=user.privilege_info,
                          total_items=total_items,
                          user_id=user_id,
                          isFooter=False)
 
 @main.route('/add_order', methods=['POST'])
+@login_required
 def add_order():
     """
     Створює замовлення з кошика дефолтного користувача
     """
     try:
-        # Використовуємо дефолтного користувача
-        user_id = DEFAULT_USER_ID
+        user_id = g.current_user.id
         
         # Отримуємо кошик користувача
         cart_items = CartItem.query.filter_by(user_id=user_id).all()
@@ -342,11 +393,10 @@ def add_order():
         if not cart_items or len(cart_items) == 0:
             return redirect(url_for('main.cart'))
         
-        # Отримуємо discount з форми (якщо є)
-        discount = float(request.form.get('discount', 1.0))
+        discount_multiplier = g.current_user.discount_multiplier
         
         # Створюємо замовлення
-        order = Order.add_order(user_id, cart_items, discount)
+        order = Order.add_order(user_id, cart_items, discount_multiplier)
         
         # Зберігаємо замовлення в БД
         db.session.add(order)
@@ -374,14 +424,90 @@ def add_order():
         return redirect(url_for('main.cart'))
 
 @main.route('/order_success/<int:order_id>')
+@login_required
 def order_success(order_id):
     """
     Сторінка успішного оформлення замовлення
     """
-    order = Order.query.get_or_404(order_id)
+    order = Order.query.filter_by(id=order_id, user_id=g.current_user.id).first()
+    if not order:
+        abort(404)
     return render_template('order_success.html', order=order, isFooter=False)
+
+# Реєстрація
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        nickname = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        password_confirm = request.form['confirm']
+
+        # Перевірка паролів
+        if password != password_confirm:
+            flash("Паролі не співпадають!", "danger")
+            return redirect(url_for('main.register'))
+
+        # Перевірка на існуючий email
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("Користувач з такою поштою вже існує!", "danger")
+            return redirect(url_for('main.register'))
+
+        # Створення нового користувача
+        new_user = User(nickname=nickname, email=email, status='User', privilege='Default')
+        new_user.set_password(password)  # Хешуємо пароль перед збереженням
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Після успішної реєстрації, зберігаємо ID в сесії
+        session.permanent = True
+        session['user_id'] = new_user.id
+        session['user_nickname'] = new_user.nickname
+        session['user_status'] = new_user.status  # якщо статус є
+
+        flash("Реєстрація успішна! Тепер ви можете увійти.", "success")
+        return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
+
+    return redirect(url_for('main.index'))
+
+# Авторизація
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        # Перевірка користувача за email
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):  # Перевірка пароля
+            session.permanent = True
+            session['user_id'] = user.id  # Зберігаємо ID користувача в сесії
+            session['user_nickname'] = user.nickname
+            session['user_status'] = user.status  # Якщо є статус
+
+            flash("Вітаємо, ви увійшли!", "success")
+            return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
+        else:
+            flash("Невірний логін або пароль", "danger")
+            return redirect(url_for('main.index'))  # Перенаправлення назад на форму входу
+
+    return redirect(url_for('main.index'))
+
+# Вихід
+@main.route('/logout')
+def logout():
+    session.clear()  # Очищаємо сесію
+    flash("Ви вийшли з системи", "info")
+    return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
+
+@main.route("/test")
+def test(): 
+    print(session.get("user_id"))
     
 @main.route('/admin')
+@login_required
+@admin_required
 def admin():
     items = Desktop.query.all()   # список товарів
     news = []                     # поки пусто

@@ -9,6 +9,7 @@
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
     <div class="d-flex justify-content-end align-items-center gap-1">
+      {% if not current_user %}
       <!-- Мобільна кнопка Вхід (кругла) -->
       <button id="login-mobile"
         class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none">
@@ -21,8 +22,21 @@
           </div>
         </div>
       </button>
+      {% else %}
+      <button id="profile-mobile"
+        class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none"
+        aria-label="Показати профіль">
+        <div class="svg-wrapper-1">
+          <div class="svg-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+              <path d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+            </svg>
+          </div>
+        </div>
+      </button>
+      {% endif %}
       <!-- Мобільна кнопка кошика -->
-      <a href="/cart" class="text-decoration-none">
+      <a href="/cart" class="text-decoration-none" data-cart-link="true">
         <button id="cart-button-mobile"
           class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-lg-none ms-2 position-relative"
           style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
@@ -50,6 +64,7 @@
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
         <li class="nav-item"><a href="/feedback" class="nav-link">Відгуки</a></li>
 
+        {% if not current_user %}
         <!-- ПК кнопка Вхід після Новини -->
         <li class="nav-item d-none d-lg-block ms-2">
           <button id="login-desktop"
@@ -65,9 +80,39 @@
             <span>Вхід</span>
           </button>
         </li>
+        {% else %}
+        <li class="nav-item dropdown d-none d-lg-block ms-3">
+          <a class="nav-link dropdown-toggle fw-semibold text-warning" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {{ current_user.nickname }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Статус: {{ current_user.status }}
+              </span>
+            </li>
+            <li>
+              <div class="dropdown-item-text small d-flex align-items-center">
+                <span class="me-2 text-muted">Привілегія:</span>
+                <span class="badge bg-{{ current_user.privilege_info.badge_class }} text-uppercase">
+                  {{ current_user.privilege_label }}
+                </span>
+              </div>
+            </li>
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Знижка: -{{ current_user.discount_percent }}%
+              </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Вийти</a></li>
+          </ul>
+        </li>
+        {% endif %}
         <li class="nav-item d-none d-lg-block ms-2">
           <!-- ПК кнопка кошика -->
-          <a href="/cart" class="text-decoration-none">
+          <a href="/cart" class="text-decoration-none" data-cart-link="true">
             <button id="cart-button-desktop"
               class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-none d-lg-inline-flex ms-lg-2 position-relative"
               style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
@@ -87,7 +132,32 @@
   </div>
 </header>
 
-{% include 'components/login-panel.html' %}
+{% if current_user %}
+<div id="mobile-profile-panel" class="mobile-user-info d-lg-none mx-3 mt-2 mb-3">
+  <div class="fw-semibold text-uppercase small text-muted mb-2">Ваш профіль</div>
+  <div class="mobile-user-row">
+    <span>Користувач:</span>
+    <span class="fw-semibold">{{ current_user.nickname }}</span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Статус:</span>
+    <span class="text-uppercase fw-semibold">{{ current_user.status }}</span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Привілегія:</span>
+    <span class="badge bg-{{ current_user.privilege_info.badge_class }} text-uppercase">
+      {{ current_user.privilege_label }}
+    </span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Знижка:</span>
+    <span class="fw-semibold">-{{ current_user.discount_percent }}%</span>
+  </div>
+  <div class="mt-3 text-end">
+    <a href="{{ url_for('main.logout') }}" class="btn btn-outline-warning btn-sm">Вийти</a>
+  </div>
+</div>
+{% endif %}
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -105,6 +175,8 @@
   const themeToggleMobile = document.getElementById('theme-toggle-mobile');
   const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
   const body = document.body;
+  const profileMobileBtn = document.getElementById('profile-mobile');
+  const mobileProfilePanel = document.getElementById('mobile-profile-panel');
 
   function updateTheme(theme) {
     body.setAttribute('data-bs-theme', theme);
@@ -130,4 +202,21 @@
 
   if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
   if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+
+  if (profileMobileBtn && mobileProfilePanel) {
+    const toggleMobilePanel = () => {
+      mobileProfilePanel.classList.toggle('show');
+    };
+
+    profileMobileBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleMobilePanel();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!mobileProfilePanel.contains(event.target)) {
+        mobileProfilePanel.classList.remove('show');
+      }
+    });
+  }
 </script>
