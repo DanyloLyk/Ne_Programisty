@@ -492,7 +492,7 @@ def test():
 @main.route('/admin')
 def admin():
     items = Desktop.query.all()   # список товарів
-    news = []                     # поки пусто
+    news = News.query.all()       # список новин
     orders = []                   # поки пусто
     users = []                    # поки пусто
 
@@ -572,19 +572,84 @@ def delete_item(item_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-
-
-@main.route('/add_news')
+@main.route('/add_news', methods=['POST'])
 def add_news():
-    return "Add news page (ще не готово)"
+    try:
+        data = request.get_json()
 
-@main.route('/edit_news/<int:news_id>')
-def edit_news(news_id):
-    return f"Edit news {news_id} page (ще не готово)"
+        name = data.get('name')
+        description = data.get('description')
+        description_second = data.get('descriptionSecond')
+        images = data.get('images', [])        # список URL
 
-@main.route('/delete_news/<int:news_id>')
+        news = News(
+            name=name,
+            description=description,
+            descriptionSecond=description_second,
+        )
+
+        # Завантаження кожного зображення
+        for url in images:
+            img_path = download_image(url)
+            news.images.append(NewsImage(img_url=img_path))
+
+        db.session.add(news)
+        db.session.commit()
+
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при додаванні новини:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/get_news/<int:news_id>')
+def get_news(news_id):
+    news = News.query.get_or_404(news_id)
+    return jsonify(success=True, news={
+        "name": news.name,
+        "description": news.description,
+        "descriptionSecond": news.descriptionSecond,
+        "images": [img.img_url for img in news.images]
+    })
+
+@main.route('/edit_news/<int:news_id>', methods=['POST'])
+def edit_news_post(news_id):
+    try:
+        data = request.get_json()
+        news = News.query.get_or_404(news_id)
+
+        news.name = data.get('name')
+        news.description = data.get('description')
+        news.descriptionSecond = data.get('descriptionSecond')
+
+        # Перезаписати список фото
+        news.images.clear()
+        for url in data.get('images', []):
+            img_path = download_image(url)
+            news.images.append(NewsImage(img_url=img_path))
+
+        db.session.commit()
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при редагуванні новини:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/delete_news/<int:news_id>', methods=['DELETE'])
 def delete_news(news_id):
-    return f"Delete news {news_id} (ще не готово)"
+    try:
+        news = News.query.get_or_404(news_id)
+        db.session.delete(news)
+        db.session.commit()
+
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при видаленні:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @main.route('/delete_user/<int:user_id>')
 def delete_user(user_id):

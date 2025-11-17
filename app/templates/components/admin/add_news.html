@@ -1,0 +1,41 @@
+<div class="modal fade" id="addNewsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title fw-bold">➕ Додати новину</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="addNewsForm">
+                <div class="modal-body bg-dark text-light">
+
+                    <div class="mb-3">
+                        <label class="form-label">Назва новини</label>
+                        <input name="name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Опис (короткий)</label>
+                        <textarea name="description" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Опис (другий)</label>
+                        <textarea name="descriptionSecond" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Зображення (URL через кому)</label>
+                        <input name="images" class="form-control" placeholder="https://img1.jpg, https://img2.jpg">
+                    </div>
+
+                </div>
+                <div class="modal-footer bg-dark">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Зберегти</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
