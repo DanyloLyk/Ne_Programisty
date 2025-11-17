@@ -21,16 +21,11 @@ window.onload = function() {
         });
         console.log("Masonry successfully initialized.");
     }
-
-    // Встановлюємо таймер для показу лоадера
     if (loaderWrapper) {
         loaderTimeout = setTimeout(() => {
             loaderWrapper.classList.remove('hidden'); // показуємо лоадер, якщо затримка пройшла
         }, loaderDelay);
     }
-
-    // Прибрати лоадер після повного завантаження контенту
-    // Якщо завантаження було швидким, лоадер не встигне показатися
     setTimeout(() => {
         if (loaderWrapper) {
             clearTimeout(loaderTimeout); // якщо таймер ще не спрацював — скасувати
@@ -42,7 +37,6 @@ window.onload = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Знаходимо кнопку та форму
     const submitBtn = document.getElementById('submit-btn');
     const form = document.getElementById('feedback-form');
     const messageDiv = document.getElementById('form-message');

@@ -359,3 +359,23 @@ async function reloadActiveTab() {
         location.reload();
     }
 }
+document.addEventListener('click', async function (e) {
+  const btn = e.target.closest('.delete-feedback-btn');
+  if (!btn) return;
+  if (!confirm('Видалити відгук?')) return;
+
+  const id = btn.dataset.id;
+  try {
+    const resp = await fetch(`/delete_feedback/${id}`, { method: 'DELETE' });
+    const json = await resp.json();
+    if (resp.ok && json.success) {
+      const node = document.getElementById(`feedback-${id}`);
+      if (node) node.remove();
+    } else {
+      alert('Помилка при видаленні: ' + (json.error || 'unknown'));
+    }
+  } catch (err) {
+    alert('Network error при видаленні відгуку.');
+    console.error(err);
+  }
+});
