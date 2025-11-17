@@ -5,23 +5,8 @@
   --bs-primary: #EF8354;
   --bs-secondary: #4e555b;
   --nav-btn-hover-bg: #4e555b;
-<<<<<<< HEAD
-  --auth-surface-bg: #ffffff;
-  --auth-surface-text: #212529;
-  --auth-surface-subtext: #4e555b;
-  --auth-input-bg: #f8f9fa;
-  --auth-input-text: #212529;
-  --auth-accent: #ffc107;
-  --auth-button-bg: #ffffff;
-  --auth-button-color: #212529;
-  --auth-button-hover-bg: #212121;
-  --auth-button-hover-color: #ffc107;
-  --loader-bg: rgba(248, 249, 250, 0.95);
-  --loader-bg-hover: rgba(248, 249, 250, 0.9);
-=======
   --login-color: #e0e1e3;
   --login-color1: #f8f9fa;
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
 }
 
 [data-bs-theme="dark"] {
@@ -205,13 +190,8 @@ body {
     height: 40px;
     border-radius: 50%;
     border: none;
-<<<<<<< HEAD
-    background-color: var(--auth-button-bg);
-    color: var(--auth-button-color);
-=======
     background-color: var(--login-color); /* чорний фон */
     color: #ffc107; /* жовта іконка */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
     cursor: pointer;
     transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
     box-shadow: 0 0 0 transparent;
@@ -225,22 +205,12 @@ body {
 }
 
 .login-btn.mobile:hover {
-<<<<<<< HEAD
-    background-color: var(--auth-button-hover-bg);
-    color: var(--auth-button-hover-color);
-    box-shadow: 0 0 15px var(--auth-accent);
-}
-
-.login-btn.mobile:hover svg {
-    fill: var(--auth-button-hover-color);
-=======
     background-color: #ffc107; /* фон стає жовтим */
     color: var(--login-color1); /* іконка чорна */
 }
 
 .login-btn.mobile:hover svg {
     fill: var(--login-color1);
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
     transform: scale(1.2);
 }
 
@@ -251,19 +221,11 @@ body {
 /* ПК кнопка — прямокутна з текстом, чорний фон, жовтий текст */
 .login-btn.desktop {
   font-family: inherit;
-<<<<<<< HEAD
-  font-size: 16px;
-  background: var(--auth-button-bg);
-  color: var(--auth-button-color);
-  fill: var(--auth-button-color);
-  padding: 0.5em 0.8em;
-=======
   font-size: 16px;              /* було 20px */
   background: var(--login-color);          /* темний фон */
   color: #ffc107;               /* жовтий текст */
   fill: #ffc107;                /* жовта іконка */
   padding: 0.5em 0.8em;         /* трохи менше */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
   padding-left: 0.7em;
   display: flex;
   align-items: center;
@@ -289,17 +251,10 @@ body {
 
 /* Ефект наведення */
 .login-btn.desktop:hover {
-<<<<<<< HEAD
-  background: var(--auth-button-hover-bg);
-  color: var(--auth-button-hover-color);
-  fill: var(--auth-button-hover-color);
-  box-shadow: 0 0 15px var(--auth-accent);
-=======
   background: #ffc107;
   color: var(--login-color1);
   fill: var(--login-color1);
   box-shadow: 0 0 10px #ffc107; /* трохи менше світіння */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
 }
 
 /* Анімація руху іконки */
@@ -327,21 +282,12 @@ body {
 /* From Uiverse.io by bociKond */ 
 /* Основний фон і кольори сайту */
 .form {
-<<<<<<< HEAD
-  --background: var(--auth-surface-bg);
-  --input-focus: var(--auth-accent);
-  --font-color: var(--auth-surface-text);
-  --font-color-sub: var(--auth-surface-subtext);
-  --bg-color: var(--auth-input-bg);
-  --main-color: var(--auth-accent);
-=======
   --background: var(--login-color);       /* чорний фон */
   --input-focus: #ffc107;      /* жовтий контур при фокусі */
   --font-color: #ffc107;       /* жовтий текст */
   --font-color-sub: var(--bs-body-color);   /* світлий сірий для підписів */
   --bg-color: var(--login-color1);         /* фон input */
   --main-color: #ffc107;       /* акцент жовтий */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
   padding: 20px;
   background: var(--background);
   color: var(--font-color);
@@ -477,17 +423,6 @@ body {
 
 /* Вміст модалки */
 .login-modal-content {
-<<<<<<< HEAD
-  background-color: var(--auth-surface-bg);
-  color: var(--auth-surface-text);
-  padding: 25px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: 1px solid rgba(255, 193, 7, 0.2);
-=======
   background-color: var(--login-color); /* чисто чорний фон */
   padding: 40px; /* більше внутрішніх відступів */
   border-radius: 15px; /* більш округлі кути */
@@ -496,7 +431,6 @@ body {
   box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
   position: relative;
   border: none; /* без будь-якої рамки чи прозорої обводки */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
 }
 
 /* Кнопка закриття */
@@ -506,21 +440,13 @@ body {
   right: 15px;
   font-size: 26px;
   font-weight: bold;
-<<<<<<< HEAD
-  color: var(--auth-surface-text);
-=======
   color: #ffc107;
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .close:hover {
-<<<<<<< HEAD
-  color: var(--auth-accent);
-=======
   color: #ffffff; /* при наведенні біла */
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
 }
 
 
@@ -619,10 +545,6 @@ body {
 
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 06f4a51cf1474d64c414137f1a53c989bfe09316
 /* Навігаційні кнопки(кошик та зміна теми) з анімацією */
 .nav-btn {
   width: 40px;
