@@ -13,6 +13,8 @@
   --bs-body-bg: #2D3142;
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
+  --login-color: #212121;
+  --login-color1: #2D3142;
   --nav-btn-hover-bg: #ffc107;
   --auth-surface-bg: #212121;
   --auth-surface-text: #f8f9fa;
@@ -405,32 +407,43 @@ body {
 /* Логін модалка */
 .login-modal {
   display: none; /* прихована спочатку */
-  position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
+  position: fixed; /* фіксуємо до вікна браузера */
+  inset: 0; /* займає весь екран для центрування */
+  z-index: 11000;
   opacity: 0;
-  transition: all 0.3s ease-in-out;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none; /* блокуємо клики коли сховано */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Активна (показана) */
 .login-modal.show {
-  display: block;
-  transform: translate(-50%, -50%) scale(1);
+  display: flex;
+  position: fixed;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+  z-index: 11000; /* вище за оверлей */
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* Вміст модалки */
 .login-modal-content {
-  background-color: var(--login-color); /* чисто чорний фон */
-  padding: 40px; /* більше внутрішніх відступів */
-  border-radius: 15px; /* більш округлі кути */
+  background-color: var(--login-color); /* surface color */
+  padding: 24px; /* внутрішні відступи */
+  border-radius: 10px; /* округлі кути */
   width: 100%;
-  max-width: 500px; /* більша ширина */
-  box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
+  max-width: 420px; /* вужче, як просили */
+  box-sizing: border-box;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
   position: relative;
-  border: none; /* без будь-якої рамки чи прозорої обводки */
+  border: none;
+  transition: opacity 180ms ease;
+  opacity: 1;
 }
 
 /* Кнопка закриття */
@@ -447,6 +460,28 @@ body {
 
 .close:hover {
   color: #ffffff; /* при наведенні біла */
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 576px) {
+  .login-modal-content {
+    padding: 18px;
+    max-width: 92%;
+    border-radius: 10px;
+  }
+
+  .oauthButton {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form > p { font-size: 18px; }
+  .oauthButton { height: 44px; }
+  .close { top: 10px; right: 10px; font-size: 22px; }
+}
+
+@media (min-width: 1200px) {
+  .login-modal-content { max-width: 640px; }
 }
 
 
@@ -697,14 +732,3 @@ body {
 .mobile-user-row span:last-child {
   font-weight: 600;
 }
-
-.login-modal.show {
-  display: block;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10000; /* вище за оверлей */
-}
-
-
