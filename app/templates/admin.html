@@ -8,6 +8,8 @@
 {% include 'components/admin/edit_item.html' %}
 {% include 'components/admin/add_news.html' %}
 {% include 'components/admin/edit_news.html' %}
+{% include 'components/admin/edit_user.html' %}
+{% include 'components/admin/order_info.html' %}
 
 <div class="container mt-4">
 
@@ -103,24 +105,50 @@
         <!-- ========================= -->
         <!-- 🧾 ЗАМОВЛЕННЯ -->
         <!-- ========================= -->
-        <div id="orders" class="tab-pane fade">
-            <h4 class="fw-bold text-warning mb-3">🧾 Замовлення</h4>
+        <div class="tab-pane fade" id="orders">
+            <h3 class="text-warning mb-4">🧾 Замовлення</h3>
 
-            <ul class="list-group">
-                {% for order in orders %}
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>№{{ order.id }}</strong> — {{ order.user_name }}
-                            <br><span class="text-muted small">{{ order.date }}</span>
-                        </div>
-                        <div class="text-warning fw-bold">{{ order.total }} ₴</div>
-                    </div>
-                </li>
-                {% else %}
-                <p class="text-muted">Замовлень поки немає.</p>
-                {% endfor %}
-            </ul>
+            <div class="table-responsive">
+                <table class="table table-dark table-bordered align-middle">
+                    <thead class="table-warning text-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Користувач</th>
+                            <th>Статус</th>
+                            <th>Сума</th>
+                            <th>Керування</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+
+                            <td>
+                                {{ order.user.nickname }} Привілегія - <span class="badge bg-warning">{{ order.user.privilege_label }}</span><br>
+                                <small class="text-muted">{{ order.user.email }}</small>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info">{{ order.status }}</span>
+                            </td>
+
+                            <td>{{ order.total_sum }} грн</td>
+
+                            <td>
+                                <button 
+                                    class="btn btn-outline-warning btn-sm view-order-btn"
+                                    data-id="{{ order.id }}">
+                                    🔍 Переглянути
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- ========================= -->
@@ -131,14 +159,20 @@
 
             <ul class="list-group">
                 {% for user in users %}
-                <li class="list-group-item d-flex justify-content-between">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <strong>{{ user.username }}</strong>
-                        <br><span class="text-muted small">{{ user.email }}</span>
+                        <strong>{{ user.nickname }}</strong> — <span class="text-muted small">{{ user.email }}</span> User ID: {{ user.id }}
+                        <br>
+                        Статус: <span class="badge bg-info">{{ user.status }}</span>,
+                        Привілегія: <span class="badge bg-warning">{{ user.privilege_label }}</span>
                     </div>
                     <div>
-                        <a href="{{ url_for('main.delete_user', id=user.id) }}" class="btn btn-outline-danger btn-sm"
-                           onclick="return confirm('Видалити користувача?')">🗑️</a>
+                        <button class="btn btn-outline-warning btn-sm edit-user-btn" data-id="{{ user.id }}">
+                            ✏️ Редагувати
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm delete-user-btn" data-id="{{ user.id }}">
+                            🗑️
+                        </button>
                     </div>
                 </li>
                 {% else %}

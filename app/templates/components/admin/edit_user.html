@@ -1,0 +1,57 @@
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати користувача</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="editUserForm">
+                <input type="hidden" name="id" id="editUserId">
+                <div class="modal-body bg-dark text-light">
+
+                    <div class="mb-3">
+                        <label class="form-label">Нікнейм</label>
+                        <input name="nickname" id="editUserNickname" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="email" id="editUserEmail" class="form-control" type="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Статус</label>
+                        <select name="status" id="editUserStatus" class="form-select">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Moder">Moder</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Привілегія</label>
+                        <select name="privilege" id="editUserPrivilege" class="form-select">
+                            <option value="Default">Default</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Diamond">Diamond</option>
+                            <option value="VIP">VIP</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Новий пароль (залишити порожнім, щоб не змінювати)</label>
+                        <input name="password" id="editUserPassword" type="password" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-dark">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Зберегти</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

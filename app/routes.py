@@ -10,6 +10,7 @@ from app.utils import download_image
 from .models.user import User
 
 
+
 main = Blueprint('main', __name__)
 
 
@@ -530,8 +531,8 @@ def test():
 def admin():
     items = Desktop.query.all()   # список товарів
     news = News.query.all()       # список новин
-    orders = []                   # поки пусто
-    users = []                    # поки пусто
+    orders = Order.query.order_by(Order.id.desc()).all()                   # поки пусто
+    users = User.query.all()      # список користувачів
 
     return render_template(
         'admin.html',
@@ -688,6 +689,103 @@ def delete_news(news_id):
         print("Помилка при видаленні:", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
-@main.route('/delete_user/<int:user_id>')
+@main.route('/get_user/<int:user_id>')
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify(success=True, user={
+        "id": user.id,
+        "nickname": user.nickname,
+        "email": user.email,
+        "status": user.status,
+        "privilege": user.privilege
+    })
+
+@main.route('/edit_user/<int:user_id>', methods=['POST'])
+def edit_user_post(user_id):
+    try:
+        data = request.get_json()
+        user = User.query.get_or_404(user_id)
+
+        user.nickname = data.get('nickname')
+        user.email = data.get('email')
+        user.status = data.get('status')
+        user.privilege = data.get('privilege')
+
+        if data.get('password'):
+            user.set_password(data['password'])
+
+        db.session.commit()
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e))
+
+@main.route('/delete_user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    return f"Delete user {user_id} (ще не готово)"
+    try:
+        user = User.query.get_or_404(user_id)
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e))
+
+@main.route('/get_order/<int:order_id>')
+def get_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    
+    order_items = []
+    for item in order.items:
+        desktop = Desktop.query.get(item['item_id'])
+        if not desktop:
+            continue
+        
+        # Конвертуємо ціну в число
+        price_str = str(desktop.price).replace(' ', '').replace(',', '.')
+        try:
+            price = float(price_str)
+        except ValueError:
+            price = 0.0
+        
+        count = item['quantity']
+        discount = item['discount']
+        total = round(price * count * discount, 2)
+
+        order_items.append({
+            "name": desktop.name,
+            "count": count,
+            "price": price,
+            "sum": total
+        })
+
+    return jsonify(success=True, order={
+        "id": order.id,
+        "status": order.status,
+        "total_sum": round(order.total_amount, 2),
+        "user": {
+            "id": order.user.id,
+            "nickname": order.user.nickname,
+            "email": order.user.email
+        },
+        "items": order_items
+    })
+
+
+
+@main.route('/update_order_status/<int:order_id>', methods=['POST'])
+def update_order_status(order_id):
+    try:
+        data = request.get_json()
+        new_status = data.get("status")
+
+        order = Order.query.get_or_404(order_id)
+        order.status = new_status
+
+        db.session.commit()
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e))

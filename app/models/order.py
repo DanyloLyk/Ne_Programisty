@@ -6,11 +6,13 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # <-- тільки один раз
+    user = db.relationship("User", backref="orders")  # <-- зв’язок з User
     
     total_amount = db.Column(db.Float, nullable=False)  # Загальна сума замовлення
     status = db.Column(db.String(50), default='completed', nullable=False)  # completed, cancelled, etc.
-    
+
+
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
     items = db.Column(db.JSON, nullable=False, default=list)
     
@@ -108,7 +110,7 @@ class Order(db.Model):
             user_id=user_id,
             total_amount=round(total_amount, 2),
             items=order_items,
-            status='completed'
+            status='In process'
         )
         
         return order
