@@ -34,6 +34,45 @@
         </div>
     </section>
 
+    {# --- Top-3 popular products --- #}
+    {% if top_popular and top_popular|length > 0 %}
+    <section class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="h3 fw-bold text-warning mb-3">Топ-3 популярних товарів</h2>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    {% for item in top_popular %}
+                    <div class="col-12 col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm d-flex flex-column">
+                            {% if item.image %}
+                            <div class="ratio ratio-1x1">
+                                <img src="{{ url_for('static', filename=item.image) }}" class="w-100 h-100" alt="{{ item.name }}" style="object-fit: cover;">
+                            </div>
+                            {% else %}
+                            <div class="ratio ratio-1x1 bg-secondary"></div>
+                            {% endif %}
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ item.name }}</h5>
+                                <p class="card-text text-muted small">{{ item.description }}</p>
+                                <p class="mb-2"><strong>Купили:</strong> {{ item.bought_count }}</p>
+
+                                <div class="mt-auto">
+                                    <div class="text-center text-warning fw-bold mb-2">{{ '%.2f'|format(item.price) }} ₴</div>
+                                    <a href="{{ url_for('main.add_to_cart', item_id=item.id) }}" class="btn btn-warning w-100">До кошика</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
 </div>
 
 {% endblock %}

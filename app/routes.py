@@ -37,7 +37,47 @@ def inject_current_user():
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    # Показуємо головну сторінку та формуємо топ-3 найпопулярніших товарів
+    try:
+        # Збираємо всі замовлення та агрегуємо кількість придбаних одиниць по item_id
+        counts = {}
+        orders = Order.query.all()
+        for order in orders:
+            for it in (order.items or []):
+                iid = it.get('item_id')
+                qty = int(it.get('quantity', 0) or 0)
+                if not iid:
+                    continue
+                counts[iid] = counts.get(iid, 0) + qty
+
+        # Підбираємо дані по товарах
+        popular = []
+        for iid, total_qty in counts.items():
+            product = Desktop.query.get(iid)
+            if not product:
+                continue
+            # Приводимо ціну до float (як це робиться в інших місцях)
+            try:
+                price_str = str(product.price).replace(' ', '').replace(',', '.') if product.price is not None else '0'
+                price = float(price_str) if price_str else 0.0
+            except Exception:
+                price = 0.0
+
+            popular.append({
+                'id': product.id,
+                'name': product.name,
+                'description': product.description,
+                'image': product.image,
+                'price': price,
+                'bought_count': total_qty,
+            })
+
+        # Сортуємо та беремо топ-3
+        popular_sorted = sorted(popular, key=lambda x: x['bought_count'], reverse=True)[:3]
+    except Exception:
+        popular_sorted = []
+    print(popular_sorted)
+    return render_template('index.html', top_popular=popular_sorted)
 
 @main.route('/about')
 def about():
@@ -700,6 +740,34 @@ def get_user(user_id):
         "privilege": user.privilege
     })
 
+
+@main.route('/get_user_orders_count/<int:user_id>')
+def get_user_orders_count(user_id):
+    try:
+        # Ensure user exists
+        user = User.query.get_or_404(user_id)
+        cnt = Order.query.filter_by(user_id=user.id).count()
+        return jsonify(success=True, count=cnt)
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
+
+@main.route('/delete_user_force/<int:user_id>', methods=['DELETE'])
+def delete_user_force(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+
+        # Delete all orders belonging to this user first
+        Order.query.filter_by(user_id=user.id).delete()
+
+        # Now delete the user
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e)), 500
+
 @main.route('/edit_user/<int:user_id>', methods=['POST'])
 def edit_user_post(user_id):
     try:
@@ -725,12 +793,18 @@ def edit_user_post(user_id):
 def delete_user(user_id):
     try:
         user = User.query.get_or_404(user_id)
+
+        # Якщо в цього користувача є замовлення, забороняємо видаляти
+        existing_orders = Order.query.filter_by(user_id=user.id).count()
+        if existing_orders > 0:
+            return jsonify(success=False, error='Користувача неможливо видалити: є пов' + "яз" + 'ані замовлення.'), 400
+
         db.session.delete(user)
         db.session.commit()
         return jsonify(success=True)
     except Exception as e:
         db.session.rollback()
-        return jsonify(success=False, error=str(e))
+        return jsonify(success=False, error=str(e)), 500
 
 @main.route('/get_order/<int:order_id>')
 def get_order(order_id):
