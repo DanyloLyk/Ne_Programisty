@@ -145,4 +145,27 @@
         itemsContainer.style.display = 'none';
     }
 </script>
+
+{% if orders and orders|length > 0 %}
+<hr class="my-4">
+<div class="container mt-3">
+    <h4 class="fw-bold text-warning mb-3">📦 Ваші замовлення</h4>
+    <div class="list-group">
+        {% for order in orders %}
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Замовлення #{{ order.id }}</h5>
+                <small class="text-muted">Статус: {{ order.status }}</small>
+            </div>
+            <p class="mb-1">Сума: <strong class="text-warning">{{ order.total_amount }} ₴</strong></p>
+            <ul class="mb-0">
+                {% for it in order.order_items %}
+                <li>{{ it.name }} — x{{ it.quantity }} — {{ '%.2f'|format(it.price) }} ₴</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}

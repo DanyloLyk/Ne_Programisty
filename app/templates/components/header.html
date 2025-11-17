@@ -127,6 +127,20 @@
             🌙
           </button>
         </li>
+        {% if current_user and current_user.status in ['Admin', 'Moder'] %}
+        <!-- Кнопка адмін-панелі: десктоп -->
+        <li class="nav-item d-none d-lg-block ms-3">
+          <a href="{{ url_for('main.admin') }}" class="btn btn-primary btn-sm">
+            Адмін панель
+          </a>
+        </li>
+        <!-- Мобільна кнопка адмін-панелі: показується в бургер-меню внизу -->
+        <li class="nav-item d-lg-none w-100 mt-3">
+          <a href="{{ url_for('main.admin') }}" class="btn btn-primary w-100">
+            Адмін панель
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
   </div>
