@@ -29,6 +29,8 @@
         {% endblock %}
     </main>
 
+    {% include 'components/loader.html' %}
+
     {% if isFooter is not defined or isFooter %}
     {% include 'components/footer.html' %}
     {% endif %}

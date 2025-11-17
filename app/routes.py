@@ -401,6 +401,7 @@ def order_success(order_id):
     if not order:
         abort(404)
     return render_template('order_success.html', order=order, isFooter=False)
+<<<<<<< HEAD
 
 # Реєстрація
 @main.route('/register', methods=['GET', 'POST'])
@@ -472,3 +473,49 @@ def logout():
 @main.route("/test")
 def test(): 
     print(session.get("user_id"))
+=======
+    
+@main.route('/admin')
+def admin():
+    items = Desktop.query.all()   # список товарів
+    news = []                     # поки пусто
+    orders = []                   # поки пусто
+    users = []                    # поки пусто
+
+    return render_template(
+        'admin.html',
+        items=items,
+        news=news,
+        orders=orders,
+        users=users,
+        isFooter=False
+    )
+
+@main.route('/add_item')
+def add_item():
+    return "Add item page (ще не готово)"
+
+@main.route('/edit_item/<int:item_id>')
+def edit_item(item_id):
+    return f"Edit item {item_id} page (ще не готово)"
+
+@main.route('/delete_item/<int:item_id>')
+def delete_item(item_id):
+    return f"Delete item {item_id} page (ще не готово)"
+
+@main.route('/add_news')
+def add_news():
+    return "Add news page (ще не готово)"
+
+@main.route('/edit_news/<int:news_id>')
+def edit_news(news_id):
+    return f"Edit news {news_id} page (ще не готово)"
+
+@main.route('/delete_news/<int:news_id>')
+def delete_news(news_id):
+    return f"Delete news {news_id} (ще не готово)"
+
+@main.route('/delete_user/<int:user_id>')
+def delete_user(user_id):
+    return f"Delete user {user_id} (ще не готово)"
+>>>>>>> 563851826795cfdc56a80f81d5d771a402b90186

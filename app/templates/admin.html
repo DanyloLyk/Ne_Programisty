@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Адмін-панель — Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="fw-bold text-warning mb-4">⚙️ Адмін-панель</h2>
+
+    <!-- NAV TABS -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#items">🎲 Товари</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#news">📰 Новини</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#orders">🧾 Замовлення</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#users">👥 Користувачі</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- ========================= -->
+        <!-- 🎲 ТОВАРИ -->
+        <!-- ========================= -->
+        <div id="items" class="tab-pane fade show active">
+            <h4 class="fw-bold text-warning mb-3">🎲 Товари</h4>
+
+            <a href="{{ url_for('main.add_item') }}" class="btn btn-warning mb-3 fw-bold">
+                ➕ Додати товар
+            </a>
+
+            <div class="row">
+                {% for item in items %}
+                <div class="col-md-4 mb-3">
+                    <div class="card border border-warning shadow-sm">
+                        <img src="/static/{{ item.image }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning fw-bold">{{ item.name }}</h5>
+                            <p class="card-text small">{{ item.description[:80] }}...</p>
+                            <p class="fw-bold">{{ item.price }} ₴</p>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('main.edit_item', item_id=item.id) }}" class="btn btn-outline-warning btn-sm">✏️ Редагувати</a>
+                                <a href="{{ url_for('main.delete_item', item_id=item.id) }}" class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('Видалити товар?')">🗑️</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted">Немає товарів.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 📰 НОВИНИ -->
+        <!-- ========================= -->
+        <div id="news" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">📰 Новини</h4>
+
+            <a href="{{ url_for('main.add_news') }}" class="btn btn-warning mb-3 fw-bold">
+                ➕ Додати новину
+            </a>
+
+            <ul class="list-group">
+                {% for item in news %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <strong>{{ item.title }}</strong>
+                        <br>
+                        <span class="text-muted small">{{ item.date }}</span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('main.edit_news', id=item.id) }}" class="btn btn-outline-warning btn-sm">✏️</a>
+                        <a href="{{ url_for('main.delete_news', id=item.id) }}" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Видалити новину?')">🗑️</a>
+                    </div>
+                </li>
+                {% else %}
+                <p class="text-muted">Новин немає.</p>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 🧾 ЗАМОВЛЕННЯ -->
+        <!-- ========================= -->
+        <div id="orders" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">🧾 Замовлення</h4>
+
+            <ul class="list-group">
+                {% for order in orders %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>№{{ order.id }}</strong> — {{ order.user_name }}
+                            <br><span class="text-muted small">{{ order.date }}</span>
+                        </div>
+                        <div class="text-warning fw-bold">{{ order.total }} ₴</div>
+                    </div>
+                </li>
+                {% else %}
+                <p class="text-muted">Замовлень поки немає.</p>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- ========================= -->
+        <!-- 👥 КОРИСТУВАЧІ -->
+        <!-- ========================= -->
+        <div id="users" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">👥 Користувачі</h4>
+
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <strong>{{ user.username }}</strong>
+                        <br><span class="text-muted small">{{ user.email }}</span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('main.delete_user', id=user.id) }}" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Видалити користувача?')">🗑️</a>
+                    </div>
+                </li>
+                {% else %}
+                <p class="text-muted">Користувачів немає.</p>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
