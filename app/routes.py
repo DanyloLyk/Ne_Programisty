@@ -24,34 +24,15 @@ def login_required(view_func):
     return wrapper
 
 
-def admin_required(view_func):
-    @wraps(view_func)
-    def wrapper(*args, **kwargs):
-        user = getattr(g, 'current_user', None)
-        if not user or user.status.lower() != 'admin':
-            flash('Недостатньо прав для доступу до адмін-панелі.', 'danger')
-            return redirect(url_for('main.index'))
-        return view_func(*args, **kwargs)
-
-    return wrapper
-
-
 @main.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
     g.current_user = User.query.get(user_id) if user_id else None
-    if g.current_user:
-        if g.current_user.ensure_valid_levels():
-            db.session.commit()
 
 
 @main.app_context_processor
 def inject_current_user():
-    current_user = getattr(g, 'current_user', None)
-    return {
-        'current_user': current_user,
-        'privilege_tiers': User.PRIVILEGE_TIERS
-    }
+    return {'current_user': getattr(g, 'current_user', None)}
 
 @main.route('/')
 def index():
@@ -200,14 +181,19 @@ def cart():
                 'id': item.item.id,
                 'name': item.item.name,
                 'description': item.item.description,
-                'price': item.item.price,
+                'price': float(str(item.item.price).replace(' ', '').replace(',', '.')) if item.item.price is not None else 0.0,
                 'image': item.item.image
             } if item.item else None
         }
         carts.append(cart_dict)
     
     carts = carts if len(carts) != 0 else None
-    return render_template('cart.html', carts=carts, isFooter=False, user_id=user.id)
+    # Передаємо інформацію про знижку користувача (множник)
+    discount_multiplier = getattr(user, 'discount_multiplier', 1.0)
+    discount_percent = getattr(user, 'discount_percent', 0)
+    return render_template('cart.html', carts=carts, isFooter=False, user_id=user.id,
+                           discount_multiplier=discount_multiplier,
+                           discount_percent=discount_percent)
 
 @main.route('/add_to_cart/<int:item_id>')
 @login_required
@@ -318,8 +304,7 @@ def checkout():
     """
     Сторінка підтвердження замовлення
     """
-    user = g.current_user
-    user_id = user.id
+    user_id = g.current_user.id
     
     # Отримуємо кошик користувача
     cart_items = CartItem.query.filter_by(user_id=user_id).all()
@@ -329,24 +314,27 @@ def checkout():
     
     # Конвертуємо об'єкти CartItem в словники для відображення
     carts = []
-    subtotal = 0.0
-    discounted_total = 0.0
+    total_amount = 0.0
     total_items = 0
-    discount_multiplier = user.discount_multiplier
-    
+
+    # Отримуємо множник знижки для поточного користувача
+    discount_multiplier = getattr(g.current_user, 'discount_multiplier', 1.0)
+    discount_percent = getattr(g.current_user, 'discount_percent', 0)
+
     for item in cart_items:
         if not item.item:
             continue
-        
+
         # Конвертуємо ціну в число, видаляючи пробіли
         price_str = str(item.item.price).replace(' ', '').replace(',', '.')
         price = float(price_str) if price_str else 0.0
         item_total = price * item.quantity
-        subtotal += item_total
-        discounted_value = item_total * discount_multiplier
-        discounted_total += discounted_value
+        # Сума з урахуванням знижки
+        item_total_discounted = item_total * discount_multiplier
+
+        total_amount += item_total_discounted
         total_items += item.quantity
-        
+
         cart_dict = {
             'id': item.id,
             'user_id': item.user_id,
@@ -359,23 +347,18 @@ def checkout():
                 'price': price,
                 'image': item.item.image
             },
-            'total': item_total,
-            'total_with_discount': discounted_value
+            'total': round(item_total_discounted, 2),
+            'original_total': round(item_total, 2)
         }
         carts.append(cart_dict)
-    
-    discount_amount = subtotal - discounted_total
-    
+
     return render_template('checkout.html', 
                          carts=carts, 
-                         subtotal=round(subtotal, 2),
-                         total_amount=round(discounted_total, 2),
-                         discount_amount=round(discount_amount, 2),
-                         discount_percent=user.discount_percent,
-                         user_status=user.status,
-                         privilege_info=user.privilege_info,
+                         total_amount=round(total_amount, 2),
                          total_items=total_items,
                          user_id=user_id,
+                         discount_multiplier=discount_multiplier,
+                         discount_percent=discount_percent,
                          isFooter=False)
 
 @main.route('/add_order', methods=['POST'])
@@ -393,10 +376,11 @@ def add_order():
         if not cart_items or len(cart_items) == 0:
             return redirect(url_for('main.cart'))
         
-        discount_multiplier = g.current_user.discount_multiplier
-        
-        # Створюємо замовлення
-        order = Order.add_order(user_id, cart_items, discount_multiplier)
+        # Використовуємо множник знижки, що відповідає привілеям користувача
+        discount = getattr(g.current_user, 'discount_multiplier', 1.0)
+
+        # Створюємо замовлення з урахуванням знижки
+        order = Order.add_order(user_id, cart_items, discount)
         
         # Зберігаємо замовлення в БД
         db.session.add(order)
@@ -455,7 +439,7 @@ def register():
             return redirect(url_for('main.register'))
 
         # Створення нового користувача
-        new_user = User(nickname=nickname, email=email, status='User', privilege='Default')
+        new_user = User(nickname=nickname, email=email)
         new_user.set_password(password)  # Хешуємо пароль перед збереженням
         db.session.add(new_user)
         db.session.commit()
@@ -506,8 +490,6 @@ def test():
     print(session.get("user_id"))
     
 @main.route('/admin')
-@login_required
-@admin_required
 def admin():
     items = Desktop.query.all()   # список товарів
     news = []                     # поки пусто

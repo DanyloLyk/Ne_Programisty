@@ -1,4 +1,3 @@
-from datetime import timedelta
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -13,9 +12,9 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
-    app.secret_key = 'a3f6d7e8b9d4c2f1e0b76b7885d0a741'  # Важливо для роботи сесій
+    app.config['SECRET_KEY'] = 'your_secret_key_here'
+
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -25,11 +24,16 @@ def create_app():
     from app.models.cart import CartItem
     from app.models.order import Order
     from app.models.news import News
-    from app.models.user import User
 
     from app.routes import main
     app.register_blueprint(main)
+
     with app.app_context():
         db.create_all()
 
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host="0.0.0.0", port=5000, debug=True)
