@@ -88,6 +88,16 @@
                 Статус: {{ current_user.status }}
               </span>
             </li>
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Привілегія: {{ current_user.privilege_label }}
+              </span>
+            </li>
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Знижка: -{{ current_user.discount_percent }}%
+              </span>
+            </li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Вийти</a></li>
           </ul>
