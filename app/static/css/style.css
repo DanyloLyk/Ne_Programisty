@@ -41,6 +41,8 @@
 .nav-link {
   position: relative;
   transition: color 0.3s ease-in-out;
+  color: var(--bs-body-color) !important;                   /* Додаємо */
+  text-decoration: none;          /* Додаємо */
 }
 
 .nav-link::after {
