@@ -191,9 +191,44 @@ def cart():
     # Передаємо інформацію про знижку користувача (множник)
     discount_multiplier = getattr(user, 'discount_multiplier', 1.0)
     discount_percent = getattr(user, 'discount_percent', 0)
+    # Також збираємо простий список замовлень користувача для відображення в кошику
+    try:
+        user_orders = Order.query.filter_by(user_id=user.id).order_by(Order.id.desc()).all()
+    except Exception:
+        user_orders = []
+
+    orders_summary = []
+    for order in user_orders:
+        items_summary = []
+        for it in (order.items or []):
+            try:
+                # намагаємось знайти назву та ціну товару по item_id
+                product = Desktop.query.get(it.get('item_id'))
+                name = product.name if product else f"Товар #{it.get('item_id')}"
+                price_str = str(product.price).replace(' ', '').replace(',', '.') if product and product.price is not None else '0'
+                price = float(price_str) if price_str else 0.0
+            except Exception:
+                name = f"Товар #{it.get('item_id')}"
+                price = 0.0
+
+            items_summary.append({
+                'item_id': it.get('item_id'),
+                'name': name,
+                'quantity': it.get('quantity'),
+                'price': price,
+            })
+
+        orders_summary.append({
+            'id': order.id,
+            'status': order.status,
+            'total_amount': order.total_amount,
+            'order_items': items_summary,
+        })
+
     return render_template('cart.html', carts=carts, isFooter=False, user_id=user.id,
                            discount_multiplier=discount_multiplier,
-                           discount_percent=discount_percent)
+                           discount_percent=discount_percent,
+                           orders=orders_summary)
 
 @main.route('/add_to_cart/<int:item_id>')
 @login_required
@@ -459,21 +494,35 @@ def register():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
 
         # Перевірка користувача за email
         user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):  # Перевірка пароля
+        if not user:
+            # Чітке повідомлення, коли користувача з такою поштою немає
+            flash("Користувача з такою поштою не знайдено", "danger")
+            return redirect(url_for('main.index'))
+
+        # Перевіряємо пароль окремо, щоб повідомити про неправильний пароль
+        try:
+            password_ok = user.check_password(password)
+        except Exception:
+            # Якщо сталася внутрішня помилка при перевірці пароля
+            flash("Виникла внутрішня помилка під час входу", "danger")
+            return redirect(url_for('main.index'))
+
+        if password_ok:
             session.permanent = True
-            session['user_id'] = user.id  # Зберігаємо ID користувача в сесії
+            session['user_id'] = user.id  # Зберігаємо ID користуна в сесії
             session['user_nickname'] = user.nickname
             session['user_status'] = user.status  # Якщо є статус
 
             flash("Вітаємо, ви увійшли!", "success")
             return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
         else:
-            flash("Невірний логін або пароль", "danger")
+            # Конкретне повідомлення про неправильний пароль
+            flash("Неправильний пароль", "danger")
             return redirect(url_for('main.index'))  # Перенаправлення назад на форму входу
 
     return redirect(url_for('main.index'))
@@ -492,7 +541,7 @@ def test():
 @main.route('/admin')
 def admin():
     items = Desktop.query.all()   # список товарів
-    news = []                     # поки пусто
+    news = News.query.all()       # список новин
     orders = []                   # поки пусто
     users = []                    # поки пусто
 
@@ -572,19 +621,84 @@ def delete_item(item_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-
-
-@main.route('/add_news')
+@main.route('/add_news', methods=['POST'])
 def add_news():
-    return "Add news page (ще не готово)"
+    try:
+        data = request.get_json()
 
-@main.route('/edit_news/<int:news_id>')
-def edit_news(news_id):
-    return f"Edit news {news_id} page (ще не готово)"
+        name = data.get('name')
+        description = data.get('description')
+        description_second = data.get('descriptionSecond')
+        images = data.get('images', [])        # список URL
 
-@main.route('/delete_news/<int:news_id>')
+        news = News(
+            name=name,
+            description=description,
+            descriptionSecond=description_second,
+        )
+
+        # Завантаження кожного зображення
+        for url in images:
+            img_path = download_image(url)
+            news.images.append(NewsImage(img_url=img_path))
+
+        db.session.add(news)
+        db.session.commit()
+
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при додаванні новини:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/get_news/<int:news_id>')
+def get_news(news_id):
+    news = News.query.get_or_404(news_id)
+    return jsonify(success=True, news={
+        "name": news.name,
+        "description": news.description,
+        "descriptionSecond": news.descriptionSecond,
+        "images": [img.img_url for img in news.images]
+    })
+
+@main.route('/edit_news/<int:news_id>', methods=['POST'])
+def edit_news_post(news_id):
+    try:
+        data = request.get_json()
+        news = News.query.get_or_404(news_id)
+
+        news.name = data.get('name')
+        news.description = data.get('description')
+        news.descriptionSecond = data.get('descriptionSecond')
+
+        # Перезаписати список фото
+        news.images.clear()
+        for url in data.get('images', []):
+            img_path = download_image(url)
+            news.images.append(NewsImage(img_url=img_path))
+
+        db.session.commit()
+        return jsonify(success=True)
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при редагуванні новини:", e)
+        return jsonify(success=False, error=str(e))
+
+@main.route('/delete_news/<int:news_id>', methods=['DELETE'])
 def delete_news(news_id):
-    return f"Delete news {news_id} (ще не готово)"
+    try:
+        news = News.query.get_or_404(news_id)
+        db.session.delete(news)
+        db.session.commit()
+
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Помилка при видаленні:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @main.route('/delete_user/<int:user_id>')
 def delete_user(user_id):
