@@ -14,7 +14,7 @@
   --input-color: #343a40;
   --border-color: #495057;
   --focus-shadow-color: rgba(69, 78, 97, 0.6); /* Більш нейтральний/темний відтінок для тіні */
-  --focus-border-color: #7d849b; /* Світло-сіра або синя рамка для контрасту */
+  --focus-border-color: #ffc107; /* Світло-сіра або синя рамка для контрасту */
   --focus-bg-color: #495057; /* Темний фон при фокусі */
   --focus-text-color: #ffffff; /* Білий текст */
 }

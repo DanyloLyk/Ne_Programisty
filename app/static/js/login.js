@@ -77,4 +77,23 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     });
   }
+
+  // For buttons that require authentication (e.g., add-to-cart on public pages)
+  const requireAuthBtns = document.querySelectorAll('.require-auth');
+  if (requireAuthBtns.length > 0) {
+    requireAuthBtns.forEach(btn => {
+      // initialize Bootstrap tooltip
+      try {
+        new bootstrap.Tooltip(btn);
+      } catch (e) {
+        // ignore if tooltip init fails
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // On mobile/tap or desktop click, open login modal
+        if (loginModal) openModal(loginModal);
+      });
+    });
+  }
 });

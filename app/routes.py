@@ -25,6 +25,31 @@ def login_required(view_func):
     return wrapper
 
 
+def privilege_required(*allowed_statuses):
+    """Decorator to require that current_user exists and has one of the allowed statuses.
+
+    Usage: @privilege_required('Admin', 'Moder')
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(*args, **kwargs):
+            user = getattr(g, 'current_user', None)
+            print(f"DEBUG: privilege_required check for user: {user, user.status if user else None}, allowed_statuses: {allowed_statuses}")
+            if not user:
+                flash('Увійдіть, щоб продовжити.', 'warning')
+                return redirect(url_for('main.index'))
+
+            if user.status not in allowed_statuses:
+                flash('Недостатньо прав для доступу до цієї сторінки.', 'danger')
+                return redirect(url_for('main.index'))
+
+            return view_func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 @main.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
@@ -76,7 +101,6 @@ def index():
         popular_sorted = sorted(popular, key=lambda x: x['bought_count'], reverse=True)[:3]
     except Exception:
         popular_sorted = []
-    print(popular_sorted)
     return render_template('index.html', top_popular=popular_sorted)
 
 @main.route('/about')
@@ -85,78 +109,8 @@ def about():
 
 @main.route('/news')
 def news():
-    # --- ІНІЦІАЛІЗАЦІЯ ТІЛЬКИ ОДИН РАЗ ---
-    #if not News.query.first():
-    # --- seed_news_data()
-
-
     all_news = News.query.all()
     return render_template('news.html', news=all_news)
-
-def seed_news_data():
-    news_data = [
-        News(
-            name="Новинка: Гра “Стратегія 2025”",
-            description="Випробуйте свої стратегічні навички у новій грі! \n Відкрийте для себе світ битв і дипломатії.",
-            descriptionSecond=" Відкрийте для себе неймовірний світ “Стратегія 2025”! \n 🏰 Побудуйте власну імперію, використовуючи хитрість, стратегію та дипломатію 🤝. \n Кожна партія – нові виклики ⚔️ і можливість проявити свій стратегічний талант 🧠.",
-            images=[
-                NewsImage(img_url="images/news1.jpg"),
-                NewsImage(img_url="images/news1-2.jpg"),
-                NewsImage(img_url="images/news1-3.jpg"),
-            ],
-        ),
-        News(
-            name="Акція: -40% на популярні ігри",
-            description="  Обмежений час! Знижки на топові \n настільні ігри цього тижня — поповніть колекцію за вигідною ціною.",
-            descriptionSecond=" Поповніть колекцію настільних хітів зі знижкою 40% 🎉! \n “Catan”, “Ticket to Ride”, “Carcassonne” та інші стали ще доступнішими 🏷. \n Організовуйте вечори з друзями та сім’єю 👨‍👩‍👧‍👦. ",
-            images=[
-                NewsImage(img_url="images/news2.jpg"),
-                NewsImage(img_url="images/news2-2.jpg"),
-                NewsImage(img_url="images/news2-3.jpg"),
-            ],
-        ),
-        News(
-            name="Майстер-клас для гравців",
-            description="Хочеш грати як професіонал? \n Приходь на наш безкоштовний майстер-клас і навчись новим тактикам!",
-            descriptionSecond="Приходьте на живий майстер-клас 🎯. \n Отримайте поради від досвідчених геймерів, спробуйте нестандартні комбінації ходів 🔍 і відкрийте нові способи перемагати 🏆.",
-            images=[
-                NewsImage(img_url="images/news3.jpg"),
-                NewsImage(img_url="images/news3-2.jpg"),
-            ],
-        ),
-        News(
-            name="Турнір з настільних ігор",
-            description="Перевір свої стратегічні навички та виграй круті призи!",
-            descriptionSecond="Щомісячний турнір для фанатів настільних ігор 🎲. \n Переможці отримають призи 🏆, сертифікати 📜 та бонуси 🎁.",
-            images=[
-                NewsImage(img_url="images/news4.jpg"),
-                NewsImage(img_url="images/news4-2.jpg"),
-            ],
-        ),
-        News(
-            name="Нові настільні ігри у продажу",
-            description="Нові пригоди та квести чекають на тебе!",
-            descriptionSecond="Нові пригодницькі квести та кооперативні ігри вже чекають на тебе 🌟. \n Веселі вечори з друзями чи родиною 👨‍👩‍👧‍👦 гарантовані!",
-            images=[
-                NewsImage(img_url="images/news5.jpg"),
-                NewsImage(img_url="images/news5-2.jpg"),
-            ],
-        ),
-        News(
-            name="Вечірка для геймерів",
-            description="Приходь на тематичну вечірку та грай разом з іншими фанатами настільних ігор!",
-            descriptionSecond="Приходь на тематичну вечірку у “Гральну Комору”! 🕹 \n Ігри, конкурси 🏆, призи 🎁 та весела компанія гарантовані 🤗. \n Випробуй свої навички в командних та індивідуальних турнірах ⚔️, отримай подарунки і нові знайомства 🤝.\n Це шанс провести час весело, активно та з користю 🎯, об’єднуючи геймерів у дружню спільноту!",
-            images=[
-                NewsImage(img_url="images/news6.jpg"),
-                NewsImage(img_url="images/news6-2.jpg"),
-                NewsImage(img_url="images/news6-3.jpg"),
-            ],
-        ),
-    ]
-
-    db.session.add_all(news_data)
-    db.session.commit()
-    print("✅ База новин заповнена.")
 
 
 @main.route('/contacts')
@@ -237,7 +191,9 @@ def cart():
         }
         carts.append(cart_dict)
     
-    carts = carts if len(carts) != 0 else None
+    # Ensure we pass a JSON-serializable empty list (not `None`) to the template
+    # so `JSON.parse('{{ carts | tojson | safe }}')` in the template won't throw.
+    carts = carts if len(carts) != 0 else []
     # Передаємо інформацію про знижку користувача (множник)
     discount_multiplier = getattr(user, 'discount_multiplier', 1.0)
     discount_percent = getattr(user, 'discount_percent', 0)
@@ -547,22 +503,23 @@ def login():
     password = request.form.get('password')
 
     user = User.query.filter_by(email=email).first()
-    error = None
 
     if not user:
-        error = "Користувача з такою поштою не знайдено"
-    elif not user.check_password(password):
-        error = "Неправильний пароль"
-
-    if error:
-        # Передаємо помилку у шаблон
-        return render_template("index.html", login_error=error, email=email)
-    else:
-        session.permanent = True
-        session['user_id'] = user.id
-        session['user_nickname'] = user.nickname
-        session['user_status'] = user.status
+        flash("Користувача з такою поштою не знайдено", "danger")
         return redirect(url_for('main.index'))
+
+    if not user.check_password(password):
+        flash("Неправильний пароль", "danger")
+        return redirect(url_for('main.index'))
+
+    # Успішний вхід
+    session.permanent = True
+    session['user_id'] = user.id
+    session['user_nickname'] = user.nickname
+    session['user_status'] = user.status
+
+    flash(f"Вітаю, {user.nickname}!", "success")
+    return redirect(url_for('main.index'))
 
 
 # Вихід
@@ -571,12 +528,9 @@ def logout():
     session.clear()  # Очищаємо сесію
     flash("Ви вийшли з системи", "info")
     return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
-
-@main.route("/test")
-def test(): 
-    print(session.get("user_id"))
     
 @main.route('/admin')
+@privilege_required('Admin', 'Moder')
 def admin():
     items = Desktop.query.all()   # список товарів
     news = News.query.all()       # список новин
@@ -631,10 +585,23 @@ def edit_item_post(item_id):
         data = request.get_json()
         item = Desktop.query.get_or_404(item_id)
 
-        item.name = data.get('name')
-        item.description = data.get('description')
-        item.price = float(data.get('price', 0))
-        item.image = data.get('image')
+        new_name = data.get('name')
+        new_description = data.get('description')
+        new_price = float(data.get('price', 0))
+        new_image_url = data.get('image')
+
+        item.name = new_name
+        item.description = new_description
+        item.price = new_price
+
+        # Якщо URL змінено — качаємо нове зображення
+        if new_image_url and new_image_url != item.image:
+            try:
+                new_image_path = download_image(new_image_url)
+                item.image = new_image_path
+            except Exception as img_err:
+                print("Помилка при завантаженні нового зображення:", img_err)
+                return jsonify(success=False, error="Не вдалося завантажити зображення")
 
         db.session.commit()
         return jsonify(success=True)
@@ -643,6 +610,7 @@ def edit_item_post(item_id):
         db.session.rollback()
         print("Помилка при редагуванні товару:", e)
         return jsonify(success=False, error=str(e))
+
 
 @main.route('/delete_item/<int:item_id>', methods=['DELETE'])
 def delete_item(item_id):
