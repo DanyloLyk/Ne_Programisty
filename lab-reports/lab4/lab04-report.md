@@ -69,7 +69,7 @@
 | urllib3 | 2.5.0 |
 | Werkzeug | 3.1.3 |
 
-- Інші використані інструменти та розширення: GitHub, Trello, VS Code / PyCharm, Bootstrap 5, SQLite3, Flask-Migrate / Alembic.
+- Інші використані інструменти та розширення: GitHub, Trello, VS Code / PyCharm, Bootstrap 5, Flask-Migrate / Alembic.
 
 ### Структура проєкту
 
