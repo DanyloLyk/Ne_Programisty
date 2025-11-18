@@ -29,6 +29,9 @@
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#users">👥 Користувачі</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#feedbacks">📝 Відгуки</a>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -198,6 +201,37 @@
                 <p class="text-muted">Користувачів немає.</p>
                 {% endfor %}
             </ul>
+        </div>
+
+
+
+        <div id="feedbacks" class="tab-pane fade">
+            <h4 class="fw-bold text-warning mb-3">📝 Відгуки</h4>
+            <div class="list-group">
+                {% for fb in feedbacks %}
+                <div class="list-group-item mb-2" id="feedback-{{ fb.id }}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>#{{ fb.id }} — {{ fb.title }}</strong>
+                            <br>
+                            <small class="text-muted">
+                                від: {{ fb.user.nickname if fb.user else '—' }}
+                                &lt;{{ fb.user.email if fb.user and fb.user.email else '—' }}&gt;
+                            </small>
+                            <br>
+                            <small class="text-muted">Створено: {{ fb.created_at if fb.created_at else '—' }}</small>
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-outline-danger btn-sm delete-feedback-btn" data-id="{{ fb.id }}">🗑️</button>
+                        </div>
+                    </div>
+                    <hr class="my-2">
+                    <p class="mb-0">{{ fb.description }}</p>
+                </div>
+                {% else %}
+                <p class="text-muted">Відгуків немає.</p>
+                {% endfor %}
+            </div>
         </div>
 
     </div>

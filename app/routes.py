@@ -8,7 +8,7 @@ from .models.feedback import Feedback
 from .models.news import News, NewsImage
 from app.utils import download_image
 from .models.user import User
-
+from sqlalchemy.orm import joinedload
 
 
 main = Blueprint('main', __name__)
@@ -164,38 +164,47 @@ def contacts():
     return render_template('contacts.html')
 
 @main.route('/feedback')
+@login_required
 def feedback():
     return render_template('feedback.html')
 
 
 @main.route('/submit_feedback', methods=['POST'])
+@login_required
 def submit_feedback():
     try:
-        # 1. Отримуємо JSON-дані, які надіслав JavaScript
+        import traceback
         data = request.get_json()
-
         title = data.get('title')
         description = data.get('description')
 
-        # 2. Валідація на стороні сервера (дуже важливо!)
+        if getattr(g, 'current_user', None):
+            user_id = g.current_user.id
+            print(f"DEBUG: Successfully retrieved user ID: {user_id}")
+        else:
+            print("DEBUG: Current user is NOT set or not authenticated.")
+            return jsonify({'success': False, 'error': 'Користувач не авторизований для відправки.'}), 401
+
         if not title or not description:
-            # 'jsonify' створює JSON-відповідь, 400 - це код помилки "Bad Request"
-            return jsonify({'success': False, 'error': 'Заголовок та опис є обов\'язковими.'}), 400
+            return jsonify({'success': False, 'error': "Заголовок та опис є обов'язковими."}), 400
 
         if len(title) > 100 or len(description) > 300:
             return jsonify({'success': False, 'error': 'Перевищено ліміт символів.'}), 400
 
-        # 3. Створюємо запис у БД
-        new_feedback = Feedback(title=title, description=description)
+        new_feedback = Feedback(
+            title=title,
+            description=description,
+            user_id=user_id
+        )
         db.session.add(new_feedback)
         db.session.commit()
 
-        # 4. Надсилаємо відповідь про успіх
         return jsonify({'success': True, 'message': 'Відгук додано!'}), 201
-
     except Exception as e:
         db.session.rollback()
-        print(f"Помилка при збереженні відгуку: {e}")  # Логування помилки
+        import traceback
+        traceback.print_exc()
+        print(f"Помилка при збереженні відгуку: {e}")
         return jsonify({'success': False, 'error': 'Внутрішня помилка сервера.'}), 500
 
 
@@ -573,13 +582,14 @@ def admin():
     news = News.query.all()       # список новин
     orders = Order.query.order_by(Order.id.desc()).all()                   # поки пусто
     users = User.query.all()      # список користувачів
-
+    feedbacks = Feedback.query.options(joinedload(Feedback.user)).order_by(Feedback.id.desc()).all()
     return render_template(
         'admin.html',
         items=items,
         news=news,
         orders=orders,
         users=users,
+        feedbacks=feedbacks,
         isFooter=False
     )
 
@@ -863,3 +873,33 @@ def update_order_status(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(success=False, error=str(e))
+@main.route('/delete_feedback/<int:feedback_id>', methods=['DELETE'])
+def delete_feedback(feedback_id):
+    try:
+        fb = Feedback.query.get_or_404(feedback_id)
+        db.session.delete(fb)
+        db.session.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e)), 500
+
+def get_user_email_by_id(user_id):
+    if not user_id:
+        return None
+    user = User.query.get(user_id)
+    return user.email if user else None
+
+def set_user_email_in_session(user_id):
+    email = get_user_email_by_id(user_id)
+    if email:
+        session['user_email'] = email
+    else:
+        session.pop('user_email', None)
+    return email
+@main.route('/user_email/<int:user_id>')
+def user_email_route(user_id):
+    email = get_user_email_by_id(user_id)
+    if email:
+        return jsonify(success=True, email=email)
+    return jsonify(success=False, error="User not found"), 404
