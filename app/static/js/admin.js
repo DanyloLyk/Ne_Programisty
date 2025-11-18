@@ -182,8 +182,14 @@ document.querySelectorAll('.delete-news-btn').forEach(btn => {
         const result = await response.json();
 
         if(result.success) {
-            const activeTab = localStorage.getItem('activeAdminTab') || '#items';
-            location.href = window.location.pathname + activeTab;
+            // Try to remove the news item from the DOM for immediate UI feedback
+            const li = this.closest('li');
+            if (li) {
+                li.remove();
+            } else {
+                // Fallback: reload the current admin tab or full page
+                try { reloadActiveTab(); } catch (e) { location.reload(); }
+            }
         } else {
             alert("Помилка при видаленні");
         }

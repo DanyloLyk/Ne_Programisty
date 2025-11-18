@@ -61,7 +61,11 @@
 
                                 <div class="mt-auto">
                                     <div class="text-center text-warning fw-bold mb-2">{{ '%.2f'|format(item.price) }} ₴</div>
+                                    {% if current_user %}
                                     <a href="{{ url_for('main.add_to_cart', item_id=item.id) }}" class="btn btn-warning w-100">До кошика</a>
+                                    {% else %}
+                                    <button type="button" class="btn btn-secondary w-100 require-auth" data-bs-toggle="tooltip" data-bs-placement="top" title="Потрібно зареєструватись">До кошика</button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

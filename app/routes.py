@@ -237,7 +237,9 @@ def cart():
         }
         carts.append(cart_dict)
     
-    carts = carts if len(carts) != 0 else None
+    # Ensure we pass a JSON-serializable empty list (not `None`) to the template
+    # so `JSON.parse('{{ carts | tojson | safe }}')` in the template won't throw.
+    carts = carts if len(carts) != 0 else []
     # Передаємо інформацію про знижку користувача (множник)
     discount_multiplier = getattr(user, 'discount_multiplier', 1.0)
     discount_percent = getattr(user, 'discount_percent', 0)

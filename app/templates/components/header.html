@@ -62,7 +62,9 @@
         <li class="nav-item"><a href="/catalog" class="nav-link">Каталог</a></li>
         <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
+        {% if current_user %}
         <li class="nav-item"><a href="/feedback" class="nav-link">Відгуки</a></li>
+        {% endif %}
 
         {% if not current_user %}
         <!-- ПК кнопка Вхід після Новини -->
