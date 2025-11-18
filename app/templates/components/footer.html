@@ -8,6 +8,9 @@
                     <li class="list-inline-item"><a href="/catalog" class="nav-link p-0 text-body-secondary">Каталог</a></li>
                     <li class="list-inline-item"><a href="/contacts" class="nav-link p-0 text-body-secondary">Контакти</a></li>
                     <li class="list-inline-item"><a href="/news" class="nav-link p-0 text-body-secondary">Новини</a></li>
+                    {% if current_user %}
+                    <li class="list-inline-item"><a href="/feedback" class="nav-link p-0 text-body-secondary">Відгуки</a></li>
+                    {% endif %}
                 </ul>
         </div>
         <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">

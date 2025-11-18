@@ -144,6 +144,7 @@
                     <tbody>
 
                         {% for order in orders %}
+                        <script>console.log("Order", {{ order.total_amount }});</script>
                         <tr>
                             <td>#{{ order.id }}</td>
 
@@ -156,7 +157,7 @@
                                 <span class="badge bg-info">{{ order.status }}</span>
                             </td>
 
-                            <td>{{ order.total_sum }} грн</td>
+                            <td>{{ order.total_amount  }} грн</td>
 
                             <td>
                                 <button 

@@ -10,7 +10,7 @@ class Order(db.Model):
     user = db.relationship("User", backref="orders")  # <-- зв’язок з User
     
     total_amount = db.Column(db.Float, nullable=False)  # Загальна сума замовлення
-    status = db.Column(db.String(50), default='completed', nullable=False)  # completed, cancelled, etc.
+    status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
 
 
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
