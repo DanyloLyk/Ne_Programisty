@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Підтвердження замовлення - Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold text-warning mb-4">✅ Підтвердження замовлення</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Склад замовлення</h5>
+                </div>
+                <div class="card-body">
+                    {% for cart in carts %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="{{ url_for('static', filename=cart.item.image) }}" 
+                                         class="img-fluid rounded" 
+                                         alt="{{ cart.item.name }}"
+                                         style="max-height: 100px; object-fit: cover;">
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="card-title mb-1">{{ cart.item.name }}</h5>
+                                    <p class="card-text text-muted small mb-1">{{ cart.item.description }}</p>
+                                    <p class="text-warning fw-bold mb-0">
+                                        {% if discount_percent and discount_percent > 0 %}
+                                            {{ "%.2f"|format(cart.item.price) }} ₴ × {{ cart.quantity }} =
+                                            <del class="text-muted">{{ "%.2f"|format(cart.original_total) }} ₴</del>
+                                            <span class="ms-2">{{ "%.2f"|format(cart.total) }} ₴</span>
+                                        {% else %}
+                                            {{ "%.2f"|format(cart.item.price) }} ₴ × {{ cart.quantity }} = {{ "%.2f"|format(cart.total) }} ₴
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-secondary">Кількість: {{ cart.quantity }}</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <span class="text-muted small">ID: {{ cart.item.id }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Підсумок замовлення</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Товарів:</span>
+                        <strong>{{ total_items }}</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="fs-5">Загальна сума:</span>
+                        <strong class="text-warning fs-4">{{ "%.2f"|format(total_amount) }} ₴</strong>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('main.add_order') }}">
+                        <input type="hidden" name="discount" value="{{ discount_multiplier }}">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">
+                                ✅ Підтвердити замовлення
+                            </button>
+                            <a href="{{ url_for('main.cart') }}" class="btn btn-outline-secondary">
+                                ← Повернутися до кошика
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

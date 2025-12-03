@@ -5,13 +5,29 @@
   --bs-primary: #EF8354;
   --bs-secondary: #4e555b;
   --nav-btn-hover-bg: #4e555b;
+  --login-color: #e0e1e3;
+  --login-color1: #f8f9fa;
 }
 
 [data-bs-theme="dark"] {
   --bs-body-bg: #2D3142;
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
+  --login-color: #212121;
+  --login-color1: #2D3142;
   --nav-btn-hover-bg: #ffc107;
+  --auth-surface-bg: #212121;
+  --auth-surface-text: #f8f9fa;
+  --auth-surface-subtext: #e0e0e0;
+  --auth-input-bg: #323232;
+  --auth-input-text: #f8f9fa;
+  --auth-accent: #ffc107;
+  --auth-button-bg: #212121;
+  --auth-button-color: #ffc107;
+  --auth-button-hover-bg: #ffc107;
+  --auth-button-hover-color: #212121;
+  --loader-bg: rgba(33, 33, 33, 0.95);
+  --loader-bg-hover: rgba(33, 33, 33, 0.85);
 }
 
 /* Анімація появи navbar */
@@ -37,6 +53,8 @@
 .nav-link {
   position: relative;
   transition: color 0.3s ease-in-out;
+  color: var(--bs-body-color) !important;                   /* Додаємо */
+  text-decoration: none;          /* Додаємо */
 }
 
 .nav-link::after {
@@ -174,26 +192,27 @@ body {
     height: 40px;
     border-radius: 50%;
     border: none;
-    background-color: #212121; /* чорний фон */
+    background-color: var(--login-color); /* чорний фон */
     color: #ffc107; /* жовта іконка */
     cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    box-shadow: 0 0 0 transparent;
 }
 
 .login-btn.mobile svg {
     width: 20px;
     height: 20px;
-    fill: #ffc107;
+    fill: var(--auth-button-color);
     transition: transform 0.3s ease, fill 0.25s ease;
 }
 
 .login-btn.mobile:hover {
     background-color: #ffc107; /* фон стає жовтим */
-    color: #212121; /* іконка чорна */
+    color: var(--login-color1); /* іконка чорна */
 }
 
 .login-btn.mobile:hover svg {
-    fill: #212121;
+    fill: var(--login-color1);
     transform: scale(1.2);
 }
 
@@ -205,7 +224,7 @@ body {
 .login-btn.desktop {
   font-family: inherit;
   font-size: 16px;              /* було 20px */
-  background: #212121;          /* темний фон */
+  background: var(--login-color);          /* темний фон */
   color: #ffc107;               /* жовтий текст */
   fill: #ffc107;                /* жовта іконка */
   padding: 0.5em 0.8em;         /* трохи менше */
@@ -214,28 +233,29 @@ body {
   align-items: center;
   cursor: pointer;
   border: none;
-  border-radius: 10px;          /* замість 15px */
+  border-radius: 10px;
   font-weight: 700;
   transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0 transparent;
 }
 
 .login-btn.desktop span {
   display: block;
-  margin-left: 0.25em;          /* трохи менший відступ */
+  margin-left: 0.25em;
   transition: all 0.3s ease-in-out;
 }
 
 .login-btn.desktop svg {
   display: block;
   transform-origin: center center;
-  transition: transform 0.3s ease-in-out, fill 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 /* Ефект наведення */
 .login-btn.desktop:hover {
   background: #ffc107;
-  color: #212121;
-  fill: #212121;
+  color: var(--login-color1);
+  fill: var(--login-color1);
   box-shadow: 0 0 10px #ffc107; /* трохи менше світіння */
 }
 
@@ -264,14 +284,15 @@ body {
 /* From Uiverse.io by bociKond */ 
 /* Основний фон і кольори сайту */
 .form {
-  --background: #212121;       /* чорний фон */
+  --background: var(--login-color);       /* чорний фон */
   --input-focus: #ffc107;      /* жовтий контур при фокусі */
   --font-color: #ffc107;       /* жовтий текст */
-  --font-color-sub: #e0e0e0;   /* світлий сірий для підписів */
-  --bg-color: #323232;         /* фон input */
+  --font-color-sub: var(--bs-body-color);   /* світлий сірий для підписів */
+  --bg-color: var(--login-color1);         /* фон input */
   --main-color: #ffc107;       /* акцент жовтий */
   padding: 20px;
   background: var(--background);
+  color: var(--font-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -313,7 +334,7 @@ body {
   border-radius: 5px;
   border: 2px solid var(--main-color);
   background-color: var(--bg-color);
-  color: var(--font-color-sub);
+  color: var(--auth-input-text);
   outline: none;
   font-weight: 500;
   transition: all 0.25s ease;
@@ -382,47 +403,97 @@ body {
   fill: var(--main-color); /* Іконка теж міняє колір */
 }
 
-
-.login-modal {
-  display: none; /* прихована спочатку */
+/* Модалка фонове покриття */
+.login-modal,
+.signup-modal {
   position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;       /* займає весь екран */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.5); /* тьмяне тло */
   opacity: 0;
-  transition: all 0.3s ease-in-out;
+  pointer-events: none;
+  z-index: 11000;
+  transition: opacity 0.2s ease;
 }
 
-.login-modal.show {
-  display: block;
-  transform: translate(-50%, -50%) scale(1);
+/* Активна модалка */
+.login-modal.show,
+.signup-modal.show {
   opacity: 1;
+  pointer-events: auto;
 }
 
-.login-modal-content {
-  background-color: var(--background);
-  padding: 25px;
+/* Контент модалки */
+.login-modal-content,
+.signup-modal-content {
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
   border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  /* Proportional, not too wide */
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
   position: relative;
+  border: none;
+  transition: box-shadow 180ms ease, opacity 160ms ease;
 }
 
+/* Кнопка закриття */
 .close {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: bold;
-  color: var(--font-color);
+  color: #ffc107;
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close:hover {
+  color: #ffffff;
+}
+.login-modal-content,
+.signup-modal-content {
+  /* ensure only one styled modal definition controls sizing/appearance */
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
+  border-radius: 10px;
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  position: relative;
+  border: none;
+  box-shadow: 
+    0 8px 28px rgba(255, 193, 7, 0.35),   /* теплий жовтий glow */
+    0 0 20px rgba(255, 193, 7, 0.25),      /* м’яка зовнішня підсвітка */
+    0 0 40px rgba(255, 193, 7, 0.15);      /* легкий ореол */
+  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition: box-shadow 180ms ease, opacity 160ms ease;
 }
 
-.close:hover {
-  color: var(--main-color);
+/* hover: subtle shadow only (no scale) */
+.login-modal-content:hover,
+.signup-modal-content:hover {
+  transform: scale(1.02);
+  box-shadow: 
+    0 12px 30px rgba(255, 193, 7, 0.45),   /* посилений жовтий glow */
+    0 0 25px rgba(255, 193, 7, 0.35),      /* яскравіша зовнішня підсвітка */
+    0 0 50px rgba(255, 193, 7, 0.25);      /* більш виразний ореол */
 }
+
+
 
 
 
@@ -519,53 +590,8 @@ body {
 
 
 
-/* Логін модалка */
-.login-modal {
-  display: none; /* прихована спочатку */
-  position: fixed;
-  z-index: 9999;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
-}
 
-/* Активна (показана) */
-.login-modal.show {
-  display: block;
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-}
-
-/* Вміст модалки */
-.login-modal-content {
-  background-color: #212121; /* чисто чорний фон */
-  padding: 40px; /* більше внутрішніх відступів */
-  border-radius: 15px; /* більш округлі кути */
-  width: 100%;
-  max-width: 500px; /* більша ширина */
-  box-shadow: 0 0 25px rgba(255, 193, 7, 0.3); /* легке жовте світіння */
-  position: relative;
-  border: none; /* без будь-якої рамки чи прозорої обводки */
-}
-
-/* Кнопка закриття */
-.close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 26px;
-  font-weight: bold;
-  color: #ffc107;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.close:hover {
-  color: #ffffff; /* при наведенні біла */
-}
-
+/* Навігаційні кнопки(кошик та зміна теми) з анімацією */
 .nav-btn {
   width: 40px;
   height: 40px;
@@ -610,7 +636,8 @@ body {
   box-shadow: none;
   transform: scale(1);
 }
-/* Мобільна кнопка — зміна кольорів і плавна анімація */
+
+/* Для мобільних пристроїв */
 .nav-btn.mobile {
   width: 50px;
   height: 50px;
@@ -673,11 +700,6 @@ body {
   transform: scale(1);
 }
 
-.dark-card {
-    background-color: #212529; /* Чорний або дуже темно-сірий фон */
-    color: #f8f9fa; /* Світлий текст */
-}
-
 /* Обгортка зображення картки: Фіксує висоту */
 .card-img-wrapper {
     width: 100%;
@@ -690,44 +712,34 @@ body {
     width: 100%;
 }
 
-/* Обмеження тексту в картці до 3 рядків */
-.text-truncate-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 3.6em;
-  
-.login-modal.show {
+.mobile-user-info {
+  display: none;
+  background-color: var(--auth-surface-bg);
+  color: var(--auth-surface-text);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.15);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mobile-user-info.show {
   display: block;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10000; /* вище за оверлей */
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* --- СТИЛІ МОДАЛЬНОГО ВІКНА --- */
-.dark-modal-content {
-    background-color: #212529; /* Темний фон модального вікна */
-    color: #f8f9fa;
-    border: 1px solid #ffc107; /* Жовта рамка */
+.mobile-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+  gap: 0.75rem;
 }
 
-.modal-title-warning {
-    color: #ffc107 !important;
-    border-bottom: 2px solid #343a40;
-}
-
-/* Обгортка зображення каруселі: Фіксує висоту */
-.carousel-image-container {
-    width: 100%;
-    height: 450px; /* Приклад висоти. Можна змінити. */
-    overflow: hidden;
-}
-.carousel-image-container img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
+.mobile-user-row span:last-child {
+  font-weight: 600;
 }

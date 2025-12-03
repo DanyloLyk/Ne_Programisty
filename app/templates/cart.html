@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Кошик - Гральна Комора{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold text-warning mb-4">🛒 Ваш кошик</h2>
+    
+    {# Порожній кошик #}
+    <div id="cart-empty" style="display: none;">
+        <div class="alert-info">
+            <h4 class="alert-heading">Ваш кошик порожній</h4>
+            <p class="mb-0">Додайте товари з <a href="{{ url_for('main.catalog') }}" class="icon-link">каталогу</a>.</p>
+        </div>
+    </div>
+
+    {# Кошик з товарами #}
+    <div id="cart-items" style="display: none;">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="cart-items-list">
+                            {# Товари будуть додані через JavaScript #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Підсумок замовлення</h5>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Товарів:</span>
+                            <strong id="total-items">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Загальна сума:</span>
+                            <strong class="text-warning" id="total-price">0 ₴</strong>
+                        </div>
+                        <a href="{{ url_for('main.checkout') }}" class="btn btn-warning w-100 fw-bold" id="checkout-btn">
+                            Оформити замовлення
+                        </a>
+                        <a href="{{ url_for('main.catalog') }}" class="btn btn-outline-secondary w-100 mt-2">
+                            Продовжити покупки
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cartItems = JSON.parse('{{ carts | tojson | safe }}');
+    const discountMultiplier = Number({{ discount_multiplier | tojson | safe }} || 1.0);
+    const emptyContainer = document.getElementById('cart-empty');
+    const itemsContainer = document.getElementById('cart-items');
+    const itemsList = document.getElementById('cart-items-list');
+    const totalItemsEl = document.getElementById('total-items');
+    const totalPriceEl = document.getElementById('total-price');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
+        // Показуємо контейнер з товарами
+        itemsContainer.style.display = 'block';
+        emptyContainer.style.display = 'none';
+        
+        let totalItems = 0;
+        let totalPrice = 0;
+        
+        // Відображаємо товари
+        cartItems.forEach(cartItem => {
+            const item = cartItem.item;
+            if (!item) return;
+            
+            // Конвертуємо значення в числа, видаляючи пробіли та коми
+            const priceStr = String(item.price).replace(/\s/g, '').replace(',', '.');
+            const price = parseFloat(priceStr) || 0;
+            const quantity = parseInt(cartItem.quantity) || 0;
+            // Розрахунок з урахуванням множника знижки
+            const itemTotalOriginal = price * quantity;
+            const itemTotal = itemTotalOriginal * (parseFloat(discountMultiplier) || 1.0);
+
+            totalItems += quantity;
+            totalPrice += itemTotal;
+            
+            const cartItemHtml = `
+                <div class="card mb-3" id="cart-item-${cartItem.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <img src="/static/${item.image}" 
+                                     class="img-fluid rounded" 
+                                     alt="${item.name}"
+                                     style="max-height: 100px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="card-title mb-1">${item.name}</h5>
+                                <p class="card-text text-muted small mb-1">${item.description}</p>
+                                <p class="text-warning fw-bold mb-0">
+                                    ${price.toFixed(2)} ₴ × ${quantity} = 
+                                    ${(discountMultiplier < 1) ? `<del class="text-muted">${itemTotalOriginal.toFixed(2)} ₴</del> <span class="ms-2">${itemTotal.toFixed(2)} ₴</span>` : `${itemTotal.toFixed(2)} ₴`}
+                                </p>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="/update_cart/${cartItem.item_id}?action=decrease" 
+                                       class="btn btn-outline-secondary btn-sm">-</a>
+                                    <span class="btn btn-outline-secondary btn-sm disabled" style="min-width: 50px;">
+                                        ${quantity}
+                                    </span>
+                                    <a href="/update_cart/${cartItem.item_id}?action=increase" 
+                                       class="btn btn-outline-secondary btn-sm">+</a>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <a href="/remove_from_cart/${cartItem.item_id}"
+                                   class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('Видалити товар з кошика?')">
+                                    🗑️ Видалити
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            itemsList.innerHTML += cartItemHtml;
+        });
+        
+        // Оновлюємо підсумок
+        totalItemsEl.textContent = totalItems;
+        totalPriceEl.textContent = totalPrice.toFixed(2) + ' ₴';
+        
+        // Блокуємо кнопку, якщо кошик порожній
+        if (totalItems === 0) {
+            checkoutBtn.classList.add('disabled');
+            checkoutBtn.href = '#';
+        }
+    } else {
+        // Показуємо контейнер порожнього кошика
+        emptyContainer.style.display = 'block';
+        itemsContainer.style.display = 'none';
+    }
+</script>
+
+{% if orders and orders|length > 0 %}
+<hr class="my-4">
+<div class="container mt-3">
+    <h4 class="fw-bold text-warning mb-3">📦 Ваші замовлення</h4>
+    <div class="list-group">
+        {% for order in orders %}
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Замовлення #{{ order.id }}</h5>
+                <small class="text-muted">Статус: {{ order.status }}</small>
+            </div>
+            <p class="mb-1">Сума: <strong class="text-warning">{{ order.total_amount }} ₴</strong></p>
+            <ul class="mb-0">
+                {% for it in order.order_items %}
+                <li>{{ it.name }} — x{{ it.quantity }} — {{ '%.2f'|format(it.price) }} ₴</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

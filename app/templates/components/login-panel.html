@@ -1,18 +1,19 @@
+{% if not current_user %}
 <!-- Модалка Вхід -->
 <div id="login-modal" class="login-modal">
   <div class="login-modal-content">
     <span id="close-login" class="close">&times;</span>
-    <form action="" class="form">
+    <form action="{{ url_for('main.login') }}" method="POST" class="form">
       <p>Ласкаво просимо, <span>увійдіть, щоб продовжити</span></p>
 
       <span class="input-span">
         <label for="login-email" class="label">Електронна пошта</label>
-        <input type="email" name="email" id="login-email" placeholder="Введіть вашу електронну пошту">
+        <input type="email" name="email" id="login-email" placeholder="Введіть вашу електронну пошту" required>
       </span>
 
       <span class="input-span">
         <label for="login-password" class="label">Пароль</label>
-        <input type="password" name="password" id="login-password" placeholder="Введіть ваш пароль">
+        <input type="password" name="password" id="login-password" placeholder="Введіть ваш пароль" required>
       </span>
 
       <button type="submit" class="oauthButton submit">
@@ -33,31 +34,32 @@
   </div>
 </div>
 
+
 <!-- Модалка Реєстрація -->
 <div id="signup-modal" class="login-modal">
   <div class="login-modal-content">
     <span id="close-signup" class="close">&times;</span>
-    <form action="" class="form">
+    <form action="{{ url_for('main.register') }}" method="POST" class="form">
       <p>Ласкаво просимо, <span>створіть свій обліковий запис</span></p>
 
       <span class="input-span">
         <label for="signup-name" class="label">Ім’я користувача</label>
-        <input type="text" name="name" id="signup-name" placeholder="Введіть ім’я користувача">
+        <input type="text" name="name" id="signup-name" placeholder="Введіть ім’я користувача" required>
       </span>
 
       <span class="input-span">
         <label for="signup-email" class="label">Електронна пошта</label>
-        <input type="email" name="email" id="signup-email" placeholder="Введіть вашу електронну пошту">
+        <input type="email" name="email" id="signup-email" placeholder="Введіть вашу електронну пошту" required>
       </span>
 
       <span class="input-span">
         <label for="signup-password" class="label">Пароль</label>
-        <input type="password" name="password" id="signup-password" placeholder="Введіть пароль">
+        <input type="password" name="password" id="signup-password" placeholder="Введіть пароль" required>
       </span>
 
       <span class="input-span">
         <label for="signup-confirm" class="label">Підтвердіть пароль</label>
-        <input type="password" name="confirm" id="signup-confirm" placeholder="Повторіть пароль">
+        <input type="password" name="confirm" id="signup-confirm" placeholder="Повторіть пароль" required>
       </span>
 
       <button type="submit" class="oauthButton submit">
@@ -77,3 +79,4 @@
     </form>
   </div>
 </div>
+{% endif %}

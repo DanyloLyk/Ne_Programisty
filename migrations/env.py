@@ -1,88 +1,97 @@
 import logging
 from logging.config import fileConfig
+import os
+import sys
+
+sys.path.append(os.getcwd())
 
 from flask import current_app
-
 from alembic import context
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# Alembic config
 config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
 fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
+# create or reuse Flask app/context
+app = None
+_app_ctx = None
+app_ctx_pushed = False
+try:
+    # if an app context is already active, use it (no push)
+    _ = current_app.name
+    app = current_app._get_current_object()
+except RuntimeError:
+    # no active app context: create and push one
+    from app import create_app, db
+    app = create_app()
+    _app_ctx = app.app_context()
+    _app_ctx.push()
+    app_ctx_pushed = True
+    # import models after app context so they register with db.metadata
+    from app.models.desktop import Desktop
+    from app.models.cart import CartItem
+    from app.models.order import Order
+    from app.models.news import News
+    from app.models.feedback import Feedback
+    from app.models.user import User
+else:
+    # when current_app exists, still import models so metadata is available
+    from app import db
+    from app.models.desktop import Desktop
+    from app.models.cart import CartItem
+    from app.models.order import Order
+    from app.models.news import News
+    from app.models.feedback import Feedback
+    from app.models.user import User
+
+# target metadata for autogenerate
+target_db = getattr(app, 'extensions', {}).get('migrate', None)
+if target_db is None:
+    # fallback to db object if available
+    try:
+        from app import db as _db
+        target_metadata = _db.metadata
+        target_db = _db
+    except Exception:
+        target_metadata = None
+else:
+    try:
+        target_metadata = target_db.db.metadata
+    except Exception:
+        target_metadata = target_db.metadata
 
 def get_engine():
     try:
-        # this works with Flask-SQLAlchemy<3 and Alchemical
-        return current_app.extensions['migrate'].db.get_engine()
-    except (TypeError, AttributeError):
-        # this works with Flask-SQLAlchemy>=3
-        return current_app.extensions['migrate'].db.engine
-
+        return target_db.get_engine()  # Flask-SQLAlchemy <3
+    except Exception:
+        try:
+            return target_db.engine  # Flask-SQLAlchemy >=3
+        except Exception:
+            return current_app.extensions['migrate'].db.get_engine()
 
 def get_engine_url():
     try:
-        return get_engine().url.render_as_string(hide_password=False).replace(
-            '%', '%%')
-    except AttributeError:
         return str(get_engine().url).replace('%', '%%')
+    except Exception:
+        return config.get_main_option('sqlalchemy.url')
 
-
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 config.set_main_option('sqlalchemy.url', get_engine_url())
-target_db = current_app.extensions['migrate'].db
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
 
 def get_metadata():
-    if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
-    return target_db.metadata
-
+    if target_db and hasattr(target_db, 'metadatas'):
+        return target_db.metadatas.get(None)
+    if target_db:
+        return getattr(target_db, 'metadata', None)
+    return target_metadata
 
 def run_migrations_offline():
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(
-        url=url, target_metadata=get_metadata(), literal_binds=True
-    )
-
+    context.configure(url=url, target_metadata=get_metadata(), literal_binds=True)
     with context.begin_transaction():
         context.run_migrations()
 
-
 def run_migrations_online():
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
-    # this callback is used to prevent an auto-migration from being generated
-    # when there are no changes to the schema
-    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
     def process_revision_directives(context, revision, directives):
         if getattr(config.cmd_opts, 'autogenerate', False):
             script = directives[0]
@@ -95,19 +104,16 @@ def run_migrations_online():
         conf_args["process_revision_directives"] = process_revision_directives
 
     connectable = get_engine()
-
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=get_metadata(),
-            **conf_args
-        )
-
+        context.configure(connection=connection, target_metadata=get_metadata(), **conf_args)
         with context.begin_transaction():
             context.run_migrations()
-
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
+# if we pushed an app context here, pop it to avoid mismatched pops
+if app_ctx_pushed and _app_ctx is not None:
+    _app_ctx.pop()
