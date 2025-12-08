@@ -871,3 +871,4 @@ def user_email_route(user_id):
     if email:
         return jsonify(success=True, email=email)
     return jsonify(success=False, error="User not found"), 404
+
