@@ -24,7 +24,6 @@ def get_detailed_cart_items_for_user(user_id: int) -> list[dict] | None:
                 'image': item.item.image
             } if item.item else None
         })
-        print(res)
     return res
 
 def get_cart_items_for_user(user_id: int) -> list[dict] | None:
@@ -39,10 +38,10 @@ def get_cart_items_for_user(user_id: int) -> list[dict] | None:
     res = []
     for item in items:
         res.append({
-            'id': item.id,
-            'user_id': item.user_id,
-            'item_id': item.item_id,
-            'quantity': item.quantity
+            'id': item['id'],
+            'user_id': item['user_id'],
+            'item_id': item['item_id'],
+            'quantity': item['quantity']
         })
     return res
 

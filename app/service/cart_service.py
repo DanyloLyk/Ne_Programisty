@@ -1,6 +1,7 @@
 from requests import get
 from ..domain.cart_rules import get_cart_items_for_user, get_detailed_cart_items_for_user, get_item_in_cart
 from ..models.cart import CartItem
+from ..models.desktop import Desktop
 from .. import db
 
 class CartService:
@@ -41,12 +42,12 @@ class CartService:
         items = CartService.__get_cart_items(user_id)
         if not items:
             return 0.0
+
         total = 0.0
         for item in items:
-            if item.item and item.item.price is not None:
-                price_str = str(item.item.price).replace(' ', '').replace(',', '.')
-                price = float(price_str)
-                total += price * item.quantity
+            if item.get('item') and item['item'].get('price') is not None:
+                price = float(str(item['item']['price']).replace(' ', '').replace(',', '.'))
+                total += price * item.get('quantity', 0)
         return total
     
     @staticmethod
@@ -81,6 +82,13 @@ class CartService:
         Returns:
             CartItem: Доданий елемент кошика
         """
+        
+            # Перевіряємо, чи існує товар
+        item = Desktop.query.get(item_id)
+        if not item:
+            raise ValueError(f"Товар з id={item_id} не знайдено")
+        
+        
         cart_item = get_item_in_cart(user_id, item_id)
         if cart_item:
             CartService.update_item_quantity(user_id, item_id, cart_item.quantity + quantity)

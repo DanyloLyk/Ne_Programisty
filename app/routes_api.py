@@ -1,7 +1,10 @@
-from flask import Blueprint, jsonify, g, request, session
+from flask import Blueprint, render_template, jsonify, g, request, session
+from functools import wraps
+from app.models import cart
+from app.models.user import User
 from app.service.news_service import NewsService
 from app.service.cart_service import CartService
-from app.models.user import User
+from app.service.user_service import UserService
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -9,30 +12,51 @@ api = Blueprint('api', __name__, url_prefix='/api/v1')
 @api.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
-    g.current_user = User.query.get(user_id) if user_id else None
-
-
-# ----------------- Cart -----------------
-@api.route("/cart", methods=["GET"])
-def get_cart():
+    g.current_user = UserService.get_user_by_id(user_id) if user_id else None
+    
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not g.current_user:
+            return jsonify({"message": "Неавторизований користувач"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+    
+# ----------------- User -----------------
+@api.route("/auth/", methods=["POST"])
+def autorize():
     """
-    Отримати корзину
+    Авторизація користувача
     ---
     tags:
-      - Cart
+      - User
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+            password:
+              type: string
     responses:
-      200:
-        description: Повертає кошик користувача
-      401:
-        description: Користувач не авторизований
+        200:
+            description: Успішна авторизація
+        401:
+            description: Невірні облікові дані
     """
-    if not g.current_user:
-        return jsonify({"error": "User not logged in"}), 401
-
-    user_id = g.current_user.id
-    cart_details = CartService.get_cart(user_id)
-    return jsonify(cart_details)
-
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    
+    user = UserService.authorize_user(username, password)
+    if user:
+        session['user_id'] = user.id
+        return jsonify({"message": "Успішна авторизація"}), 200
+    else:
+        return jsonify({"message": "Невірні облікові дані"}), 401
 
 # ----------------- News -----------------
 @api.route("/news", methods=['GET'])
@@ -134,45 +158,60 @@ def api_add_news():
     parameters:
       - name: body
         in: body
+    """
+    user_id = g.current_user.id  # Припускаємо, що ідентифікатор користувача доступний через g.current_user
+    cart_details = CartService.get_cart(user_id)
+    return jsonify(cart_details)
+
+# ----------------- Cart -----------------
+@api.route("/cart", methods=["GET"])
+@login_required
+def get_cart():
+    """
+    Отримати корзину
+    ---
+    tags:
+      - Cart
+    responses:
+      200:
+        description: Повертає кошик користувача
+      401:
+        description: Користувач не авторизований
+    """
+    if not g.current_user:
+        return jsonify({"error": "User not logged in"}), 401
+
+    user_id = g.current_user.id
+    cart_details = CartService.get_cart(user_id)
+    return jsonify(cart_details)
+
+@api.route("/cart/add", methods=["POST"])
+@login_required
+def add_to_cart():
+    """
+    Додати товар до корзини
+    ---
+    tags:
+      - Cart
+    parameters:
+      - in: body
+        name: body
         required: true
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "Нова новина"
-            description:
-              type: string
-              example: "Короткий опис"
-            descriptionSecond:
-              type: string
-              example: "Детальний опис новини"
-            image_urls:
-              type: array
-              items:
-                type: string
-              example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+          item_id:
+            type: integer
+        quantity:
+            type: integer
     responses:
-      201:
-        description: Новина успішно створена
-      400:
-        description: Некоректні дані
+      200:
+        description: Додає item_id в кошик current_user
     """
-    data = request.json
-    if not data:
-        return jsonify({"error": "No input data provided"}), 400
-
-    name = data.get('name')
-    description = data.get('description')
-    descriptionSecond = data.get('descriptionSecond')
-    image_urls = data.get('image_urls', [])
-
-    new_news = NewsService.create_news(name, description, descriptionSecond, image_urls)
-
+    data = request.get_json()
+    cart_item = CartService.add_item_to_cart(user_id=g.current_user.id, item_id=data.get("item_id"), quantity=data.get("quantity"))
+    # Перетворюємо в dict, щоб Flask міг відправити JSON
     return jsonify({
-        "id": new_news.id,
-        "name": new_news.name,
-        "description": new_news.description,
-        "descriptionSecond": new_news.descriptionSecond,
-        "images": [img.img_url for img in new_news.images]
-    }), 201
+        "id": cart_item.id,
+        "item_id": cart_item.item_id,
+        "quantity": cart_item.quantity,
+        "user_id": cart_item.user_id
+    })
