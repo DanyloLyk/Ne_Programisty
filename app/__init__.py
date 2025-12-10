@@ -13,11 +13,14 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
     app.config['SECRET_KEY'] = 'your_secret_key_here'
+    app.json.sort_keys = False
     app.config['SWAGGER'] = {
         'title': 'My API',
         'uiversion': 3,
+        'sort_keys': False,
         # 'openapi': '3.0.2'  # якщо хочеш OpenAPI 3
     }
+    
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -37,7 +40,23 @@ def create_app():
     app.register_blueprint(api_bp)
     
     from flasgger import Swagger
-    Swagger(app)
+    
+    swagger_config = {
+        "headers": [],
+        "specs": [
+            {
+                "endpoint": 'apispec_1',
+                "route": '/apispec_1.json',
+                "rule_filter": lambda rule: True,
+                "model_filter": lambda tag: True,
+            }
+        ],
+        "static_url_path": "/flasgger_static",
+        "swagger_ui": True,
+        "specs_route": "/apidocs/"
+    }
+
+    Swagger(app, config=swagger_config)
 
 
     with app.app_context():

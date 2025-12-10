@@ -22,14 +22,14 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
     
-# ----------------- User -----------------
+# ----------------- Auth -----------------
 @api.route("/auth/", methods=["POST"])
 def autorize():
     """
     Авторизація користувача
     ---
     tags:
-      - User
+      - Auth
     parameters:
       - in: body
         name: body
@@ -58,6 +58,189 @@ def autorize():
     else:
         return jsonify({"message": "Невірні облікові дані"}), 401
 
+# ----------------- User -----------------
+@api.route("/users/", methods=["GET"])
+def get_users():
+    """
+    Отримати список усіх користувачів
+    ---
+    tags:
+      - User
+    responses:
+        200:
+            description: Список користувачів
+        500:
+            description: Внутрішня помилка сервера
+    """ 
+
+    users = UserService.get_all_users()
+    users_list = []
+    for user in users:
+        users_list.append({
+            "id": user.id,
+            "nickname": user.nickname,
+            "email": user.email,
+            "status": user.status
+        })
+    return jsonify(users_list), 200 
+
+@api.route("/users/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    """
+    Отримати інформацію про користувача за його ID
+    ---
+    tags:
+      - User
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+        200:
+            description: Інформація про користувача
+        404:
+            description: Користувача не знайдено
+    """ 
+
+    user = UserService.get_user_by_id(user_id)
+    if user:
+        return jsonify({
+            "id": user.id,
+            "nickname": user.nickname,
+            "email": user.email,
+            "status": user.status
+        }), 200
+    else:
+        return jsonify({"message": "Користувача не знайдено"}), 404
+    
+
+@api.route("/register/", methods=["POST"])
+def registration():
+    """
+    Реєстрація користувача
+    ---
+    tags:
+      - User
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nickname:
+              type: string
+            email: 
+              type: string
+            password:
+              type: string
+            password_confirm:
+              type: string
+    responses:
+        200:
+            description: Успішна реєстрація
+        400:
+            description: Помилка реєстрації
+    """ 
+
+    data = request.get_json()
+    nickname = data.get("nickname")
+    email = data.get("email")
+    password = data.get("password")
+    password_confirm = data.get("password_confirm")
+    
+    user = UserService.registration(nickname, email, password, password_confirm)
+    if user:
+        return jsonify({"message": "Успішна реєстрація"}), 200
+    else:
+        return jsonify({"message": "Помилка реєстрації"}), 400
+
+@api.route("/delete_user/<int:user_id>", methods=["DELETE"])
+@login_required
+def delete_user(user_id):
+    """
+    Видалити користувача за його ID
+    ---
+    tags:
+      - User
+    parameters:
+      - name: user_id 
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+        200:
+            description: Користувач успішно видалений
+        404:
+            description: Користувача не знайдено
+    """
+    success = UserService.delete_user(user_id)
+    if success:
+        return jsonify({"message": "Користувач успішно видалений"}), 200
+    else:
+        return jsonify({"message": "Користувача не знайдено"}), 404 
+    
+
+@api.route("/edit_user/<int:user_id>", methods=["PUT"])
+@login_required
+def edit_user(user_id):
+    """
+    Редагувати інформацію про користувача
+    ---
+    tags:
+      - User
+    parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        description: ID користувача
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nickname:
+              type: string
+            email: 
+              type: string
+            status:
+              type: string
+            privilege:
+              type: string
+            password:
+              type: string
+    responses:
+        200:
+            description: Інформація про користувача успішно оновлена
+        400:
+            description: Помилка оновлення інформації про користувача
+    """
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"message": "Немає даних для оновлення"}), 400
+
+    nickname = data.get("nickname") 
+    email = data.get("email")
+    status = data.get("status")
+    privilege = data.get("privilege")
+    password = data.get("password")
+    
+    success = UserService.edit_user(user_id, nickname, email, status, privilege, password)
+
+    if success:
+        return jsonify({"message": "Інформація про користувача успішно оновлена"}), 200
+    else:
+        return jsonify({"message": "Помилка оновлення інформації про користувача"}), 400
+    
 # ----------------- News -----------------
 @api.route("/news", methods=['GET'])
 def api_get_news():
@@ -215,3 +398,4 @@ def add_to_cart():
         "quantity": cart_item.quantity,
         "user_id": cart_item.user_id
     })
+
