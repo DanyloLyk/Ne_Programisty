@@ -80,7 +80,9 @@ def get_users():
             "id": user.id,
             "nickname": user.nickname,
             "email": user.email,
-            "status": user.status
+            "status": user.status, 
+            "privilege": user.privilege,
+            "discount_percent": user.discount_percent
         })
     return jsonify(users_list), 200 
 
