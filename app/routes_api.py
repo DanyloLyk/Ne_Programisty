@@ -5,15 +5,33 @@ from app.models.user import User
 from app.service.news_service import NewsService
 from app.service.cart_service import CartService
 from app.service.user_service import UserService
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, current_user
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
+'''
 @api.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
     g.current_user = UserService.get_user_by_id(user_id) if user_id else None
-    
+'''
+
+def admin_required(fn):
+    @wraps(fn)
+    @jwt_required()
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = UserService.get_user_by_id(user_id)
+        
+        # Перевірка, чи юзер існує і чи він Адмін
+        if not user or user.status != 'Admin':
+            return jsonify(msg='Доступ заборонено! Тільки для адмінів!'), 403
+            
+        return fn(*args, **kwargs)
+    return wrapper
+
+'''
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -21,7 +39,8 @@ def login_required(f):
             return jsonify({"message": "Неавторизований користувач"}), 401
         return f(*args, **kwargs)
     return decorated_function
-    
+''' 
+
 # ----------------- Auth -----------------
 @api.route("/auth/", methods=["POST"])
 def autorize():
@@ -53,8 +72,8 @@ def autorize():
     
     user = UserService.authorize_user(username, password)
     if user:
-        session['user_id'] = user.id
-        return jsonify({"message": "Успішна авторизація"}), 200
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({"access_token": access_token, "message": "Успішна авторизація"}), 200
     else:
         return jsonify({"message": "Невірні облікові дані"}), 401
 
@@ -87,6 +106,7 @@ def get_users():
     return jsonify(users_list), 200 
 
 @api.route("/users/<int:user_id>", methods=["GET"])
+@jwt_required()
 def get_user(user_id):
     """
     Отримати інформацію про користувача за його ID
@@ -105,6 +125,8 @@ def get_user(user_id):
             description: Інформація про користувача
         404:
             description: Користувача не знайдено
+    security:
+      - Bearer: []
     """ 
 
     user = UserService.get_user_by_id(user_id)
@@ -161,7 +183,7 @@ def registration():
         return jsonify({"message": "Помилка реєстрації"}), 400
 
 @api.route("/delete_user/<int:user_id>", methods=["DELETE"])
-@login_required
+@admin_required
 def delete_user(user_id):
     """
     Видалити користувача за його ID
@@ -180,6 +202,8 @@ def delete_user(user_id):
             description: Користувач успішно видалений
         404:
             description: Користувача не знайдено
+    security:
+      - Bearer: []
     """
     success = UserService.delete_user(user_id)
     if success:
@@ -189,7 +213,7 @@ def delete_user(user_id):
     
 
 @api.route("/edit_user/<int:user_id>", methods=["PUT"])
-@login_required
+@admin_required
 def edit_user(user_id):
     """
     Редагувати інформацію про користувача
@@ -224,6 +248,8 @@ def edit_user(user_id):
             description: Інформація про користувача успішно оновлена
         400:
             description: Помилка оновлення інформації про користувача
+    security:
+      - Bearer: []
     """
     data = request.get_json()
     
@@ -275,7 +301,7 @@ def api_get_news():
                 items:
                   type: string
                   example: "https://example.com/image.jpg"
-    """
+      """
     news_items = NewsService.fetch_all_news()
     return jsonify(news_items)
 
@@ -306,7 +332,8 @@ def api_get_news_by_id(news_id):
     return jsonify(news_item)
 
 
-@api.route("/news/<int:news_id>", methods=['DELETE'])
+@api.route("/news_delete/<int:news_id>", methods=['DELETE'])
+@admin_required
 def api_delete_news_by_id(news_id):
     """
     Видалити новину за ID
@@ -325,13 +352,16 @@ def api_delete_news_by_id(news_id):
         description: Новина успішно видалена
       404:
         description: Новина не знайдена
+    security:
+      - Bearer: []
     """
     success = NewsService.remove_news_by_id(news_id)
     if not success:
         return jsonify({"error": "News item not found"}), 404
     return jsonify({"message": "News item deleted successfully"})
 
-@api.route("/news/<int:news_id>", methods=['PUT'])
+@api.route("/news_edit/<int:news_id>", methods=['PUT'])
+@admin_required
 def api_edit_news(news_id):
     """
     Редагувати новину за ID
@@ -366,6 +396,8 @@ def api_edit_news(news_id):
         description: Новина успішно оновлена
       404:
         description: Новина не знайдена
+    security:
+      - Bearer: []
     """
     data = request.get_json()
     news_item = NewsService.update_news(
@@ -380,7 +412,8 @@ def api_edit_news(news_id):
     return jsonify({"message": "Новина успішно оновлено"}), 200
 
 
-@api.route("/news", methods=['POST'])
+@api.route("/news_add", methods=['POST'])
+@admin_required
 def api_add_news():
     """
     Додати новину
@@ -409,6 +442,8 @@ def api_add_news():
         description: Новина успішно додана
       400:
         description: Помилка додавання новини
+    security:
+      - Bearer: []
     """
     news=NewsService.create_news(
         name=request.json.get("name"),
@@ -420,7 +455,7 @@ def api_add_news():
 
 # ----------------- Cart -----------------
 @api.route("/get_cart", methods=["GET"])
-@login_required
+@jwt_required()
 def get_cart():
     """
     Отримати корзину для зареєстрованого користувача
@@ -432,16 +467,17 @@ def get_cart():
         description: Повертає кошик користувача
       401:
         description: Користувач не авторизований
+    security:
+      - Bearer: []  
     """
-    if not g.current_user:
+    if not get_jwt_identity():
         return jsonify({"error": "User not logged in"}), 401
 
-    user_id = g.current_user.id
+    user_id = get_jwt_identity()
     cart_details = CartService.get_cart(user_id)
     return jsonify(cart_details)
 
 @api.route("/get_cart/<int:user_id>", methods=["GET"])
-@login_required
 def get_cart_for_user(user_id):
     """
     Отримати корзину для заданого користувача по ід
@@ -459,13 +495,13 @@ def get_cart_for_user(user_id):
       200:
         description: Повертає кошик користувача
       401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований 
     """
     cart_details = CartService.get_cart(user_id)
     return jsonify(cart_details)
 
 @api.route("/get_detailed_cart", methods=["GET"])
-@login_required
+@jwt_required()
 def get_detailed_cart():
     """
     Отримати детальну корзину для зареєстрованого користувача
@@ -477,16 +513,17 @@ def get_detailed_cart():
         description: Повертає кошик користувача
       401:
         description: Користувач не авторизований
+    security:
+      - Bearer: []  
     """
-    if not g.current_user:
+    if not get_jwt_identity():
         return jsonify({"error": "User not logged in"}), 401
 
-    user_id = g.current_user.id
+    user_id = get_jwt_identity()
     cart_details = CartService.get_detailed_cart_items(user_id)
     return jsonify(cart_details)
 
 @api.route("/get_detailed_cart/<int:user_id>", methods=["GET"])
-@login_required
 def get_detailed_cart_for_user(user_id):
     """
     Отримати детальну корзину для заданого користувача по ід
@@ -509,8 +546,8 @@ def get_detailed_cart_for_user(user_id):
     cart_details = CartService.get_detailed_cart_items(user_id)
     return jsonify(cart_details)
 
-@api.route("/cart/add", methods=["POST"])
-@login_required
+@api.route("/cart_add", methods=["POST"])
+@admin_required
 def add_to_cart():
     """
     Додати товар до корзини
@@ -533,9 +570,17 @@ def add_to_cart():
     responses:
       200:
         description: Додає item_id в кошик current_user
+      401:
+        description: Користувач не авторизований
+    security:
+      - Bearer: []
     """
     data = request.get_json()
-    cart_item = CartService.add_item_to_cart(user_id=g.current_user.id, item_id=data.get("item_id"), quantity=data.get("quantity"))
+    if data.get("user_id") is None:
+        user_id = get_jwt_identity()
+    else:
+        user_id = data.get("user_id")
+    cart_item = CartService.add_item_to_cart(user_id=user_id, item_id=data.get("item_id"), quantity=data.get("quantity"))
     # Перетворюємо в dict, щоб Flask міг відправити JSON
     return jsonify({
         "id": cart_item.id,

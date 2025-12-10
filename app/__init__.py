@@ -2,6 +2,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -12,7 +13,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
-    app.config['SECRET_KEY'] = 'your_secret_key_here'
+    app.config['JWT_SECRET_KEY'] = '7ca594aa165516b25042703fbc5f3f16'
     app.json.sort_keys = False
     app.config['SWAGGER'] = {
         'title': 'My API',
@@ -21,7 +22,7 @@ def create_app():
         # 'openapi': '3.0.2'  # якщо хочеш OpenAPI 3
     }
     
-
+    jwt = JWTManager(app)
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -42,6 +43,8 @@ def create_app():
     from flasgger import Swagger
     
     swagger_config = {
+        'title': 'My API',
+        'uiversion': 3,
         "headers": [],
         "specs": [
             {
@@ -53,7 +56,16 @@ def create_app():
         ],
         "static_url_path": "/flasgger_static",
         "swagger_ui": True,
-        "specs_route": "/apidocs/"
+        "specs_route": "/apidocs/",
+        'securityDefinitions': {
+            'Bearer': {
+                'type': 'apiKey',
+                'name': 'Authorization',
+                'in': 'header',
+                'description': "Введіть: Bearer <ваш_токен>"
+            }
+        },
+        'security': [{'Bearer': []}]
     }
 
     Swagger(app, config=swagger_config)
