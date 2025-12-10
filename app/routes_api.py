@@ -233,11 +233,10 @@ def edit_user(user_id):
     status = data.get("status")
     privilege = data.get("privilege")
     password = data.get("password")
-    
+    user = UserService.get_user_by_id(user_id)
     success = UserService.edit_user(user_id, nickname, email, status, privilege, password)
-
     if success:
-        return jsonify({"message": "Інформація про користувача успішно оновлена"}), 200
+        return jsonify({"message": "Інформація про користувача успішно оновлена", "data": user.to_dict()}), 200
     else:
         return jsonify({"message": "Помилка оновлення інформації про користувача"}), 400
     

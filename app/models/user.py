@@ -42,6 +42,17 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nickname': self.nickname,
+            'email': self.email,
+            'status': self.status,
+            'privilege': self.privilege,
+            'privilege_label': self.privilege_label,
+            'discount_percent': self.discount_percent
+        }
 
     @property
     def privilege_info(self):

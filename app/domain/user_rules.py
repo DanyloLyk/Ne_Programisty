@@ -45,13 +45,30 @@ def delete_user(user_id):
 def edit_user(user_id, nickname, email, status, privilege, password=None):
     
     user = User.query.get(user_id)
-    user.nickname = nickname
-    user.email = email
-    user.status = status
-    user.privilege = privilege
+
+    if user is None:
+        return False
+    
+    if nickname is not None:
+        user.nickname = nickname
+
+    if email is not None:
+        user.email = email
+    
+    if status is not None:
+        user.status = status
+
+    if privilege is not None:
+        user.privilege = privilege
 
     if user.password != password and password is not None:
         user.set_password(password)
 
-    db.session.commit()
-    return True
+    user.ensure_valid_levels()
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error editing user: {e}")
+        return False
