@@ -21,7 +21,8 @@ def get_detailed_cart_items_for_user(user_id: int) -> list[dict] | None:
                 'name': item.item.name,
                 'description': item.item.description,
                 'price': float(str(item.item.price).replace(' ', '').replace(',', '.')) if item.item.price is not None else 0.0,
-                'image': item.item.image
+                'image': item.item.image,
+                'total_price': (float(str(item.item.price).replace(' ', '').replace(',', '.')) if item.item.price is not None else 0.0) * item.quantity
             } if item.item else None
         })
     return res

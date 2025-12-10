@@ -419,11 +419,11 @@ def api_add_news():
     return jsonify(created=news.id), 200
 
 # ----------------- Cart -----------------
-@api.route("/cart", methods=["GET"])
+@api.route("/get_cart", methods=["GET"])
 @login_required
 def get_cart():
     """
-    Отримати корзину
+    Отримати корзину для зареєстрованого користувача
     ---
     tags:
       - Cart
@@ -440,6 +440,75 @@ def get_cart():
     cart_details = CartService.get_cart(user_id)
     return jsonify(cart_details)
 
+@api.route("/get_cart/<int:user_id>", methods=["GET"])
+@login_required
+def get_cart_for_user(user_id):
+    """
+    Отримати корзину для заданого користувача по ід
+    ---
+    tags:
+      - Cart
+    parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+      200:
+        description: Повертає кошик користувача
+      401:
+        description: Користувач не авторизований
+    """
+    cart_details = CartService.get_cart(user_id)
+    return jsonify(cart_details)
+
+@api.route("/get_detailed_cart", methods=["GET"])
+@login_required
+def get_detailed_cart():
+    """
+    Отримати детальну корзину для зареєстрованого користувача
+    ---
+    tags:
+      - Cart
+    responses:
+      200:
+        description: Повертає кошик користувача
+      401:
+        description: Користувач не авторизований
+    """
+    if not g.current_user:
+        return jsonify({"error": "User not logged in"}), 401
+
+    user_id = g.current_user.id
+    cart_details = CartService.get_detailed_cart_items(user_id)
+    return jsonify(cart_details)
+
+@api.route("/get_detailed_cart/<int:user_id>", methods=["GET"])
+@login_required
+def get_detailed_cart_for_user(user_id):
+    """
+    Отримати детальну корзину для заданого користувача по ід
+    ---
+    tags:
+      - Cart
+    parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+      200:
+        description: Повертає кошик користувача
+      401:
+        description: Користувач не авторизований
+    """
+    cart_details = CartService.get_detailed_cart_items(user_id)
+    return jsonify(cart_details)
+
 @api.route("/cart/add", methods=["POST"])
 @login_required
 def add_to_cart():
@@ -453,10 +522,14 @@ def add_to_cart():
         name: body
         required: true
         schema:
-          item_id:
-            type: integer
-        quantity:
-            type: integer
+          type: object
+          properties:
+            user_id:
+              type: integer
+            item_id:
+              type: integer
+            quantity:
+              type: integer
     responses:
       200:
         description: Додає item_id в кошик current_user

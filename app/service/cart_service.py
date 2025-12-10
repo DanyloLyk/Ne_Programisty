@@ -17,7 +17,8 @@ class CartService:
             return None
         return res
     
-    def __get_deteailed_cart_items(user_id: int) -> list[CartItem] | None:
+    @staticmethod
+    def get_detailed_cart_items(user_id: int) -> list[CartItem] | None:
         """
         Повертає детально всі товари в кошику для заданого користувача.
         
@@ -39,15 +40,15 @@ class CartService:
         Returns:
             float: Загальна вартість товарів у кошику
         """
-        items = CartService.__get_cart_items(user_id)
+        items = CartService.get_detailed_cart_items(user_id)
         if not items:
             return 0.0
 
         total = 0.0
         for item in items:
-            if item.get('item') and item['item'].get('price') is not None:
-                price = float(str(item['item']['price']).replace(' ', '').replace(',', '.'))
-                total += price * item.get('quantity', 0)
+            if item.get('item') and item['item'].get('total_price') is not None:
+                price_for_order = item['item']['total_price']
+                total += price_for_order
         return total
     
     @staticmethod
