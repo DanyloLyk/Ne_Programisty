@@ -330,6 +330,54 @@ def api_delete_news_by_id(news_id):
         return jsonify({"error": "News item not found"}), 404
     return jsonify({"message": "News item deleted successfully"})
 
+@api.route("/news/<int:news_id>", methods=['PUT'])
+def api_edit_news(news_id):
+    """
+    Редагувати новину за ID
+    ---
+    tags:
+      - News
+    parameters:
+      - name: news_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID новини
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            descriptionSecond:
+              type: string
+            image_urls:
+              type: array
+              items:
+                type: string
+    responses:
+      200:
+        description: Новина успішно оновлена
+      404:
+        description: Новина не знайдена
+    """
+    data = request.get_json()
+    news_item = NewsService.update_news(
+        news_id,
+        name=data.get("name"),
+        description=data.get("description"),
+        descriptionSecond=data.get("descriptionSecond"),
+        image_urls=data.get("image_urls", [])
+    )
+    if not news_item:
+        return jsonify({"error": "Новину не знайдено"}), 404
+    return jsonify({"message": "Новина успішно оновлено"}), 200
+
 
 @api.route("/news", methods=['POST'])
 def api_add_news():
@@ -339,12 +387,35 @@ def api_add_news():
     tags:
       - News
     parameters:
-      - name: body
-        in: body
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            descriptionSecond:
+              type: string
+            image_urls:
+              type: array
+              items:
+                type: string
+    responses:
+      200:
+        description: Новина успішно додана
+      400:
+        description: Помилка додавання новини
     """
-    user_id = g.current_user.id  # Припускаємо, що ідентифікатор користувача доступний через g.current_user
-    cart_details = CartService.get_cart(user_id)
-    return jsonify(cart_details)
+    news=NewsService.create_news(
+        name=request.json.get("name"),
+        description=request.json.get("description"),
+        descriptionSecond=request.json.get("descriptionSecond"),
+        image_urls=request.json.get("image_urls", [])
+    )
+    return jsonify(created=news.id), 200
 
 # ----------------- Cart -----------------
 @api.route("/cart", methods=["GET"])

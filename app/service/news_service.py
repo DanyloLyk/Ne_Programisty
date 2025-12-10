@@ -17,3 +17,28 @@ class NewsService:
     @staticmethod
     def create_news(name, description, descriptionSecond, image_urls):
         return add_news(name, description, descriptionSecond, image_urls)
+    
+    @staticmethod
+    def update_news(news_id, name, description, descriptionSecond, image_urls):
+        from .. import db
+        item = News.query.get(news_id)
+        if item is None:
+            return None
+
+        item.name = name
+        item.description = description
+        item.descriptionSecond = descriptionSecond
+
+        # Видаляємо існуючі зображення
+        NewsImage.query.filter_by(news_id=news_id).delete()
+
+        # Додаємо нові зображення
+        for url in image_urls:
+            news_image = NewsImage(
+                img_url=url,
+                news_id=news_id
+            )
+            db.session.add(news_image)
+
+        db.session.commit()
+        return item
