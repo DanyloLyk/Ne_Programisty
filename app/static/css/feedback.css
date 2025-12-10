@@ -1,0 +1,67 @@
+:root,
+[data-bs-theme="light"] {
+  --bs-body-bg: #f8f9fa;
+  --input-color: #e0e1e3;
+  --border-color: #ced4da;
+  --focus-shadow-color: rgba(255, 193, 7, 0.5); /* Жовтий для світлої теми */
+  --focus-border-color: #ffc107; /* Жовта рамка для світлої теми */
+  --focus-bg-color: #ffffff; /* Білий фон при фокусі */
+  --focus-text-color: #212529; /* Чорний текст */
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #2D3142;
+  --input-color: #343a40;
+  --border-color: #495057;
+  --focus-shadow-color: rgba(69, 78, 97, 0.6); /* Більш нейтральний/темний відтінок для тіні */
+  --focus-border-color: #ffc107; /* Світло-сіра або синя рамка для контрасту */
+  --focus-bg-color: #495057; /* Темний фон при фокусі */
+  --focus-text-color: #ffffff; /* Білий текст */
+}
+.feedback-form-card.dark-theme {
+    background-color: var(--bs-body-bg);
+    border-radius: 12px;
+    border: 1px solid var(--focus-border-color);
+}
+.feedback-header {
+    color: var(--focus-border-color) !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 1px;
+}
+.form-label {
+    font-weight: 600;
+    color: var(--focus-border-color);
+    margin-bottom: 8px;
+    display: block;
+}
+.form-control {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: var(--input-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--focus-text-color); /* Колір тексту за замовчуванням */
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+.form-control:focus {
+    border-color: var(--focus-border-color) !important;
+    box-shadow: 0 0 0 0.2rem var(--focus-shadow-color) !important;
+    background-color: var(--focus-bg-color) !important;
+
+    /* Динамічний колір тексту */
+    color: var(--focus-text-color) !important;
+}
+.form-submit-btn {
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    color: #212529;
+}
+.form-submit-btn:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+}
+.form-submit-btn:active {
+    transform: translateY(1px);
+}
+#form-message {
+    color: #f8f9fa;
+}

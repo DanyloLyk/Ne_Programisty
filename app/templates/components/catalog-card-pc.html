@@ -6,7 +6,11 @@
             <h5 class="card-title">{{ item.name }}</h5>
             <h3 class="card-subtitle mb-2 text-warning fw-bold">💰 {{ item.price }} ₴</h3>
             <p class="card-text">{{ item.description }}</p>
-            <button class="btn btn-outline-warning w-100 fw-bold buy-btn">🛒 Купити</button>
+            {% if current_user %}
+            <a href="{{ url_for('main.add_to_cart', item_id=item.id) }}" class="btn btn-outline-warning w-100 fw-bold buy-btn">🛒 Добавити в кошик</a>
+            {% else %}
+            <button type="button" class="btn btn-secondary w-100 require-auth" data-bs-toggle="tooltip" data-bs-placement="top" title="Потрібно зареєструватись">🛒 Добавити в кошик</button>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,16 +1,55 @@
+{% include 'components/login-panel.html' %}
+
 <header class="navbar fixed-top navbar-expand-lg border-bottom bg-body-tertiary shadow-sm animate-navbar">
   <div class="container-fluid">
     <!-- ЛОГО -->
-    <a href="/" class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft" style="animation-delay: 0.5s; animation-fill-mode: both;">
+    <a href="/" class="navbar-brand d-flex align-items-center animate__animated animate__fadeInLeft"
+      style="animation-delay: 0.5s; animation-fill-mode: both;">
       <img src="static/images/logo.png" alt="Logo" width="32" height="32" class="me-2">
       <span class="fw-bold text-warning">Гральна Комора</span>
     </a>
+    <div class="d-flex justify-content-end align-items-center gap-1">
+      {% if not current_user %}
+      <!-- Мобільна кнопка Вхід (кругла) -->
+      <button id="login-mobile"
+        class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none">
+        <div class="svg-wrapper-1">
+          <div class="svg-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+              <path
+                d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+            </svg>
+          </div>
+        </div>
+      </button>
+      {% else %}
+      <button id="profile-mobile"
+        class="login-btn mobile d-flex align-items-center justify-content-center ms-2 d-lg-none"
+        aria-label="Показати профіль">
+        <div class="svg-wrapper-1">
+          <div class="svg-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+              <path d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+            </svg>
+          </div>
+        </div>
+      </button>
+      {% endif %}
+      <!-- Мобільна кнопка кошика -->
+      <a href="/cart" class="text-decoration-none" data-cart-link="true">
+        <button id="cart-button-mobile"
+          class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-lg-none ms-2 position-relative"
+          style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
+          🛒
+        </button>
+      </a>
+      <!-- Кнопка перемикання теми мобільна -->
+      <button id="theme-toggle-mobile" class="nav-btn rounded-circle border-0 p-2 d-lg-none ms-2">
+        🌙
+      </button>
+    </div>
 
-    <button id="theme-toggle-mobile" class="btn btn-outline-secondary rounded-circle border-0 p-2 d-lg-none me-2"
-      type="button" style="width: 40px; height: 40px;">
-      🌙
-    </button>
-
+    <!-- Hamburger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -23,73 +62,177 @@
         <li class="nav-item"><a href="/catalog" class="nav-link">Каталог</a></li>
         <li class="nav-item"><a href="/contacts" class="nav-link">Контакти</a></li>
         <li class="nav-item"><a href="/news" class="nav-link">Новини</a></li>
+        {% if current_user %}
+        <li class="nav-item"><a href="/feedback" class="nav-link">Відгуки</a></li>
+        {% endif %}
 
-      <button id="theme-toggle-desktop"
-        class="btn btn-outline-secondary rounded-circle border-0 p-2 ms-lg-3 d-none d-lg-block"
-        style="width: 40px; height: 40px;">
-        🌙
-      </button>
+        {% if not current_user %}
+        <!-- ПК кнопка Вхід після Новини -->
+        <li class="nav-item d-none d-lg-block ms-2">
+          <button id="login-desktop"
+            class="login-btn desktop d-none d-lg-flex align-items-center justify-content-center ms-3">
+            <div class="svg-wrapper-1">
+              <div class="svg-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24">
+                  <path
+                    d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0zm0 80c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 384c-52.9 0-99.8-23.9-131.4-61.4 2.1-43.8 87.6-67.9 131.4-67.9s129.3 24.1 131.4 67.9C355.8 440.1 308.9 464 256 464z" />
+                </svg>
+              </div>
+            </div>
+            <span>Вхід</span>
+          </button>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown d-none d-lg-block ms-3">
+          <a class="nav-link dropdown-toggle fw-semibold text-warning" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {{ current_user.nickname }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Статус: {{ current_user.status }}
+              </span>
+            </li>
+            <li>
+              <div class="dropdown-item-text small d-flex align-items-center">
+                <span class="me-2 text-muted">Привілегія:</span>
+                <span class="badge bg-{{ current_user.privilege_info.badge_class }} text-uppercase">
+                  {{ current_user.privilege_label }}
+                </span>
+              </div>
+            </li>
+            <li>
+              <span class="dropdown-item-text text-muted small">
+                Знижка: -{{ current_user.discount_percent }}%
+              </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Вийти</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        <li class="nav-item d-none d-lg-block ms-2">
+          <!-- ПК кнопка кошика -->
+          <a href="/cart" class="text-decoration-none" data-cart-link="true">
+            <button id="cart-button-desktop"
+              class="nav-btn btn-yellow-hover rounded-circle border-0 p-2 d-none d-lg-inline-flex ms-lg-2 position-relative"
+              style="width: 40px; height: 40px;" aria-label="Відкрити кошик">
+              🛒
+            </button>
+          </a>
+        </li>
+        <!-- ПК кнопка перемикання теми -->
+        <li class="nav-item d-none d-lg-block ms-2">
+          <button id="theme-toggle-desktop" class="nav-btn rounded-circle border-0 p-2"
+            style="width: 40px; height: 40px;">
+            🌙
+          </button>
+        </li>
+        {% if current_user and current_user.status in ['Admin', 'Moder'] %}
+        <!-- Кнопка адмін-панелі: десктоп -->
+        <li class="nav-item d-none d-lg-block ms-3">
+          <a href="{{ url_for('main.admin') }}" class="btn btn-primary btn-sm">
+            Адмін панель
+          </a>
+        </li>
+        <!-- Мобільна кнопка адмін-панелі: показується в бургер-меню внизу -->
+        <li class="nav-item d-lg-none w-100 mt-3">
+          <a href="{{ url_for('main.admin') }}" class="btn btn-primary w-100">
+            Адмін панель
+          </a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 </header>
 
+{% if current_user %}
+<div id="mobile-profile-panel" class="mobile-user-info d-lg-none mx-3 mt-2 mb-3">
+  <div class="fw-semibold text-uppercase small text-muted mb-2">Ваш профіль</div>
+  <div class="mobile-user-row">
+    <span>Користувач:</span>
+    <span class="fw-semibold">{{ current_user.nickname }}</span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Статус:</span>
+    <span class="text-uppercase fw-semibold">{{ current_user.status }}</span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Привілегія:</span>
+    <span class="badge bg-{{ current_user.privilege_info.badge_class }} text-uppercase">
+      {{ current_user.privilege_label }}
+    </span>
+  </div>
+  <div class="mobile-user-row">
+    <span>Знижка:</span>
+    <span class="fw-semibold">-{{ current_user.discount_percent }}%</span>
+  </div>
+  <div class="mt-3 text-end">
+    <a href="{{ url_for('main.logout') }}" class="btn btn-outline-warning btn-sm">Вийти</a>
+  </div>
+</div>
+{% endif %}
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-  const currentPath = window.location.pathname;
-  const navLinks = document.querySelectorAll('.nav-link');
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
 
-  navLinks.forEach(link => {
-    const linkPath = link.getAttribute('href');
-
-    // Активуємо лінку, якщо шлях збігається
-    // або (особливий випадок — / vs /index.html)
-    if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
-      link.classList.add('active');
-    }
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      if (linkPath === currentPath || (linkPath === '/' && currentPath === '/index.html')) {
+        link.classList.add('active');
+      }
+    });
   });
-});
 
-// ======== Темна / Світла тема ========
+  const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+  const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
+  const body = document.body;
+  const profileMobileBtn = document.getElementById('profile-mobile');
+  const mobileProfilePanel = document.getElementById('mobile-profile-panel');
 
-const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
-const body = document.body;
+  function updateTheme(theme) {
+    body.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+    const icon = theme === 'light' ? '🌙' : '☀️';
+    if (themeToggleMobile) themeToggleMobile.textContent = icon;
+    if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
+  }
 
-// Функція для оновлення теми
-function updateTheme(theme) {
-  body.setAttribute('data-bs-theme', theme);
-  localStorage.setItem('theme', theme);
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  updateTheme(savedTheme);
 
-  const icon = theme === 'light' ? '🌙' : '☀️';
+  function toggleTheme(event) {
+    const current = body.getAttribute('data-bs-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    const themeToggle = event.currentTarget;
+    themeToggle.classList.add('rotate-icon');
+    themeToggle.addEventListener('animationend', () => {
+      themeToggle.classList.remove('rotate-icon');
+    }, { once: true });
+    updateTheme(next);
+  }
 
-  if (themeToggleMobile) themeToggleMobile.textContent = icon;
-  if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
-}
+  if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+  if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
 
-// Зчитуємо тему з localStorage або встановлюємо 'light'
-const savedTheme = localStorage.getItem('theme') || 'light';
-updateTheme(savedTheme);
+  if (profileMobileBtn && mobileProfilePanel) {
+    const toggleMobilePanel = () => {
+      mobileProfilePanel.classList.toggle('show');
+    };
 
-// Функція перемикання теми
-function toggleTheme(event) {
-  const current = body.getAttribute('data-bs-theme');
-  const next = current === 'light' ? 'dark' : 'light';
+    profileMobileBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleMobilePanel();
+    });
 
-  // Знайти кнопку, яка була натиснута
-  const themeToggle = event.currentTarget;
-
-  // Анімація обертання іконки
-  themeToggle.classList.add('rotate-icon');
-  themeToggle.addEventListener('animationend', () => {
-    themeToggle.classList.remove('rotate-icon');
-  }, { once: true });
-
-  updateTheme(next);
-}
-
-// Призначаємо обробники подій для перемикачів
-if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
-
+    document.addEventListener('click', (event) => {
+      if (!mobileProfilePanel.contains(event.target)) {
+        mobileProfilePanel.classList.remove('show');
+      }
+    });
+  }
 </script>
-

@@ -4,12 +4,30 @@
   --bs-body-color: #212529;
   --bs-primary: #EF8354;
   --bs-secondary: #4e555b;
+  --nav-btn-hover-bg: #4e555b;
+  --login-color: #e0e1e3;
+  --login-color1: #f8f9fa;
 }
 
 [data-bs-theme="dark"] {
   --bs-body-bg: #2D3142;
   --bs-body-color: #f8f9fa;
   --bs-primary: #EF8354;
+  --login-color: #212121;
+  --login-color1: #2D3142;
+  --nav-btn-hover-bg: #ffc107;
+  --auth-surface-bg: #212121;
+  --auth-surface-text: #f8f9fa;
+  --auth-surface-subtext: #e0e0e0;
+  --auth-input-bg: #323232;
+  --auth-input-text: #f8f9fa;
+  --auth-accent: #ffc107;
+  --auth-button-bg: #212121;
+  --auth-button-color: #ffc107;
+  --auth-button-hover-bg: #ffc107;
+  --auth-button-hover-color: #212121;
+  --loader-bg: rgba(33, 33, 33, 0.95);
+  --loader-bg-hover: rgba(33, 33, 33, 0.85);
 }
 
 /* Анімація появи navbar */
@@ -35,6 +53,8 @@
 .nav-link {
   position: relative;
   transition: color 0.3s ease-in-out;
+  color: var(--bs-body-color) !important;                   /* Додаємо */
+  text-decoration: none;          /* Додаємо */
 }
 
 .nav-link::after {
@@ -163,6 +183,318 @@ body {
   opacity: 0.12;
 }
 
+/* Мобільна кнопка — кругла, чорний фон, жовта іконка */
+.login-btn.mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--login-color); /* чорний фон */
+    color: #ffc107; /* жовта іконка */
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    box-shadow: 0 0 0 transparent;
+}
+
+.login-btn.mobile svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--auth-button-color);
+    transition: transform 0.3s ease, fill 0.25s ease;
+}
+
+.login-btn.mobile:hover {
+    background-color: #ffc107; /* фон стає жовтим */
+    color: var(--login-color1); /* іконка чорна */
+}
+
+.login-btn.mobile:hover svg {
+    fill: var(--login-color1);
+    transform: scale(1.2);
+}
+
+.login-btn.mobile:active {
+    transform: scale(0.95);
+}
+
+/* ПК кнопка — прямокутна з текстом, чорний фон, жовтий текст */
+.login-btn.desktop {
+  font-family: inherit;
+  font-size: 16px;              /* було 20px */
+  background: var(--login-color);          /* темний фон */
+  color: #ffc107;               /* жовтий текст */
+  fill: #ffc107;                /* жовта іконка */
+  padding: 0.5em 0.8em;         /* трохи менше */
+  padding-left: 0.7em;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0 transparent;
+}
+
+.login-btn.desktop span {
+  display: block;
+  margin-left: 0.25em;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-btn.desktop svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Ефект наведення */
+.login-btn.desktop:hover {
+  background: #ffc107;
+  color: var(--login-color1);
+  fill: var(--login-color1);
+  box-shadow: 0 0 10px #ffc107; /* трохи менше світіння */
+}
+
+/* Анімація руху іконки */
+.login-btn.desktop:hover .svg-wrapper {
+  transform: scale(1.25);
+  transition: 0.4s linear;
+}
+
+.login-btn.desktop:hover svg {
+  transform: translateX(1em) scale(1.1);
+}
+
+/* Зникнення тексту при наведенні */
+.login-btn.desktop:hover span {
+  opacity: 0;
+  transition: 0.4s linear;
+}
+
+/* При натисканні — легке зменшення */
+.login-btn.desktop:active {
+  transform: scale(0.95);
+}
+
+
+/* From Uiverse.io by bociKond */ 
+/* Основний фон і кольори сайту */
+.form {
+  --background: var(--login-color);       /* чорний фон */
+  --input-focus: #ffc107;      /* жовтий контур при фокусі */
+  --font-color: #ffc107;       /* жовтий текст */
+  --font-color-sub: var(--bs-body-color);   /* світлий сірий для підписів */
+  --bg-color: var(--login-color1);         /* фон input */
+  --main-color: #ffc107;       /* акцент жовтий */
+  padding: 20px;
+  background: var(--background);
+  color: var(--font-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 350px;
+}
+
+/* Заголовок форми */
+.form > p {
+  color: var(--font-color);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.form > p > span {
+  color: var(--font-color-sub);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Input fields */
+.input-span {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-span input[type="text"],
+.input-span input[type="email"],
+.input-span input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  color: var(--auth-input-text);
+  outline: none;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.input-span input[type="text"]:focus,
+.input-span input[type="email"]:focus,
+.input-span input[type="password"]:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 8px var(--input-focus);
+}
+
+
+/* Labels */
+.label {
+  color: var(--font-color);
+  font-weight: 600;
+}
+
+/* Submit button */
+.oauthButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0 15px;
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--main-color); /* Жовтий фон спочатку */
+  color: #212121; /* Чорний текст спочатку */
+  box-shadow: 7px 7px #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 250ms;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.oauthButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #212121; /* Чорний для ефекту hover */
+  z-index: -1;
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+}
+
+.oauthButton:hover {
+  color: var(--main-color); /* Текст стає жовтим */
+}
+
+.oauthButton:hover::before {
+  width: 100%;
+}
+
+.oauthButton.submit:hover svg {
+  transform: translateX(5px) rotate(20deg);
+  fill: var(--main-color); /* Іконка теж міняє колір */
+}
+
+/* Модалка фонове покриття */
+.login-modal,
+.signup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;       /* займає весь екран */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.5); /* тьмяне тло */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 11000;
+  transition: opacity 0.2s ease;
+}
+
+/* Активна модалка */
+.login-modal.show,
+.signup-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Контент модалки */
+.login-modal-content,
+.signup-modal-content {
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
+  border-radius: 10px;
+  /* Proportional, not too wide */
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  position: relative;
+  border: none;
+  transition: box-shadow 180ms ease, opacity 160ms ease;
+}
+
+/* Кнопка закриття */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #ffc107;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close:hover {
+  color: #ffffff;
+}
+.login-modal-content,
+.signup-modal-content {
+  /* ensure only one styled modal definition controls sizing/appearance */
+  background-color: var(--auth-surface-bg, var(--login-color));
+  color: var(--auth-surface-text, var(--bs-body-color));
+  padding: clamp(12px, 3.5vw, 20px);
+  border-radius: 10px;
+  width: clamp(300px, 46vw, 380px);
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  position: relative;
+  border: none;
+  box-shadow: 
+    0 8px 28px rgba(255, 193, 7, 0.35),   /* теплий жовтий glow */
+    0 0 20px rgba(255, 193, 7, 0.25),      /* м’яка зовнішня підсвітка */
+    0 0 40px rgba(255, 193, 7, 0.15);      /* легкий ореол */
+  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition: box-shadow 180ms ease, opacity 160ms ease;
+}
+
+/* hover: subtle shadow only (no scale) */
+.login-modal-content:hover,
+.signup-modal-content:hover {
+  transform: scale(1.02);
+  box-shadow: 
+    0 12px 30px rgba(255, 193, 7, 0.45),   /* посилений жовтий glow */
+    0 0 25px rgba(255, 193, 7, 0.35),      /* яскравіша зовнішня підсвітка */
+    0 0 50px rgba(255, 193, 7, 0.25);      /* більш виразний ореол */
+}
+
+
+
 
 
 /* Social icons styling */
@@ -259,5 +591,155 @@ body {
 
 
 
+/* Навігаційні кнопки(кошик та зміна теми) з анімацією */
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;          /* прибираємо рамку */
+  background: none;      /* прибираємо стандартний фон */
+  box-shadow: none;      /* початково без тіні */
+  
+}
 
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;          
+  background: none;      
+  box-shadow: none;      
+  cursor: pointer;
+  border-radius: 50%;    /* щоб кругла була */
+  transition: 
+    background 0.3s ease-in-out, 
+    box-shadow 0.3s ease-in-out, 
+    transform 0.2s ease-in-out;
+}
 
+.nav-btn:hover {
+  background: var(--nav-btn-hover-bg);            
+  box-shadow: 0 0 30px var(--nav-btn-hover-bg);
+  transform: scale(1.1); /* трохи збільшуємо */
+}
+
+.nav-btn:focus {
+  outline: none; 
+  box-shadow: 0 0 30px var(--nav-btn-hover-bg);
+}
+
+/* Щоб при відведенні мишки ефект плавно зникав */
+.nav-btn:not(:hover) {
+  transition: 
+    background 0.4s ease-in-out, 
+    box-shadow 0.4s ease-in-out, 
+    transform 0.3s ease-in-out;
+  background: none;
+  box-shadow: none;
+  transform: scale(1);
+}
+
+/* Для мобільних пристроїв */
+.nav-btn.mobile {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ffc107; /* жовтий фон за замовчуванням */
+  color: #212121;             /* чорна іконка */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 
+    background 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
+  box-shadow: none;
+}
+
+.nav-btn.mobile svg {
+  width: 22px;
+  height: 22px;
+  fill: #212121; /* чорна іконка */
+  transition: transform 0.3s ease, fill 0.3s ease;
+}
+
+/* Hover / натискання */
+.nav-btn.mobile:hover {
+  background-color: #212121;  /* чорний фон */
+  color: #ffc107;             /* жовта іконка */
+  box-shadow: 0 0 25px #ffc107; /* жовте сяйво */
+  transform: scale(1.15);        /* легке збільшення */
+}
+
+.nav-btn.mobile:hover svg {
+  fill: #ffc107;               /* іконка стає жовтою */
+  transform: scale(1.2);
+}
+
+.nav-btn.mobile:active {
+  transform: scale(0.95);      /* натискання */
+  box-shadow: 0 0 15px #ffc107;
+}
+
+.nav-btn.mobile:focus {
+  outline: none;
+  box-shadow: 0 0 25px #ffc107;
+}
+
+/* Плавне повернення до звичайного стану */
+.nav-btn.mobile:not(:hover) {
+  transition: 
+    background 0.4s ease-in-out, 
+    color 0.4s ease-in-out, 
+    box-shadow 0.4s ease-in-out, 
+    transform 0.3s ease-in-out;
+  background-color: #ffc107;
+  color: #212121;
+  box-shadow: none;
+  transform: scale(1);
+}
+
+/* Обгортка зображення картки: Фіксує висоту */
+.card-img-wrapper {
+    width: 100%;
+    height: 200px; /* Приклад висоти. Можна змінити. */
+    overflow: hidden;
+}
+.card-img-wrapper img {
+    object-fit: cover; /* Обрізає та зберігає пропорції */
+    height: 100%;
+    width: 100%;
+}
+
+.mobile-user-info {
+  display: none;
+  background-color: var(--auth-surface-bg);
+  color: var(--auth-surface-text);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.15);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mobile-user-info.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+  gap: 0.75rem;
+}
+
+.mobile-user-row span:last-child {
+  font-weight: 600;
+}

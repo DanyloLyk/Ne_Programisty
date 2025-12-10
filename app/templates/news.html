@@ -2,11 +2,11 @@
 
 {% block title %}Новини - Гральна Комора{% endblock %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+
 {% block content %}
 <div class="container mt-5">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
 
-    <!-- Новини -->
     <section class="row text-center border-top pt-4 mb-5">
         <div class="col-12">
             <h2 class="fw-bold text-warning mb-3">Останні новини</h2>
@@ -17,378 +17,63 @@
     </section>
 
     <section class="row mb-5">
-        <!-- Новина 1 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news1.jpg') }}" class="card-img-top"
-                    alt="Стратегія 2025">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Новинка: Гра “Стратегія 2025”</h5>
-                    <p class="card-text fs-6">
-                        Випробуйте свої стратегічні навички у новій грі! Відкрийте для себе світ битв і дипломатії.
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal1">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Новина 2 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news2.jpg') }}" class="card-img-top img-fluid"
-                    alt="Акція на ігри">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Акція: -40% на популярні ігри</h5>
-                    <p class="card-text fs-6">
-                        Обмежений час! Знижки на топові настільні ігри цього тижня — поповніть колекцію за вигідною
-                        ціною.
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal2">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Новина 3 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news3.jpg') }}" class="card-img-top" alt="Майстер-клас">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Майстер-клас для гравців</h5>
-                    <p class="card-text fs-6">
-                        Хочеш грати як професіонал? Приходь на наш безкоштовний майстер-клас і навчись новим тактикам!
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal3">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Новина 4 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news4.jpg') }}" class="card-img-top"
-                    alt="Турнір з настільних ігор">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Турнір з настільних ігор</h5>
-                    <p class="card-text fs-6">
-                        Перевір свої стратегічні навички та виграй круті призи!
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal4">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Новина 5 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news5.jpg') }}" class="card-img-top"
-                    alt="Нові настільні ігри">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Нові настільні ігри у продажу</h5>
-                    <p class="card-text fs-6">
-                        Нові пригоди та квести вже чекають на тебе у нашому магазині.
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal5">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Новина 6 -->
-        <div class="col-md-4 mb-4">
-            <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
-                <img src="{{ url_for('static', filename='images/news6.jpg') }}" class="card-img-top"
-                    alt="Вечірка для геймерів">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-warning">Вечірка для геймерів</h5>
-                    <p class="card-text fs-6">
-                        Приходь на тематичну вечірку та грай разом з іншими фанатами настільних ігор!
-                    </p>
-                    <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
-                        data-bs-target="#newsModal6">
-                        Детальніше
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-
-    <!-- Модальні вікна -->
-
-    <!-- Модалка 1 -->
-    <div class="modal fade" id="newsModal1" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Гра “Стратегія 2025” 🎮</h2>
-
-                    <!-- Carousel -->
-                    <div id="carouselNews1" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news1.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news1-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news1-3.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 3">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews1"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews1"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
+     {% for item in news %}
+       <div class="col-md-4 mb-4">
+                <div class="card border-warning shadow-sm h-100 animate__animated card-hover-animate">
+                    <div class="card-img-wrapper">
+                        {% if item.images %}
+                            <img src="{{ url_for('static', filename=item.images[0].img_url) }}" class="card-img-top"
+                                 alt="{{ item.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" class="card-img-top"
+                                 alt="Немає зображення">
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-warning">{{ item.name }}</h5>
+                        <p class="card-text fs-6 text-truncate-3">{{ item.description }}</p>
+                        <button type="button" class="btn btn-outline-warning mt-auto buy-btn" data-bs-toggle="modal"
+                                data-bs-target="#newsModal{{ item.id }}">
+                            Детальніше
                         </button>
                     </div>
-
-                    <p>Відкрийте для себе неймовірний світ “Стратегія 2025”! <br> 🏰 Побудуйте власну імперію,
-                        використовуючи
-                        хитрість, стратегію та дипломатію 🤝. <br> Кожна партія – нові виклики ⚔️ і можливість проявити
-                        свій
-                        стратегічний талант 🧠.</p>
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">Закрити</button>
                 </div>
+            </div>
+    {% endfor %}
+</section>
+    {% for item in news %}
+  <div class="modal fade news-modal-dark" id="newsModal{{ item.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow dark-modal-content">
+            <div class="modal-body p-4">
+                <h2 class="fw-bold mb-3 modal-title-warning">{{ item.name }} 🎮</h2>
+                <div id="carouselNews{{ item.id }}" class="carousel slide mb-4" data-bs-ride="carousel">
+                    <div class="carousel-inner rounded-3">
+                        {% for image in item.images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img src="{{ url_for('static', filename=image.img_url) }}"
+                                    class="d-block w-100 rounded-3" alt="Фото до новини {{ item.name }} - {{ loop.index }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev carousel-control-accent" type="button" data-bs-target="#carouselNews{{ item.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next carousel-control-accent" type="button" data-bs-target="#carouselNews{{ item.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <p class="news-description mb-2">
+                    {{ item.description | replace('\n', '<br>') | safe }}
+                </p>
+                <p class="news-description accent-text mt-2 mb-0">
+                    {{ item.descriptionSecond | replace('\n', '<br>') | safe }}
+                </p>
+                <button type="button" class="btn btn-warning btn-lg w-100 mt-4 modal-close-btn" data-bs-dismiss="modal">Закрити</button>
             </div>
         </div>
     </div>
-
-    <!-- Модалка 2 -->
-    <div class="modal fade" id="newsModal2" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Акція: -40% на популярні ігри 🤑</h2>
-
-                    <div id="carouselNews2" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news2-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news2-3.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 3">
-                            </div>
-                        </div>
-
-                        <!-- Кнопки навігації -->
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews2"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews2"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
-                        </button>
-                    </div>
-
-                    <p>
-                        Поповніть колекцію настільних хітів зі знижкою 40% 🎉! <br>
-                        “Catan”, “Ticket to Ride”, “Carcassonne” та інші стали ще доступнішими 🏷️. <br>
-                        Організовуйте вечори з друзями та сім’єю 👨‍👩‍👧‍👦. <br>
-                    </p>
-
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">
-                        Закрити
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Модалка 3 -->
-    <div class="modal fade" id="newsModal3" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Майстер-клас для гравців 🏫</h2>
-
-                    <div id="carouselNews3" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news3.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news3-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews3"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews3"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
-                        </button>
-                    </div>
-
-                    <p>Приходьте на живий майстер-клас 🎯. <br> Отримайте поради від досвідчених геймерів, спробуйте
-                        нестандартні комбінації ходів 🔍 і відкрийте нові способи перемагати 🏆.</p>
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">Закрити</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка 4 -->
-    <div class="modal fade" id="newsModal4" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Турнір з настільних ігор 🏅</h2>
-
-                    <div id="carouselNews4" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news4.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news4-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews4"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews4"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
-                        </button>
-                    </div>
-
-                    <p>Щомісячний турнір для фанатів настільних ігор 🎲. <br> Переможці отримають призи 🏆, сертифікати
-                        📜 та
-                        бонуси 🎁.</p>
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">Закрити</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка 5 -->
-    <div class="modal fade" id="newsModal5" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Нові настільні ігри у продажу 🆕</h2>
-
-                    <div id="carouselNews5" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news5.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news5-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews5"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews5"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
-                        </button>
-                    </div>
-
-                    <p>Нові пригодницькі квести та кооперативні ігри вже чекають на тебе 🌟. <br> Веселі вечори з
-                        друзями чи
-                        родиною 👨‍👩‍👧‍👦 гарантовані!</p>
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">Закрити</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка 6 -->
-    <div class="modal fade" id="newsModal6" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-body p-5">
-                    <h2 class="fw-bold mb-3">Вечірка для геймерів 🎉</h2>
-
-                    <!-- Carousel -->
-                    <div id="carouselNews6" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ url_for('static', filename='images/news6.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news6-2.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ url_for('static', filename='images/news6-3.jpg') }}"
-                                    class="d-block w-100 rounded" alt="Фото 3">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews6"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Попереднє</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselNews6"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Наступне</span>
-                        </button>
-                    </div>
-
-                    <p>
-                        Приходь на тематичну вечірку у “Гральну Комору”! 🕹️ <br>
-                        Ігри, конкурси 🏆, призи 🎁 та весела компанія гарантовані 🤗. <br>
-                        Випробуй свої навички в командних та індивідуальних турнірах ⚔️, отримай подарунки і нові
-                        знайомства 🤝. <br>
-                        Це шанс провести час весело, активно та з користю 🎯, об’єднуючи геймерів у дружню спільноту!
-                    </p>
-                    <button type="button" class="btn btn-outline-warning w-100 mt-3" data-bs-dismiss="modal">Закрити</button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+    {% endfor %}
 </div>
 {% endblock %}
