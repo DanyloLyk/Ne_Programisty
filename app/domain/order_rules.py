@@ -7,8 +7,11 @@ from app.models.user import User
 def get_all_orders():
     return Order.query.all()
 
-def get_order(user_id):
-    return Order.query.get(user_id)
+def get_order(order_id):
+    return Order.query.get(order_id)
+
+def get_orders(user_id):
+    return Order.query.filter_by(user_id=user_id).all()
 
 def add_order(user_id):
     try:
@@ -30,15 +33,42 @@ def add_order(user_id):
             db.session.delete(cart_item)
         
         db.session.commit()
-        
-        order_id = order.id
-        return True, order.to_dict(), order_id, 200
+    
+        return order, None
         
     except ValueError as e:
         db.session.rollback()
-        print(f"ValueError при створенні замовлення: {e}")
-        return jsonify(message=f"ValueError при створенні замовлення: {e}"), 400
+        return None, f"Помилка даних: {str(e)}"
     except Exception as e:
         db.session.rollback()
-        print(f"Помилка при створенні замовлення: {e}")
-        return jsonify(message=f"Помилка при створенні замовлення: {e}"), 500
+        print(f"CRITICAL ERROR: {e}")
+        return None, f"Системна помилка: {str(e)}"
+
+def delete_order(order_id):
+    order = Order.query.get(order_id)
+    if order is None:
+        return False
+    else:
+        db.session.delete(order)
+        db.session.commit()
+        return True
+    
+def edit_order(order_id, status=None):
+    order = Order.query.get(order_id)
+
+    if order is None:
+        return False, f"Замовлення з id={order_id} не знайдено"
+    
+    if status is not None:
+        order.status = status
+    else:        
+        return None, f"Cтатус замовлення не оновлено, зберігся поточний статус: {order.status}"
+
+    try:
+        db.session.commit()
+        order = Order.query.get(order_id)
+        return order, None
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error editing order: {e}")
+        return None, f"Помилка при редагуванні замовлення: {str(e)}"

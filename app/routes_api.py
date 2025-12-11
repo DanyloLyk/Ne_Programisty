@@ -1194,21 +1194,21 @@ def get_all_orders():
     orders = OrdersService.get_all_orders()
     return jsonify([order.to_dict() for order in orders])
 
-@api.route("/order/<int:order_id>", methods=["GET"])
+@api.route("/order/<int:user_id>", methods=["GET"])
 @jwt_required()
-def get_order(order_id):
+def get_order(user_id):
     """
-    Отримати замовлення за ID замовлення
+    Отримати замовлення за ID користувача
     ---
     tags:
       - Orders
     parameters:
-      - name: order_id
+      - name: user_id
         in: path
         required: true
         schema:
           type: integer
-        description: ID замовлення   
+        description: ID користувача
     responses:
         200:
             description: Інформація про замовлення
@@ -1220,11 +1220,11 @@ def get_order(order_id):
       - Bearer: []
     """
 
-    order = OrdersService.get_order(order_id)
-    if not order:
-        return jsonify({"message": "Замовлення не знайдено"}), 404
+    orders = OrdersService.get_orders(user_id)
+    if not orders:
+        return jsonify({"message": "Замовлень не знайдено"}), 404
     else:
-        return jsonify(order.to_dict()), 200
+        return jsonify(orders), 200
     
 @api.route("/add_order/<int:user_id>", methods=["POST"])
 @jwt_required()
@@ -1253,9 +1253,85 @@ def add_order(user_id):
     """
     if not user_id:
         user_id = get_jwt_identity()
-    result = OrdersService.add_order(user_id)
-    if result:
-      return jsonify({"message": f"Замовлення успішно створено: {result}", "data": OrdersService.get_order(user_id).to_dict()}), 200
-    else: 
-      return jsonify({"message": "Помилка створення замовлення"}), 400
+    order, error_message = OrdersService.add_order(user_id)
     
+    if error_message:
+        return jsonify({"message": error_message}), 400
+        
+    return jsonify({
+        "message": "Замовлення успішно створено",
+        "data": order.to_dict()
+    }), 200
+    
+@api.route("/orders/<int:order_id>", methods=["PATCH"])
+@admin_required
+def update_order_status(order_id):
+    """
+    Оновити статус замовлення
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: order_id
+        in: path 
+        required: true
+        schema:
+          type: integer
+        description: ID замовлення
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+        description: Новий статус замовлення
+    responses:
+        200:
+            description: Статус замовлення успішно оновлено
+        404:
+            description: Замовлення не знайдено
+        500:
+            description: Внутрішня помилка сервера
+    security:
+      - Bearer: []
+    """ 
+    data = request.get_json()
+    new_status = data.get("status")
+    
+    order, error_message = OrdersService.edit_status_order(order_id, new_status)
+    if not error_message:
+        return jsonify({"message": "Статус замовлення успішно оновлено", "data": order.to_dict()}), 200
+    else:
+        return jsonify({"message": error_message}), 404
+    
+@api.route("/orders/<int:order_id>", methods=["DELETE"])
+@admin_required
+def delete_order(order_id):
+    """
+    Видалити замовлення за його ID
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: order_id 
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID замовлення
+    responses:
+        200:
+            description: Замовлення успішно видалено
+        404:
+            description: Замовлення не знайдено
+    security:
+      - Bearer: []
+    """
+    result = OrdersService.delete_order(order_id)
+
+    if result:
+        return jsonify({"message": "Замовлення успішно видалено"}), 200
+    else:
+        return jsonify({"message": "Замовлення не знайдено"}), 404  
