@@ -10,6 +10,7 @@ class CartItem(db.Model):
     quantity = db.Column(db.Integer, default=1, nullable=False)
 
     user = db.relationship('User', backref='cart_items', lazy='select')
+    item_id = db.Column(db.Integer, db.ForeignKey('desktops.id'), nullable=False)#уточнення для SQL бо таблиця називається desktops
     item = db.relationship('Desktop', backref='in_carts', lazy='select')
 
     def __repr__(self):
