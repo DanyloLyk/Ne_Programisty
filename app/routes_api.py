@@ -454,106 +454,136 @@ def api_add_news():
     return jsonify(created=news.id), 200
 
 # ----------------- Cart -----------------
-@api.route("/get_cart", methods=["GET"])
+@api.route("/cart", methods=["GET"])
 @jwt_required()
 def get_cart():
     """
-    Отримати корзину для зареєстрованого користувача
+    Отримати власний кошик (Детальні дані)
     ---
     tags:
       - Cart
+    summary: Отримує деталізований список товарів (з ціною, назвою, тощо) у кошику поточного автентифікованого користувача.
+    description: >
+      Використовує ID користувача з JWT-токена. Завжди повертає повну інформацію про товари, включаючи їх назви та ціни.
     responses:
       200:
-        description: Повертає кошик користувача
+        description: Повертає деталізований список позицій кошика.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              item_id:
+                type: integer
+                format: int64
+                description: Ідентифікатор товару.
+              quantity:
+                type: integer
+                format: int32
+                description: Кількість цього товару в кошику.
+              name:
+                type: string
+                description: Назва товару.
+              price:
+                type: number
+                format: float
+                description: Ціна за одиницю товару.
+              # ... інші деталі товару ...
       401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Користувач не авторизований
     security:
       - Bearer: []  
     """
-    if not get_jwt_identity():
-        return jsonify({"error": "User not logged in"}), 401
-
+    # Ми перевірили, що токен існує за допомогою @jwt_required(), але логіка все одно залишається:
     user_id = get_jwt_identity()
-    cart_details = CartService.get_cart(user_id)
+    
+    # Викликаємо сервіс, який тепер повертає деталізовані дані
+    cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/get_cart/<int:user_id>", methods=["GET"])
+@api.route("/cart/<int:user_id>", methods=["GET"])
+@admin_required # <-- Додано обов'язковий декоратор для безпеки
 def get_cart_for_user(user_id):
     """
-    Отримати корзину для заданого користувача по ід
+    Отримати детальний кошик для заданого користувача по ID
     ---
     tags:
       - Cart
+    summary: Отримує деталізований список товарів у кошику вказаного користувача. Доступно лише адміністраторам.
+    description: >
+      Використовується адміністратором для перегляду кошика будь-якого користувача за його ID.
+      Повертає повну інформацію про товари (детальний кошик).
     parameters:
       - in: path
         name: user_id
         required: true
         schema:
           type: integer
-        description: ID користувача
+        description: ID користувача, детальний кошик якого потрібно отримати.
     responses:
       200:
-        description: Повертає кошик користувача
+        description: Повертає деталізований список позицій кошика.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              item_id:
+                type: integer
+                format: int64
+                description: Ідентифікатор товару.
+              quantity:
+                type: integer
+                format: int32
+                description: Кількість цього товару в кошику.
+              name:
+                type: string
+                description: Назва товару.
+              price:
+                type: number
+                format: float
+                description: Ціна за одиницю товару.
       401:
-        description: Користувач не авторизований 
-    """
-    cart_details = CartService.get_cart(user_id)
-    return jsonify(cart_details)
-
-@api.route("/get_detailed_cart", methods=["GET"])
-@jwt_required()
-def get_detailed_cart():
-    """
-    Отримати детальну корзину для зареєстрованого користувача
-    ---
-    tags:
-      - Cart
-    responses:
-      200:
-        description: Повертає кошик користувача
-      401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Missing Authorization Header
+      403:
+        description: Доступ заборонено (Користувач не є адміністратором).
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Admin privileges required
     security:
-      - Bearer: []  
+      - Bearer: []
     """
-    if not get_jwt_identity():
-        return jsonify({"error": "User not logged in"}), 401
-
-    user_id = get_jwt_identity()
-    cart_details = CartService.get_detailed_cart_items(user_id)
+    # Викликаємо сервіс, який тепер повертає деталізовані дані
+    cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/get_detailed_cart/<int:user_id>", methods=["GET"])
-def get_detailed_cart_for_user(user_id):
-    """
-    Отримати детальну корзину для заданого користувача по ід
-    ---
-    tags:
-      - Cart
-    parameters:
-      - in: path
-        name: user_id
-        required: true
-        schema:
-          type: integer
-        description: ID користувача
-    responses:
-      200:
-        description: Повертає кошик користувача
-      401:
-        description: Користувач не авторизований
-    """
-    cart_details = CartService.get_detailed_cart_items(user_id)
-    return jsonify(cart_details)
-
-@api.route("/cart_add", methods=["POST"])
+@api.route("/cart", methods=["POST"])
 @admin_required
 def add_to_cart():
     """
-    Додати товар до корзини
+    Додати товар до кошика
     ---
     tags:
       - Cart
+    summary: Додає товар до кошика автентифікованого або вказаного користувача.
+    description: >
+      Якщо `user_id` передано в тілі запиту, товар додається до кошика цього користувача (потрібні права адміністратора). 
+      Якщо `user_id` **не** передано, товар додається до кошика користувача, визначеного за JWT токеном (поточний автентифікований користувач).
     parameters:
       - in: body
         name: body
@@ -563,15 +593,46 @@ def add_to_cart():
           properties:
             user_id:
               type: integer
+              format: int64
+              description: >
+                **НЕОБОВ'ЯЗКОВЕ ПОЛЕ.** Ідентифікатор користувача. 
+                Використовується, якщо потрібно додати товар до кошика іншого користувача (зазвичай вимагає прав адміністратора). 
+                Якщо не вказано, використовується ID автентифікованого користувача з токена.
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, який додається.
+              required: true
+            quantity:
+              type: integer
+              format: int32
+              description: Кількість товару.
+              default: 1
+              required: true
+          # Явно вказуємо, які поля є обов'язковими. user_id тут відсутній.
+          required:
+            - item_id
+            - quantity
+    responses:
+      200:
+        description: Успішно додано товар в кошик. Повертає деталі нової позиції кошика.
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
             item_id:
               type: integer
             quantity:
               type: integer
-    responses:
-      200:
-        description: Додає item_id в кошик current_user
+            user_id:
+              type: integer
+      400:
+        description: Недійсні дані або відсутність обов'язкових полів (item_id або quantity).
       401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований (відсутній JWT токен).
+      403:
+        description: Доступ заборонено (наприклад, якщо користувач без прав адміністратора намагається передати чужий `user_id`).
     security:
       - Bearer: []
     """
@@ -588,4 +649,228 @@ def add_to_cart():
         "quantity": cart_item.quantity,
         "user_id": cart_item.user_id
     })
+    
+@api.route("/cart", methods=["DELETE"])
+@admin_required
+def remove_from_cart():
+    """
+    Видалити товар з кошика користувача
+    ---
+    tags:
+      - Cart
+    summary: Видаляє вказаний товар з кошика користувача. Доступно лише адміністраторам.
+    description: >
+      Використовується для видалення однієї позиції товару з кошика вказаного користувача.
+      Обов'язково вимагає `user_id` та `item_id` у тілі запиту.
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор користувача, з кошика якого потрібно видалити товар.
+              required: true
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, який потрібно видалити.
+              required: true
+          required:
+            - user_id
+            - item_id
+    responses:
+      200:
+        description: Товар успішно видалено з кошика.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Товар успішно видалено з кошика.
+      400:
+        description: Недійсні дані або відсутність обов'язкових полів.
+      401:
+        description: Користувач не авторизований.
+      403:
+        description: Доступ заборонено (Користувач не є адміністратором).
+      404:
+        description: Товар не знайдено в кошику вказаного користувача.
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
 
+    # 1. Перевірка обов'язкових полів
+    user_id = data.get("user_id")
+    item_id = data.get("item_id")
+    
+    if user_id is None or item_id is None:
+        return jsonify({"error": "Поля 'user_id' та 'item_id' є обов'язковими."}), 400
+    
+    # 2. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить remove_item_from_cart
+    try:
+        user_id = int(user_id)
+        item_id = int(item_id)
+    except ValueError:
+        return jsonify({"error": "ID користувача та товару мають бути цілими числами."}), 400
+        
+    was_removed = CartService.remove_item_from_cart(user_id=user_id, item_id=item_id)
+
+    # 3. Обробка результату
+    if was_removed:
+        return jsonify({"message": "Товар успішно видалено з кошика.", "user_id": user_id, "item_id": item_id}), 200
+    else:
+        # Якщо товар не знайдено, повертаємо 404
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено в кошику користувача з ID {user_id}."}), 404
+
+@api.route("/cart/clear", methods=["DELETE"])
+@jwt_required()
+def clear_cart_endpoint():
+    """
+    Очистити весь кошик
+    ---
+    tags:
+      - Cart
+    summary: Повністю видаляє всі товари з кошика поточного автентифікованого користувача.
+    description: Операція не вимагає тіла запиту, оскільки ідентифікатор користувача береться з JWT токена.
+    parameters:
+      # Параметри тіла запиту відсутні
+      # - in: header
+      #   name: Authorization
+      #   required: true
+      #   type: string
+      #   description: Bearer Token
+      []
+    responses:
+      200:
+        description: Кошик користувача успішно очищено.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Ваш кошик успішно очищено.
+      401:
+        description: Користувач не авторизований (відсутній або недійсний JWT токен).
+    security:
+      - Bearer: []
+    """
+    # 1. Отримання ID користувача з токена
+    current_user_id = get_jwt_identity()
+    
+    # 2. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить clear_cart
+    try:
+        CartService.clear_cart(user_id=current_user_id)
+        
+        # 3. Успішна відповідь
+        return jsonify({
+            "message": "Ваш кошик успішно очищено.", 
+            "user_id": current_user_id
+        }), 200
+        
+    except Exception as e:
+        # Обробка можливих помилок бази даних або сервісу
+        print(f"Помилка при очищенні кошика користувача {current_user_id}: {e}")
+        return jsonify({"error": "Не вдалося очистити кошик через внутрішню помилку сервера."}), 500
+
+@api.route("/cart/quantity", methods=["PUT"])
+@jwt_required()
+def update_cart_item_quantity():
+    """
+    Оновити кількість товару в кошику
+    ---
+    tags:
+      - Cart
+    summary: Оновлює кількість конкретного товару в кошику поточного користувача.
+    description: >
+      Використовується для зміни кількості товару (item_id) у кошику користувача, 
+      ідентифікатор якого береться з JWT-токена.
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, кількість якого потрібно змінити.
+              required: true
+            quantity:
+              type: integer
+              format: int32
+              description: Нова кількість товару. Має бути > 0.
+              required: true
+          required:
+            - item_id
+            - quantity
+    responses:
+      200:
+        description: Кількість товару успішно оновлено.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Кількість товару успішно оновлено.
+            item_id:
+              type: integer
+            quantity:
+              type: integer
+      400:
+        description: Недійсні дані (наприклад, quantity < 1) або відсутність обов'язкових полів.
+      401:
+        description: Користувач не авторизований.
+      404:
+        description: Товар не знайдено в кошику користувача.
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
+
+    # 1. Отримання ID користувача з токена
+    current_user_id = get_jwt_identity()
+
+    # 2. Отримання даних з тіла запиту
+    item_id = data.get("item_id")
+    quantity = data.get("quantity")
+    
+    # 3. Валідація вхідних даних
+    if item_id is None or quantity is None:
+        return jsonify({"error": "Поля 'item_id' та 'quantity' є обов'язковими."}), 400
+        
+    try:
+        item_id = int(item_id)
+        quantity = int(quantity)
+    except ValueError:
+        return jsonify({"error": "ID товару та кількість мають бути цілими числами."}), 400
+
+    if quantity <= 0:
+        # Якщо кількість <= 0, краще використати DELETE-запит, але для PUT-запиту це помилка
+        return jsonify({"error": "Кількість повинна бути більше нуля. Для видалення використовуйте DELETE."}), 400
+
+    # 4. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить update_item_quantity
+    was_updated = CartService.update_item_quantity(
+        user_id=current_user_id, 
+        item_id=item_id, 
+        quantity=quantity
+    )
+
+    # 5. Обробка результату
+    if was_updated:
+        return jsonify({
+            "message": "Кількість товару успішно оновлено.", 
+            "item_id": item_id, 
+            "quantity": quantity
+        }), 200
+    else:
+        # Якщо товар не знайдено в кошику
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}),
