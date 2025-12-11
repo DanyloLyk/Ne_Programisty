@@ -1,85 +1,44 @@
 from ..models.user import User
-from ..domain.user_rules import add_user, get_user_by_id, get_users, delete_user, edit_user
+from ..domain import user_rules
 
 class UserService:
     @staticmethod
     def get_all_users() -> list[User]:
-        """
-        Повертає список усіх користувачів.
-        """
-        return get_users()
+        return user_rules.get_users()
     
     @staticmethod
     def get_user_by_id(user_id: int) -> User | None:
-        """
-        Повертає користувача за його ID.
-        
-        user_id: ID користувача
-        """
-        return get_user_by_id(user_id)
+        return user_rules.get_user_by_id(user_id)
     
     @staticmethod
     def authorize_user(username: str, password: str) -> User | None:
         """
-        Перевіряє облікові дані користувача, і повертає id користувача, якщо авторизація успішна.       
-        Args:
-            username: Ім'я користувача
-            password: Пароль користувача
-        
-        Returns:
-            User | None: Об'єкт користувача, якщо авторизація успішна, інакше None
+        Перевіряє облікові дані.
         """
-        user = User.query.filter_by(nickname=username).first()
+        user = user_rules.get_user_by_username(username)
         if user and user.check_password(password):
             return user
         return None
 
     @staticmethod
-    def registration(nickname: str, email: str, password: str, password_confirm: str) -> User:
+    def registration(nickname: str, email: str, password: str, password_confirm: str):
         """
-        Створює нового користувача.
-        
-        Args:
-            nickname: Ім'я користувача
-            email: Електронна пошта користувача
-            password: Пароль користувача
-            password_confirm: Повторний пароль для підтвердження
-        
-        Returns:
-            User | None: Реєстрація користувача або None, якщо реєстрація не вдалася
+        Returns: (User, None) або (None, error_message)
         """
-        if not nickname or not email or not password or not password_confirm:
-            return None
-        else: 
-            return add_user(nickname, email, password, password_confirm)
+        if not nickname or not email or not password:
+            return None, "Всі поля є обов'язковими"
+            
+        return user_rules.add_user(nickname, email, password, password_confirm)
 
     @staticmethod
     def delete_user(user_id: int) -> bool:
-        """
-        Видаляє користувача за його ID.
-        
-        user_id: ID користувача
-        """
-        if get_user_by_id(user_id) is None:
+        if not user_id:
             return False
-        elif user_id is None:
-            return False
-        else:
-            return delete_user(user_id)
+        return user_rules.delete_user(user_id)
     
     @staticmethod
-    def edit_user(user_id: int, nickname: str, email: str, status: str, privilege: str, password: str = None) -> bool:
+    def edit_user(user_id: int, nickname: str, email: str, status: str, privilege: str, password: str = None):
         """
-        Редагує інформацію про користувача.
-        
-        user_id: ID користувача
-        nickname: Ім'я користувача
-        email: Електронна пошта користувача
-        status: Статус користувача
-        privilege: Привілеї користувача
-        password: Новий пароль користувача (необов'язково)
+        Returns: (User, None) або (None, error_message)
         """
-        if get_user_by_id(user_id) is None:
-            return False
-        else:
-            return edit_user(user_id, nickname, email, status, privilege, password)
+        return user_rules.edit_user(user_id, nickname, email, status, privilege, password)

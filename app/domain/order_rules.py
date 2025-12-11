@@ -1,74 +1,80 @@
-from flask import jsonify
 from .. import db
 from app.models.order import Order
 from app.models.cart import CartItem
 from app.models.user import User
 
 def get_all_orders():
-    return Order.query.all()
+    try:
+        return Order.query.all()
+    except Exception:
+        return []
 
-def get_order(order_id):
+def get_order_by_id(order_id):
     return Order.query.get(order_id)
 
-def get_orders(user_id):
-    return Order.query.filter_by(user_id=user_id).all()
-
-def add_order(user_id):
+def get_user_orders(user_id):
     try:
-        
-        cart_items = CartItem.query.filter_by(user_id=user_id).all()
-        
-        if not cart_items or len(cart_items) == 0:
-            return jsonify(message="Кошик порожній, неможливо створити замовлення"), 400
-        
-        privelege_user = User.query.get(user_id).privilege  
-        discount = getattr(privelege_user, 'discount_multiplier', 1.0)
+        return Order.query.filter_by(user_id=user_id).all()
+    except Exception:
+        return []
 
+def create_order_from_cart(user_id):
+    # 1. Отримуємо юзера для знижки
+    user = User.query.get(user_id)
+    if not user:
+        return None, "Користувача не знайдено"
+
+    cart_items = CartItem.query.filter_by(user_id=user_id).all()
+    if not cart_items:
+        return None, "Кошик порожній"
+
+    try:
+        # 2. Правильно беремо знижку з властивості об'єкта User
+        discount = user.discount_multiplier 
+
+        # 3. Створюємо замовлення (метод моделі Order)
         order = Order.add_order(user_id, cart_items, discount)
         
         db.session.add(order)
-        db.session.flush()  
         
-        for cart_item in cart_items:
-            db.session.delete(cart_item)
+        # 4. Очищаємо кошик
+        for item in cart_items:
+            db.session.delete(item)
         
         db.session.commit()
-    
         return order, None
         
     except ValueError as e:
         db.session.rollback()
-        return None, f"Помилка даних: {str(e)}"
+        return None, str(e)
     except Exception as e:
         db.session.rollback()
-        print(f"CRITICAL ERROR: {e}")
         return None, f"Системна помилка: {str(e)}"
 
-def delete_order(order_id):
+def delete_order_by_id(order_id):
     order = Order.query.get(order_id)
-    if order is None:
+    if not order:
         return False
-    else:
+        
+    try:
         db.session.delete(order)
         db.session.commit()
         return True
+    except Exception:
+        db.session.rollback()
+        return False
     
-def edit_order(order_id, status=None):
+def update_order_status(order_id, status):
     order = Order.query.get(order_id)
-
-    if order is None:
-        return False, f"Замовлення з id={order_id} не знайдено"
+    if not order:
+        return None, "Замовлення не знайдено"
     
-    if status is not None:
-        order.status = status
-    else:        
-        return None, f"Cтатус замовлення не оновлено, зберігся поточний статус: {order.status}"
-
     try:
+        # Валідацію статусу зробить модель (якщо там є @validates)
+        # або ми це вже перевірили в сервісі
+        order.status = status
         db.session.commit()
-        order = Order.query.get(order_id)
         return order, None
     except Exception as e:
         db.session.rollback()
-        print(f"Error editing order: {e}")
-        return None, f"Помилка при редагуванні замовлення: {str(e)}"
+        return None, str(e)

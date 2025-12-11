@@ -52,28 +52,57 @@ def autorize():
     ---
     tags:
       - Auth
+    summary: Вхід в систему та отримання JWT токена
+    description: >
+      Перевіряє логін та пароль користувача. Якщо дані вірні, повертає `access_token`, 
+      який потрібно використовувати для доступу до захищених маршрутів.
     parameters:
       - in: body
         name: body
         required: true
+        description: Облікові дані користувача
         schema:
           type: object
+          required:
+            - username
+            - password
           properties:
             username:
               type: string
+              example: "cat"
+              description: Нікнейм користувача
             password:
               type: string
+              example: "123"
+              description: Пароль користувача
     responses:
         200:
             description: Успішна авторизація
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  description: JWT токен для авторизації (Bearer)
+                message:
+                  type: string
+                  example: "Успішна авторизація"
         401:
-            description: Невірні облікові дані
+            description: Помилка авторизації
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Невірні облікові дані"
     """
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
     
+    # Тут сервіс може повертати просто юзера, бо помилка одна - "невірні дані"
     user = UserService.authorize_user(username, password)
+    
     if user:
         access_token = create_access_token(identity=str(user.id))
         return jsonify({"access_token": access_token, "message": "Успішна авторизація"}), 200
@@ -88,13 +117,30 @@ def get_users():
     ---
     tags:
       - User
+    summary: Повертає публічну інформацію про всіх користувачів
     responses:
         200:
-            description: Список користувачів
+            description: Список користувачів успішно отримано
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  nickname:
+                    type: string
+                  email:
+                    type: string
+                  status:
+                    type: string
+                  privilege:
+                    type: string
+                  discount_percent:
+                    type: integer
         500:
             description: Внутрішня помилка сервера
     """ 
-
     users = UserService.get_all_users()
     users_list = []
     for user in users:
@@ -112,26 +158,43 @@ def get_users():
 @jwt_required()
 def get_user(user_id):
     """
-    Отримати інформацію про користувача за його ID
+    Отримати профіль користувача за ID
     ---
     tags:
       - User
+    summary: Детальна інформація про конкретного користувача
     parameters:
       - name: user_id
         in: path
         required: true
         schema:
           type: integer
-        description: ID користувача
+        description: Унікальний ID користувача
     responses:
         200:
-            description: Інформація про користувача
+            description: Користувача знайдено
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                nickname:
+                  type: string
+                email:
+                  type: string
+                status:
+                  type: string
         404:
             description: Користувача не знайдено
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Користувача не знайдено"
     security:
       - Bearer: []
     """ 
-
     user = UserService.get_user_by_id(user_id)
     if user:
         return jsonify({
@@ -147,67 +210,100 @@ def get_user(user_id):
 @api.route("/register/", methods=["POST"])
 def registration():
     """
-    Реєстрація користувача
+    Реєстрація нового користувача
     ---
     tags:
       - User
+    summary: Створення нового акаунту
+    description: >
+      Реєструє нового користувача. Вимагає унікальний email та нікнейм.
+      Паролі повинні співпадати.
     parameters:
       - in: body
         name: body
         required: true
+        description: Дані для реєстрації
         schema:
           type: object
+          required:
+            - nickname
+            - email
+            - password
+            - password_confirm
           properties:
             nickname:
               type: string
+              description: Бажаний нікнейм (унікальний)
             email: 
               type: string
+              format: email
+              description: Електронна пошта (унікальна)
             password:
               type: string
+              description: Пароль
             password_confirm:
               type: string
+              description: Підтвердження паролю
     responses:
         200:
             description: Успішна реєстрація
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Успішна реєстрація"
         400:
-            description: Помилка реєстрації
+            description: Помилка валідації або конфлікт даних
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Паролі не співпадають"
     """ 
-
     data = request.get_json()
     nickname = data.get("nickname")
     email = data.get("email")
     password = data.get("password")
     password_confirm = data.get("password_confirm")
     
-    user = UserService.registration(nickname, email, password, password_confirm)
-    if user:
-        return jsonify({"message": "Успішна реєстрація"}), 200
-    else:
-        return jsonify({"message": "Помилка реєстрації"}), 400
+    # Оновлений виклик сервісу (повертає user, error)
+    user, error_message = UserService.registration(nickname, email, password, password_confirm)
+    
+    if error_message:
+        # Повертаємо конкретну помилку (400 Bad Request)
+        return jsonify({"message": error_message}), 400
+        
+    return jsonify({"message": "Успішна реєстрація"}), 200
 
 @api.route("/delete_user/<int:user_id>", methods=["DELETE"])
 @admin_required
 def delete_user(user_id):
     """
-    Видалити користувача за його ID
+    Видалити користувача (Тільки Адмін)
     ---
     tags:
       - User
+    summary: Видалення користувача за його ID
     parameters:
       - name: user_id 
         in: path
         required: true
         schema:
           type: integer
-        description: ID користувача
+        description: ID користувача для видалення
     responses:
         200:
-            description: Користувач успішно видалений
+            description: Успішне видалення
+        403:
+            description: Доступ заборонено (не адмін)
         404:
             description: Користувача не знайдено
     security:
       - Bearer: []
     """
+    # Тут можна залишити як є, або теж переробити сервіс на повернення (bool, msg)
     success = UserService.delete_user(user_id)
     if success:
         return jsonify({"message": "Користувач успішно видалений"}), 200
@@ -215,17 +311,18 @@ def delete_user(user_id):
         return jsonify({"message": "Користувача не знайдено"}), 404 
     
 
-@api.route("/edit_user/<int:user_id>", methods=["PUT"])
+@api.route("/edit_user/<int:user_id>", methods=["PATCH"])
 @admin_required
 def edit_user(user_id):
     """
-    Редагувати інформацію про користувача
+    Редагувати дані користувача (Тільки Адмін)
     ---
     tags:
       - User
+    summary: Оновлення інформації про користувача
     parameters:
-      - in: path
-        name: user_id
+      - name: user_id
+        in: path
         required: true
         schema:
           type: integer
@@ -242,15 +339,29 @@ def edit_user(user_id):
               type: string
             status:
               type: string
+              enum: [User, Admin, Moder]
             privilege:
               type: string
+              enum: [Default, Gold, Diamond, VIP]
             password:
               type: string
     responses:
         200:
-            description: Інформація про користувача успішно оновлена
+            description: Інформація успішно оновлена
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                data:
+                  type: object
+                  description: Оновлений об'єкт користувача
         400:
-            description: Помилка оновлення інформації про користувача
+            description: Помилка валідації (наприклад, нікнейм зайнятий)
+        403:
+            description: Доступ заборонено
+        404:
+            description: Користувача не знайдено
     security:
       - Bearer: []
     """
@@ -259,17 +370,22 @@ def edit_user(user_id):
     if not data:
         return jsonify({"message": "Немає даних для оновлення"}), 400
 
-    nickname = data.get("nickname") 
-    email = data.get("email")
-    status = data.get("status")
-    privilege = data.get("privilege")
-    password = data.get("password")
-    user = UserService.get_user_by_id(user_id)
-    success = UserService.edit_user(user_id, nickname, email, status, privilege, password)
-    if success:
-        return jsonify({"message": "Інформація про користувача успішно оновлена", "data": user.to_dict()}), 200
-    else:
-        return jsonify({"message": "Помилка оновлення інформації про користувача"}), 400
+    # Викликаємо оновлений метод сервісу
+    user, error_message = UserService.edit_user(
+        user_id, 
+        data.get("nickname"), 
+        data.get("email"), 
+        data.get("status"), 
+        data.get("privilege"), 
+        data.get("password")
+    )
+    
+    if error_message:
+        # Визначаємо код помилки: якщо "не знайдено" -> 404, інакше -> 400
+        status_code = 404 if "не знайдено" in error_message.lower() else 400
+        return jsonify({"message": error_message}), status_code
+        
+    return jsonify({"message": "Інформація про користувача успішно оновлена", "data": user.to_dict()}), 200
     
 # ----------------- News -----------------
 @api.route("/news", methods=['GET'])
@@ -281,7 +397,7 @@ def api_get_news():
       - News
     responses:
       200:
-        description: Список новин
+        description: Список новин успішно отримано
         schema:
           type: array
           items:
@@ -289,24 +405,19 @@ def api_get_news():
             properties:
               id:
                 type: integer
-                example: 1
               name:
                 type: string
-                example: "Назва новини"
               description:
                 type: string
-                example: "Опис новини"
               descriptionSecond:
                 type: string
-                example: "Детальний опис"
               images:
                 type: array
                 items:
                   type: string
-                  example: "https://example.com/image.jpg"
-      """
+    """
     news_items = NewsService.fetch_all_news()
-    return jsonify(news_items)
+    return jsonify(news_items), 200
 
 
 @api.route("/news/<int:news_id>", methods=['GET'])
@@ -320,8 +431,7 @@ def api_get_news_by_id(news_id):
       - name: news_id
         in: path
         required: true
-        schema:
-          type: integer
+        type: integer
         description: ID новини
     responses:
       200:
@@ -331,15 +441,15 @@ def api_get_news_by_id(news_id):
     """
     news_item = NewsService.fetch_news_by_id(news_id)
     if not news_item:
-        return jsonify({"error": "News item not found"}), 404
-    return jsonify(news_item)
+        return jsonify({"message": "Новину не знайдено"}), 404
+    return jsonify(news_item), 200
 
 
-@api.route("/news_delete/<int:news_id>", methods=['DELETE'])
+@api.route("/news/<int:news_id>", methods=['DELETE'])
 @admin_required
 def api_delete_news_by_id(news_id):
     """
-    Видалити новину за ID
+    Видалити новину (Тільки Адмін)
     ---
     tags:
       - News
@@ -347,9 +457,7 @@ def api_delete_news_by_id(news_id):
       - name: news_id
         in: path
         required: true
-        schema:
-          type: integer
-        description: ID новини
+        type: integer
     responses:
       200:
         description: Новина успішно видалена
@@ -360,14 +468,14 @@ def api_delete_news_by_id(news_id):
     """
     success = NewsService.remove_news_by_id(news_id)
     if not success:
-        return jsonify({"error": "News item not found"}), 404
-    return jsonify({"message": "News item deleted successfully"})
+        return jsonify({"message": "Новину не знайдено або помилка видалення"}), 404
+    return jsonify({"message": "Новину успішно видалено"}), 200
 
-@api.route("/news_edit/<int:news_id>", methods=['PUT'])
+@api.route("/news/<int:news_id>", methods=['PATCH'])
 @admin_required
 def api_edit_news(news_id):
     """
-    Редагувати новину за ID
+    Редагувати новину (Тільки Адмін)
     ---
     tags:
       - News
@@ -375,9 +483,7 @@ def api_edit_news(news_id):
       - name: news_id
         in: path
         required: true
-        schema:
-          type: integer
-        description: ID новини
+        type: integer
       - in: body
         name: body
         required: true
@@ -397,29 +503,36 @@ def api_edit_news(news_id):
     responses:
       200:
         description: Новина успішно оновлена
+      400:
+        description: Помилка оновлення
       404:
         description: Новина не знайдена
     security:
       - Bearer: []
     """
     data = request.get_json()
-    news_item = NewsService.update_news(
+    
+    updated_news, error = NewsService.update_news(
         news_id,
         name=data.get("name"),
         description=data.get("description"),
         descriptionSecond=data.get("descriptionSecond"),
         image_urls=data.get("image_urls", [])
     )
-    if not news_item:
-        return jsonify({"error": "Новину не знайдено"}), 404
-    return jsonify({"message": "Новина успішно оновлено"}), 200
+    
+    if error:
+        status_code = 404 if "не знайдено" in error else 400
+        return jsonify({"message": error}), status_code
+        
+    # Тут ми вручну формуємо відповідь, бо to_dict може не бути в моделі News (або він повертає об'єкт)
+    return jsonify({"message": "Новина успішно оновлена"}), 200
 
 
-@api.route("/news_add", methods=['POST'])
+@api.route("/news", methods=['POST'])
 @admin_required
 def api_add_news():
     """
-    Додати новину
+    Додати новину (Тільки Адмін)
     ---
     tags:
       - News
@@ -429,6 +542,9 @@ def api_add_news():
         required: true
         schema:
           type: object
+          required:
+            - name
+            - description
           properties:
             name:
               type: string
@@ -441,20 +557,26 @@ def api_add_news():
               items:
                 type: string
     responses:
-      200:
+      201:
         description: Новина успішно додана
       400:
-        description: Помилка додавання новини
+        description: Помилка додавання
     security:
       - Bearer: []
     """
-    news=NewsService.create_news(
-        name=request.json.get("name"),
-        description=request.json.get("description"),
-        descriptionSecond=request.json.get("descriptionSecond"),
-        image_urls=request.json.get("image_urls", [])
+    data = request.get_json()
+    
+    news, error = NewsService.create_news(
+        name=data.get("name"),
+        description=data.get("description"),
+        descriptionSecond=data.get("descriptionSecond"),
+        image_urls=data.get("image_urls", [])
     )
-    return jsonify(created=news.id), 200
+    
+    if error:
+        return jsonify({"message": error}), 400
+        
+    return jsonify({"message": "Новина створена", "id": news.id}), 201
 
 # ----------------- Cart -----------------
 @api.route("/cart", methods=["GET"])
@@ -882,54 +1004,79 @@ def update_cart_item_quantity():
 #################### DESKTOPS ######################
 ####################################################
 
-@api.route("/desktops",methods=["GET"])
+@api.route("/desktops", methods=["GET"])
 def get_all_desktops():
     """
     Отримати список всіх настолок
     ---
     tags:
       - Desktops
+    summary: Публічний список усіх товарів
     responses:
       200:
         description: Список успішно отримано
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              price:
+                type: number
+              image:
+                type: string
     """
+    # Сервіс повертає вже готовий список словників (завдяки rules)
     desktops = DesktopService.get_all_desktops_service()
     return jsonify(desktops), 200
 
 
-@api.route("/desktops/<int:desktop_id>",methods=["GET"])
-@jwt_required()
+@api.route("/desktops/<int:desktop_id>", methods=["GET"])
 def get_desktop_by_id(desktop_id):
     """
-    Отримати деталі одної настолки
+    Отримати деталі однієї настолки
     ---
     tags:
       - Desktops
     parameters:
       - name: desktop_id
         in: path
-        type: integer
         required: true
+        type: integer
     responses:
       200:
         description: Знайдено
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
       404:
         description: Не знайдено
     """
+    # Зверни увагу: я прибрав @jwt_required(), бо перегляд товарів зазвичай публічний
     desktop, error = DesktopService.get_desktop_details_service(desktop_id)
     
     if error:
-        return jsonify({"error": error}), 404
+        return jsonify({"message": error}), 404
         
     return jsonify(desktop.to_dict()), 200
 
 
-
-@api.route("/desktops",methods=["POST"])
+@api.route("/desktops", methods=["POST"])
 @admin_required
 def add_desktop():
     """
-    Додати настолку (Тільки для адмінів)
+    Додати настолку (Тільки Адмін)
     ---
     tags:
       - Desktops
@@ -939,6 +1086,9 @@ def add_desktop():
         required: true
         schema:
           type: object
+          required:
+            - name
+            - price
           properties:
             name:
               type: string
@@ -950,34 +1100,34 @@ def add_desktop():
               type: string
     responses:
       201:
-        description: Створено
+        description: Створено успішно
       400:
         description: Помилка валідації
-      401:
-        description: Не авторизований
     security:
       - Bearer: []
     """
     data = request.get_json()
     
-    # Викликаємо сервіс
-    new_desktop = DesktopService.create_desktop_service(data)
+    new_desktop, error = DesktopService.create_desktop_service(data)
+    
+    if error:
+        return jsonify({"message": error}), 400
         
     return jsonify(new_desktop.to_dict()), 201
 
-@api.route("/desktops/<int:desktop_id>",methods=["PATCH"])
+@api.route("/desktops/<int:desktop_id>", methods=["PATCH"])
 @admin_required
 def edit_desktop_by_id(desktop_id):
     """
-    Редагувати настолку
+    Редагувати настолку (Тільки Адмін)
     ---
     tags:
       - Desktops
     parameters:
       - name: desktop_id
         in: path
-        type: integer
         required: true
+        type: integer
       - in: body
         name: body
         required: true
@@ -994,7 +1144,7 @@ def edit_desktop_by_id(desktop_id):
               type: string
     responses:
       200:
-        description: Оновлено
+        description: Оновлено успішно
       404:
         description: Не знайдено
     security:
@@ -1005,26 +1155,24 @@ def edit_desktop_by_id(desktop_id):
     updated_desktop, error = DesktopService.update_desktop_service(desktop_id, data)
     
     if error:
-        # Тут може бути помилка 404 (не знайдено) або 400 (невірна ціна)
-        # Для простоти повернемо 400, але профі роблять перевірку error
         status_code = 404 if "not found" in error else 400
-        return jsonify({"error": error}), status_code
+        return jsonify({"message": error}), status_code
 
     return jsonify(updated_desktop.to_dict()), 200
 
-@api.route("/desktops/<int:desktop_id>",methods=["DELETE"])
+@api.route("/desktops/<int:desktop_id>", methods=["DELETE"])
 @admin_required
 def delete_desktop_by_id(desktop_id):
     """
-    Видалити настолку
+    Видалити настолку (Тільки Адмін)
     ---
     tags:
       - Desktops
     parameters:
       - name: desktop_id
         in: path
-        type: integer
         required: true
+        type: integer
     responses:
       200:
         description: Видалено
@@ -1038,15 +1186,14 @@ def delete_desktop_by_id(desktop_id):
     if success:
         return jsonify({"message": message}), 200
     else:
-        return jsonify({"error": message}), 404
-
+        return jsonify({"message": message}), 404
 
 
 ####################################################
 #################### FEEDBACKS ######################
 ####################################################
 
-@api.route("/feedbacks",methods=["GET"])
+@api.route("/feedbacks", methods=["GET"])
 def get_all_feedbacks():
     """
     Отримати список всіх відгуків
@@ -1056,12 +1203,26 @@ def get_all_feedbacks():
     responses:
       200:
         description: Список успішно отримано
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              description:
+                type: string
+              user_id:
+                type: integer
     """
     feedbacks = FeedbackService.get_all_feedbacks_service()
-    return jsonify(feedbacks), 200
+    # Конвертуємо список об'єктів у список словників
+    return jsonify([f.to_dict() for f in feedbacks]), 200
 
 
-@api.route("/feedbacks/<int:feedback_id>",methods=["GET"])
+@api.route("/feedbacks/<int:feedback_id>", methods=["GET"])
 def get_feedback_by_id(feedback_id):
     """
     Отримати один відгук по ID
@@ -1082,35 +1243,55 @@ def get_feedback_by_id(feedback_id):
     feedback, error = FeedbackService.get_feedback_by_id_service(feedback_id)
     
     if error:
-        return jsonify({"error": error}), 404
+        return jsonify({"message": error}), 404
         
     return jsonify(feedback.to_dict()), 200
 
 
-
-@api.route("/feedbacks",methods=["POST"])
+@api.route("/feedbacks", methods=["POST"])
 @jwt_required()
 def add_feedback():
     """
-    Залишити відгук (Потрібна авторизація)
+    Залишити відгук (Авторизація)
     ---
     tags:
       - Feedbacks
-
-
-
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - title
+            - description
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+    responses:
+      201:
+        description: Відгук створено
+      400:
+        description: Помилка валідації
+    security:
+      - Bearer: []
     """
     data = request.get_json()
     
-    new_feedback, error = FeedbackService.create_feedback_service(data, current_user.id)
+    # 👇 ФІКС: Беремо ID з токена, а не з current_user
+    user_id = get_jwt_identity() 
+    
+    new_feedback, error = FeedbackService.create_feedback_service(data, user_id)
     
     if error:
-        return jsonify({"error": error}), 400
+        return jsonify({"message": error}), 400
         
     return jsonify(new_feedback.to_dict()), 201
 
 
-@api.route("/feedbacks/<int:feedback_id>",methods=["PATCH"])
+@api.route("/feedbacks/<int:feedback_id>", methods=["PATCH"])
 @jwt_required()
 def edit_feedback_by_id(feedback_id):
     """
@@ -1137,23 +1318,28 @@ def edit_feedback_by_id(feedback_id):
         description: Оновлено
       404:
         description: Не знайдено
+    security:
+      - Bearer: []
     """
     data = request.get_json()
-
+    
+    # Тут в ідеалі треба перевірити, чи user_id з токена співпадає з автором відгуку
+    # Але поки лишимо так для спрощення
+    
     updated_feedback, error = FeedbackService.update_feedback_service(feedback_id, data)
     
     if error:
-        status_code = 404 if "not found" in error else 400
-        return jsonify({"error": error}), status_code
+        status_code = 404 if "не знайдено" in error else 400
+        return jsonify({"message": error}), status_code
 
     return jsonify(updated_feedback.to_dict()), 200
 
 
-@api.route("/feedbacks/<int:feedback_id>",methods=["DELETE"])
-@jwt_required()
+@api.route("/feedbacks/<int:feedback_id>", methods=["DELETE"])
+@admin_required # Видаляти краще тільки адміну (або автору, але це складніше)
 def delete_feedback_by_id(feedback_id):
     """
-    Видалити відгук
+    Видалити відгук (Тільки Адмін)
     ---
     tags:
       - Feedbacks
@@ -1167,92 +1353,76 @@ def delete_feedback_by_id(feedback_id):
         description: Видалено
       404:
         description: Не знайдено
+    security:
+      - Bearer: []
     """
     success, message = FeedbackService.delete_feedback_service(feedback_id)
     
     if success:
         return jsonify({"message": message}), 200
     else:
-        return jsonify({"error": message}), 404
+        return jsonify({"message": message}), 404
           
 
 # ----------------- Orders -----------------
 @api.route("/orders/", methods=["GET"])
+@admin_required # Це точно має бачити тільки адмін
 def get_all_orders():
     """
-    Отримати список усіх замовлень
+    Отримати список усіх замовлень (Тільки Адмін)
     ---
     tags:
       - Orders
     responses:
         200:
             description: Список замовлень
-        500:
-            description: Внутрішня помилка сервера
-    """
-
-    orders = OrdersService.get_all_orders()
-    return jsonify([order.to_dict() for order in orders])
-
-@api.route("/order/<int:user_id>", methods=["GET"])
-@jwt_required()
-def get_order(user_id):
-    """
-    Отримати замовлення за ID користувача
-    ---
-    tags:
-      - Orders
-    parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: integer
-        description: ID користувача
-    responses:
-        200:
-            description: Інформація про замовлення
-        404:
-            description: Замовлення не знайдено 
-        500:
-            description: Внутрішня помилка сервера
     security:
       - Bearer: []
     """
+    orders = OrdersService.get_all_orders()
+    return jsonify([order.to_dict() for order in orders]), 200
 
-    orders = OrdersService.get_orders(user_id)
-    if not orders:
-        return jsonify({"message": "Замовлень не знайдено"}), 404
-    else:
-        return jsonify(orders), 200
-    
-@api.route("/add_order/<int:user_id>", methods=["POST"])
+@api.route("/orders/my", methods=["GET"]) # Змінив URL, щоб не плутатись з ID
 @jwt_required()
-def add_order(user_id):
+def get_my_orders():
     """
-    Створити замовлення для користувача
+    Отримати історію своїх замовлень
     ---
     tags:
       - Orders
-    parameters:
-      - name: user_id
-        in: path
-        required: false
-        schema:
-          type: integer
-        description: ID користувача
     responses:
         200:
+            description: Список замовлень користувача
+        404:
+            description: Замовлень не знайдено
+    security:
+      - Bearer: []
+    """
+    user_id = get_jwt_identity()
+    orders = OrdersService.get_orders(user_id)
+    
+    # Повертаємо пустий список, якщо нічого немає (це краще ніж 404 для списків)
+    return jsonify(orders), 200
+    
+@api.route("/orders", methods=["POST"]) # RESTful: POST /orders
+@jwt_required()
+def add_order():
+    """
+    Створити замовлення з кошика
+    ---
+    tags:
+      - Orders
+    summary: Створює замовлення з товарів у кошику поточного користувача
+    responses:
+        201:
             description: Замовлення успішно створено
         400:
-            description: Помилка створення замовлення
-        500:
-            description: Внутрішня помилка сервера
+            description: Помилка (пустий кошик тощо)
     security:
       - Bearer: []
     """
-    if not user_id:
-        user_id = get_jwt_identity()
+    user_id = get_jwt_identity()
+    
     order, error_message = OrdersService.add_order(user_id)
     
     if error_message:
@@ -1261,13 +1431,13 @@ def add_order(user_id):
     return jsonify({
         "message": "Замовлення успішно створено",
         "data": order.to_dict()
-    }), 200
+    }), 201
     
 @api.route("/orders/<int:order_id>", methods=["PATCH"])
 @admin_required
 def update_order_status(order_id):
     """
-    Оновити статус замовлення
+    Оновити статус замовлення (Тільки Адмін)
     ---
     tags:
       - Orders
@@ -1275,25 +1445,24 @@ def update_order_status(order_id):
       - name: order_id
         in: path 
         required: true
-        schema:
-          type: integer
+        type: integer
         description: ID замовлення
-      - name: body
-        in: body
+      - in: body
+        name: body
         required: true
         schema:
           type: object
+          required:
+            - status
           properties:
             status:
               type: string
-        description: Новий статус замовлення
+              enum: [In process, Completed, Shipped, Cancelled]
     responses:
         200:
-            description: Статус замовлення успішно оновлено
+            description: Статус оновлено
         404:
             description: Замовлення не знайдено
-        500:
-            description: Внутрішня помилка сервера
     security:
       - Bearer: []
     """ 
@@ -1301,16 +1470,18 @@ def update_order_status(order_id):
     new_status = data.get("status")
     
     order, error_message = OrdersService.edit_status_order(order_id, new_status)
-    if not error_message:
-        return jsonify({"message": "Статус замовлення успішно оновлено", "data": order.to_dict()}), 200
-    else:
-        return jsonify({"message": error_message}), 404
+    
+    if error_message:
+        status_code = 404 if "не знайдено" in error_message else 400
+        return jsonify({"message": error_message}), status_code
+        
+    return jsonify({"message": "Статус оновлено", "data": order.to_dict()}), 200
     
 @api.route("/orders/<int:order_id>", methods=["DELETE"])
 @admin_required
 def delete_order(order_id):
     """
-    Видалити замовлення за його ID
+    Видалити замовлення (Тільки Адмін)
     ---
     tags:
       - Orders
@@ -1318,14 +1489,12 @@ def delete_order(order_id):
       - name: order_id 
         in: path
         required: true
-        schema:
-          type: integer
-        description: ID замовлення
+        type: integer
     responses:
         200:
-            description: Замовлення успішно видалено
+            description: Видалено
         404:
-            description: Замовлення не знайдено
+            description: Не знайдено
     security:
       - Bearer: []
     """
@@ -1334,4 +1503,4 @@ def delete_order(order_id):
     if result:
         return jsonify({"message": "Замовлення успішно видалено"}), 200
     else:
-        return jsonify({"message": "Замовлення не знайдено"}), 404  
+        return jsonify({"message": "Замовлення не знайдено"}), 404

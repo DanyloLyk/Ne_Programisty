@@ -2,24 +2,18 @@ from app.models.desktop import Desktop
 from .. import db
 
 def get_desktops():
-    """Отримати всі десктопи та перетворити їх у словники (JSON format)"""
+    """Повертає список словників для всіх товарів"""
     try:
         desktops = Desktop.query.all()
+        # Повертаємо список словників, щоб сервіс міг зразу віддати JSON
         return [desktop.to_dict() for desktop in desktops] 
     except Exception as e:
-        print(f"Error getting desktops: {e}")
         return []
 
 def get_desktop_by_id(desktop_id):
-    """Отримати один десктоп або None, якщо не знайдено"""
-    try:
-        return Desktop.query.get(desktop_id)
-    except Exception as e:
-        print(f"Error getting desktop {desktop_id}: {e}")
-        return None
+    return Desktop.query.get(desktop_id)
 
 def add_desktop(name, description, price, image):
-    """Створення нового товару"""
     try:
         new_desktop = Desktop(
             name=name,
@@ -29,47 +23,40 @@ def add_desktop(name, description, price, image):
         )
         db.session.add(new_desktop)
         db.session.commit()
-        return new_desktop
+        return new_desktop, None
     except Exception as e:
-        db.session.rollback() # Відкочуємо зміни, якщо помилка
-        print(f"Error adding desktop: {e}")
-        return None
-
-
+        db.session.rollback()
+        return None, f"Помилка бази даних: {str(e)}"
 
 def delete_desktop_by_id(desktop_id):
-    """Видалення товару"""
+    desktop = Desktop.query.get(desktop_id)
+    if not desktop:
+        return False
+    
     try:
-        desktop = Desktop.query.get(desktop_id)
-        if not desktop:
-            return False # Товар не знайдено
-        
         db.session.delete(desktop)
         db.session.commit()
         return True
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return False
 
 def edit_desktop_by_id(desktop_id, name=None, description=None, price=None, image=None):
-    """
-    Оновлення товару.
-    Ми використовуємо None за замовчуванням, щоб оновлювати тільки те, що передали.
-    """
+    desktop = Desktop.query.get(desktop_id)
+    if not desktop:
+        return None, "Товар не знайдено"
+
     try:
-        desktop = Desktop.query.get(desktop_id)
-        if not desktop:
-            return None
         if name: desktop.name = name
         if description: desktop.description = description
         if price: desktop.price = price
         if image: desktop.image = image
         
         db.session.commit()
-        return desktop
+        return desktop, None
     except Exception as e:
         db.session.rollback()
-        return None
+        return None, str(e)
 
 
 

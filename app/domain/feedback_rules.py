@@ -1,28 +1,18 @@
 from app.models.feedback import Feedback
+from .. import db 
 
 def get_feedbacks():
-    """Отримати всі відгуки"""
+    """Отримати всі відгуки (об'єкти)"""
     try:
-        # Сортуємо: нові зверху (desc)
-        feedbacks = Feedback.query.order_by(Feedback.created_at.desc()).all()
-        return [f.to_dict() for f in feedbacks]
-    except Exception as e:
-        print(f"Error getting feedbacks: {e}")
+        # Сортуємо: нові зверху
+        return Feedback.query.order_by(Feedback.id.desc()).all()
+    except Exception:
         return []
 
 def get_feedback_by_id(feedback_id):
-    """Отримати один відгук"""
-    try:
-        return Feedback.query.get(feedback_id)
-    except Exception as e:
-        print(f"Error getting feedback {feedback_id}: {e}")
-        return None
+    return Feedback.query.get(feedback_id)
 
 def add_feedback(title, description, user_id):
-    """
-    Створення нового відгуку.
-    Важливо: приймаємо user_id, бо відгук має належати комусь.
-    """
     try:
         new_feedback = Feedback(
             title=title,
@@ -31,43 +21,35 @@ def add_feedback(title, description, user_id):
         )
         db.session.add(new_feedback)
         db.session.commit()
-        return new_feedback
+        return new_feedback, None
     except Exception as e:
         db.session.rollback()
-        print(f"Error adding feedback: {e}")
-        return None
+        return None, str(e)
 
 def delete_feedback_by_id(feedback_id):
-    """Видалення відгуку"""
-    try:
-        feedback = Feedback.query.get(feedback_id)
-        if not feedback:
-            return False 
+    feedback = Feedback.query.get(feedback_id)
+    if not feedback:
+        return False
         
+    try:
         db.session.delete(feedback)
         db.session.commit()
         return True
-    except Exception as e:
+    except Exception:
         db.session.rollback()
         return False
 
 def edit_feedback_by_id(feedback_id, title=None, description=None):
-    """
-    Оновлення відгуку.
-    Міняємо тільки заголовок або текст. Автор (user_id) зазвичай не змінюється.
-    """
+    feedback = Feedback.query.get(feedback_id)
+    if not feedback:
+        return None, "Відгук не знайдено"
+    
     try:
-        feedback = Feedback.query.get(feedback_id)
-        if not feedback:
-            return None
-        
-        if title: 
-            feedback.title = title
-        if description: 
-            feedback.description = description
+        if title: feedback.title = title
+        if description: feedback.description = description
         
         db.session.commit()
-        return feedback
+        return feedback, None
     except Exception as e:
         db.session.rollback()
-        return None
+        return None, str(e)
