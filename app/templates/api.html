@@ -3,31 +3,93 @@
 {% block title %}Про нас - Гральна Комора{% endblock %}
 
 {% block content %}
-    <script src="{{ url_for('static', filename='js/api/api.js') }}"></script>
-    {# === 1. Повідомлення, що юзер - адмін(user:cat; password:123; token: отримується з айпі) === #}
-    <section class="row align-items-center mb-5" id="section-user">
-        <script>
-            login();
-        </script>    
-    </section>
-    
-    {# === 2. Каталог товарів === #}
-    <section class="row align-items-center mb-5" id="section-dekstops">
-    </section>
-    
-    {# === 3. Новини === #}
-    <section class="row align-items-center mb-5" id="section-news">
-    </section>
-    
-    {# === 4. Відгуки === #}
-    <section class="row align-items-center mb-5" id="section-feedback">
-    </section>
-    
-    {# === 5. Адмін панель === #}
-    <section class="row align-items-center mb-5" id="section-admin-panel">
-    </section>
+<script src="{{ url_for('static', filename='js/api/api.js') }}"></script>
+{# === 1. Повідомлення, що юзер - адмін(user:cat; password:123; token: отримується з айпі) === #}
+<section class="row align-items-center mb-5" id="section-user">
+    <script>
+        login();
+    </script>
+</section>
 
-    {# === 6. Модальні вікна для кошика і замовлень === #}
-    <section class="row align-items-center mb-5" id="section-admin-panel">
-    </section>
+{# === 2. Каталог товарів === #}
+<section class="mb-5" id="section-dekstops">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-warning m-0">Каталог товарів</h1>
+        <button class="btn btn-outline-warning d-flex align-items-center" data-bs-toggle="modal"
+            data-bs-target="#cartModal">
+            <i class="fa-solid fa-cart-shopping me-2"></i> Кошик
+        </button>
+    </div>
+
+    <div id="desktopCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" id="desktop-list">
+            <!-- JS підставляє <div class="carousel-item active"> ... картки ... </div> -->
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#desktopCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Попередній</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#desktopCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Наступний</span>
+        </button>
+    </div>
+</section>
+
+
+{# === 3. Новини === #}
+<section class="row align-items-center mb-5" id="section-news">
+</section>
+
+{# === 4. Відгуки === #}
+<section class="row align-items-center mb-5" id="section-feedback">
+</section>
+
+{# === 5. Адмін панель === #}
+<section class="row align-items-center mb-5" id="section-admin-panel">
+</section>
+
+{# === 6. Модальні вікна для кошика і замовлень === #}
+<section class="row align-items-center mb-5" id="section-admin-panel">
+
+    <!-- === Cart Modal === -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="cartModalLabel">
+                        <i class="fa-solid fa-cart-shopping me-2"></i>Ваш кошик
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <!-- Список товарів у кошику -->
+                    <div id="cart-items" class="d-flex flex-column gap-3">
+                        {# JS підставляє картки товарів #}
+                    </div>
+
+                    <hr>
+
+                    <!-- Сума -->
+                    <div class="d-flex justify-content-between fs-5">
+                        <span>Сума:</span>
+                        <span id="cart-total" class="fw-bold">0 ₴</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button class="btn btn-warning" id="cart-checkout-btn">Оформити замовлення</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/api/cart.js') }}"></script>
+</section>
 {% endblock %}
