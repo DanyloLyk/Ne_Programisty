@@ -5,6 +5,7 @@ from app.models.user import User
 from app.service.news_service import NewsService
 from app.service.cart_service import CartService
 from app.service.user_service import UserService
+from app.service.orders_service import OrdersService
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, current_user
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -873,4 +874,88 @@ def update_cart_item_quantity():
         }), 200
     else:
         # Якщо товар не знайдено в кошику
-        return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}),
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}), 404
+
+# ----------------- Orders -----------------
+@api.route("/orders/", methods=["GET"])
+def get_all_orders():
+    """
+    Отримати список усіх замовлень
+    ---
+    tags:
+      - Orders
+    responses:
+        200:
+            description: Список замовлень
+        500:
+            description: Внутрішня помилка сервера
+    """
+
+    orders = OrdersService.get_all_orders()
+    return jsonify([order.to_dict() for order in orders])
+
+@api.route("/order/<int:order_id>", methods=["GET"])
+@jwt_required()
+def get_order(order_id):
+    """
+    Отримати замовлення за ID замовлення
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID замовлення   
+    responses:
+        200:
+            description: Інформація про замовлення
+        404:
+            description: Замовлення не знайдено 
+        500:
+            description: Внутрішня помилка сервера
+    security:
+      - Bearer: []
+    """
+
+    order = OrdersService.get_order(order_id)
+    if not order:
+        return jsonify({"message": "Замовлення не знайдено"}), 404
+    else:
+        return jsonify(order.to_dict()), 200
+    
+@api.route("/add_order/<int:user_id>", methods=["POST"])
+@jwt_required()
+def add_order(user_id):
+    """
+    Створити замовлення для користувача
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: user_id
+        in: path
+        required: false
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+        200:
+            description: Замовлення успішно створено
+        400:
+            description: Помилка створення замовлення
+        500:
+            description: Внутрішня помилка сервера
+    security:
+      - Bearer: []
+    """
+    if not user_id:
+        user_id = get_jwt_identity()
+    result = OrdersService.add_order(user_id)
+    if result:
+      return jsonify({"message": f"Замовлення успішно створено: {result}", "data": OrdersService.get_order(user_id).to_dict()}), 200
+    else: 
+      return jsonify({"message": "Помилка створення замовлення"}), 400
+    

@@ -1,6 +1,5 @@
 from .. import db
 from app.models.user import User
-from flask import session
 
 def get_users():
     return User.query.all()
