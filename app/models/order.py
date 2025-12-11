@@ -12,7 +12,15 @@ class Order(db.Model):
     total_amount = db.Column(db.Float, nullable=False)  # Загальна сума замовлення
     status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
 
-
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'total_amount': self.total_amount,
+            'status': self.status,
+            'items': self.items # Це вже JSON/список, все ок
+        }
+    
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
     items = db.Column(db.JSON, nullable=False, default=list)
     

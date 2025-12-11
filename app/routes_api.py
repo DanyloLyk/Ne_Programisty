@@ -5,15 +5,36 @@ from app.models.user import User
 from app.service.news_service import NewsService
 from app.service.cart_service import CartService
 from app.service.user_service import UserService
+from app.service.desktop_service import DesktopService
+from app.service.feedback_service import FeedbackService
+from app.service.orders_service import OrdersService
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, current_user
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
+'''
 @api.before_app_request
 def load_current_user():
     user_id = session.get('user_id')
     g.current_user = UserService.get_user_by_id(user_id) if user_id else None
-    
+'''
+
+def admin_required(fn):
+    @wraps(fn)
+    @jwt_required()
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        user = UserService.get_user_by_id(user_id)
+        
+        # Перевірка, чи юзер існує і чи він Адмін
+        if not user or user.status != 'Admin':
+            return jsonify(msg='Доступ заборонено! Тільки для адмінів!'), 403
+            
+        return fn(*args, **kwargs)
+    return wrapper
+
+'''
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -21,7 +42,8 @@ def login_required(f):
             return jsonify({"message": "Неавторизований користувач"}), 401
         return f(*args, **kwargs)
     return decorated_function
-    
+''' 
+
 # ----------------- Auth -----------------
 @api.route("/auth/", methods=["POST"])
 def autorize():
@@ -53,8 +75,8 @@ def autorize():
     
     user = UserService.authorize_user(username, password)
     if user:
-        session['user_id'] = user.id
-        return jsonify({"message": "Успішна авторизація"}), 200
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({"access_token": access_token, "message": "Успішна авторизація"}), 200
     else:
         return jsonify({"message": "Невірні облікові дані"}), 401
 
@@ -87,6 +109,7 @@ def get_users():
     return jsonify(users_list), 200 
 
 @api.route("/users/<int:user_id>", methods=["GET"])
+@jwt_required()
 def get_user(user_id):
     """
     Отримати інформацію про користувача за його ID
@@ -105,6 +128,8 @@ def get_user(user_id):
             description: Інформація про користувача
         404:
             description: Користувача не знайдено
+    security:
+      - Bearer: []
     """ 
 
     user = UserService.get_user_by_id(user_id)
@@ -161,7 +186,7 @@ def registration():
         return jsonify({"message": "Помилка реєстрації"}), 400
 
 @api.route("/delete_user/<int:user_id>", methods=["DELETE"])
-@login_required
+@admin_required
 def delete_user(user_id):
     """
     Видалити користувача за його ID
@@ -180,6 +205,8 @@ def delete_user(user_id):
             description: Користувач успішно видалений
         404:
             description: Користувача не знайдено
+    security:
+      - Bearer: []
     """
     success = UserService.delete_user(user_id)
     if success:
@@ -189,7 +216,7 @@ def delete_user(user_id):
     
 
 @api.route("/edit_user/<int:user_id>", methods=["PUT"])
-@login_required
+@admin_required
 def edit_user(user_id):
     """
     Редагувати інформацію про користувача
@@ -224,6 +251,8 @@ def edit_user(user_id):
             description: Інформація про користувача успішно оновлена
         400:
             description: Помилка оновлення інформації про користувача
+    security:
+      - Bearer: []
     """
     data = request.get_json()
     
@@ -275,7 +304,7 @@ def api_get_news():
                 items:
                   type: string
                   example: "https://example.com/image.jpg"
-    """
+      """
     news_items = NewsService.fetch_all_news()
     return jsonify(news_items)
 
@@ -306,7 +335,8 @@ def api_get_news_by_id(news_id):
     return jsonify(news_item)
 
 
-@api.route("/news/<int:news_id>", methods=['DELETE'])
+@api.route("/news_delete/<int:news_id>", methods=['DELETE'])
+@admin_required
 def api_delete_news_by_id(news_id):
     """
     Видалити новину за ID
@@ -325,13 +355,16 @@ def api_delete_news_by_id(news_id):
         description: Новина успішно видалена
       404:
         description: Новина не знайдена
+    security:
+      - Bearer: []
     """
     success = NewsService.remove_news_by_id(news_id)
     if not success:
         return jsonify({"error": "News item not found"}), 404
     return jsonify({"message": "News item deleted successfully"})
 
-@api.route("/news/<int:news_id>", methods=['PUT'])
+@api.route("/news_edit/<int:news_id>", methods=['PUT'])
+@admin_required
 def api_edit_news(news_id):
     """
     Редагувати новину за ID
@@ -366,6 +399,8 @@ def api_edit_news(news_id):
         description: Новина успішно оновлена
       404:
         description: Новина не знайдена
+    security:
+      - Bearer: []
     """
     data = request.get_json()
     news_item = NewsService.update_news(
@@ -380,7 +415,8 @@ def api_edit_news(news_id):
     return jsonify({"message": "Новина успішно оновлено"}), 200
 
 
-@api.route("/news", methods=['POST'])
+@api.route("/news_add", methods=['POST'])
+@admin_required
 def api_add_news():
     """
     Додати новину
@@ -409,6 +445,8 @@ def api_add_news():
         description: Новина успішно додана
       400:
         description: Помилка додавання новини
+    security:
+      - Bearer: []
     """
     news=NewsService.create_news(
         name=request.json.get("name"),
@@ -419,104 +457,136 @@ def api_add_news():
     return jsonify(created=news.id), 200
 
 # ----------------- Cart -----------------
-@api.route("/get_cart", methods=["GET"])
-@login_required
+@api.route("/cart", methods=["GET"])
+@jwt_required()
 def get_cart():
     """
-    Отримати корзину для зареєстрованого користувача
+    Отримати власний кошик (Детальні дані)
     ---
     tags:
       - Cart
+    summary: Отримує деталізований список товарів (з ціною, назвою, тощо) у кошику поточного автентифікованого користувача.
+    description: >
+      Використовує ID користувача з JWT-токена. Завжди повертає повну інформацію про товари, включаючи їх назви та ціни.
     responses:
       200:
-        description: Повертає кошик користувача
+        description: Повертає деталізований список позицій кошика.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              item_id:
+                type: integer
+                format: int64
+                description: Ідентифікатор товару.
+              quantity:
+                type: integer
+                format: int32
+                description: Кількість цього товару в кошику.
+              name:
+                type: string
+                description: Назва товару.
+              price:
+                type: number
+                format: float
+                description: Ціна за одиницю товару.
+              # ... інші деталі товару ...
       401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Користувач не авторизований
+    security:
+      - Bearer: []  
     """
-    if not g.current_user:
-        return jsonify({"error": "User not logged in"}), 401
-
-    user_id = g.current_user.id
-    cart_details = CartService.get_cart(user_id)
+    # Ми перевірили, що токен існує за допомогою @jwt_required(), але логіка все одно залишається:
+    user_id = get_jwt_identity()
+    
+    # Викликаємо сервіс, який тепер повертає деталізовані дані
+    cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/get_cart/<int:user_id>", methods=["GET"])
-@login_required
+@api.route("/cart/<int:user_id>", methods=["GET"])
+@admin_required # <-- Додано обов'язковий декоратор для безпеки
 def get_cart_for_user(user_id):
     """
-    Отримати корзину для заданого користувача по ід
+    Отримати детальний кошик для заданого користувача по ID
     ---
     tags:
       - Cart
+    summary: Отримує деталізований список товарів у кошику вказаного користувача. Доступно лише адміністраторам.
+    description: >
+      Використовується адміністратором для перегляду кошика будь-якого користувача за його ID.
+      Повертає повну інформацію про товари (детальний кошик).
     parameters:
       - in: path
         name: user_id
         required: true
         schema:
           type: integer
-        description: ID користувача
+        description: ID користувача, детальний кошик якого потрібно отримати.
     responses:
       200:
-        description: Повертає кошик користувача
-      401:
-        description: Користувач не авторизований
-    """
-    cart_details = CartService.get_cart(user_id)
-    return jsonify(cart_details)
-
-@api.route("/get_detailed_cart", methods=["GET"])
-@login_required
-def get_detailed_cart():
-    """
-    Отримати детальну корзину для зареєстрованого користувача
-    ---
-    tags:
-      - Cart
-    responses:
-      200:
-        description: Повертає кошик користувача
-      401:
-        description: Користувач не авторизований
-    """
-    if not g.current_user:
-        return jsonify({"error": "User not logged in"}), 401
-
-    user_id = g.current_user.id
-    cart_details = CartService.get_detailed_cart_items(user_id)
-    return jsonify(cart_details)
-
-@api.route("/get_detailed_cart/<int:user_id>", methods=["GET"])
-@login_required
-def get_detailed_cart_for_user(user_id):
-    """
-    Отримати детальну корзину для заданого користувача по ід
-    ---
-    tags:
-      - Cart
-    parameters:
-      - in: path
-        name: user_id
-        required: true
+        description: Повертає деталізований список позицій кошика.
         schema:
-          type: integer
-        description: ID користувача
-    responses:
-      200:
-        description: Повертає кошик користувача
+          type: array
+          items:
+            type: object
+            properties:
+              item_id:
+                type: integer
+                format: int64
+                description: Ідентифікатор товару.
+              quantity:
+                type: integer
+                format: int32
+                description: Кількість цього товару в кошику.
+              name:
+                type: string
+                description: Назва товару.
+              price:
+                type: number
+                format: float
+                description: Ціна за одиницю товару.
       401:
-        description: Користувач не авторизований
+        description: Користувач не авторизований.
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Missing Authorization Header
+      403:
+        description: Доступ заборонено (Користувач не є адміністратором).
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: Admin privileges required
+    security:
+      - Bearer: []
     """
-    cart_details = CartService.get_detailed_cart_items(user_id)
+    # Викликаємо сервіс, який тепер повертає деталізовані дані
+    cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/cart/add", methods=["POST"])
-@login_required
+@api.route("/cart", methods=["POST"])
+@admin_required
 def add_to_cart():
     """
-    Додати товар до корзини
+    Додати товар до кошика
     ---
     tags:
       - Cart
+    summary: Додає товар до кошика автентифікованого або вказаного користувача.
+    description: >
+      Якщо user_id передано в тілі запиту, товар додається до кошика цього користувача (потрібні права адміністратора). 
+      Якщо user_id не передано, товар додається до кошика користувача, визначеного за JWT токеном (поточний автентифікований користувач).
     parameters:
       - in: body
         name: body
@@ -526,16 +596,55 @@ def add_to_cart():
           properties:
             user_id:
               type: integer
+              format: int64
+              description: >
+                НЕОБОВ'ЯЗКОВЕ ПОЛЕ. Ідентифікатор користувача. 
+                Використовується, якщо потрібно додати товар до кошика іншого користувача (зазвичай вимагає прав адміністратора). 
+                Якщо не вказано, використовується ID автентифікованого користувача з токена.
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, який додається.
+              required: true
+            quantity:
+              type: integer
+              format: int32
+              description: Кількість товару.
+              default: 1
+              required: true
+          # Явно вказуємо, які поля є обов'язковими. user_id тут відсутній.
+          required:
+            - item_id
+            - quantity
+    responses:
+      200:
+        description: Успішно додано товар в кошик. Повертає деталі нової позиції кошика.
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
             item_id:
               type: integer
             quantity:
               type: integer
-    responses:
-      200:
-        description: Додає item_id в кошик current_user
+            user_id:
+              type: integer
+      400:
+        description: Недійсні дані або відсутність обов'язкових полів (item_id або quantity).
+      401:
+        description: Користувач не авторизований (відсутній JWT токен).
+      403:
+        description: Доступ заборонено (наприклад, якщо користувач без прав адміністратора намагається передати чужий user_id).
+    security:
+      - Bearer: []
     """
     data = request.get_json()
-    cart_item = CartService.add_item_to_cart(user_id=g.current_user.id, item_id=data.get("item_id"), quantity=data.get("quantity"))
+    if data.get("user_id") is None:
+        user_id = get_jwt_identity()
+    else:
+        user_id = data.get("user_id")
+    cart_item = CartService.add_item_to_cart(user_id=user_id, item_id=data.get("item_id"), quantity=data.get("quantity"))
     # Перетворюємо в dict, щоб Flask міг відправити JSON
     return jsonify({
         "id": cart_item.id,
@@ -543,4 +652,610 @@ def add_to_cart():
         "quantity": cart_item.quantity,
         "user_id": cart_item.user_id
     })
+    
+@api.route("/cart", methods=["DELETE"])
+@admin_required
+def remove_from_cart():
+    """
+    Видалити товар з кошика користувача
+    ---
+    tags:
+      - Cart
+    summary: Видаляє вказаний товар з кошика користувача. Доступно лише адміністраторам.
+    description: >
+      Використовується для видалення однієї позиції товару з кошика вказаного користувача.
+      Обов'язково вимагає user_id та item_id у тілі запиту.
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор користувача, з кошика якого потрібно видалити товар.
+              required: true
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, який потрібно видалити.
+              required: true
+          required:
+            - user_id
+            - item_id
+    responses:
+      200:
+        description: Товар успішно видалено з кошика.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Товар успішно видалено з кошика.
+      400:
+        description: Недійсні дані або відсутність обов'язкових полів.
+      401:
+        description: Користувач не авторизований.
+      403:
+        description: Доступ заборонено (Користувач не є адміністратором).
+      404:
+        description: Товар не знайдено в кошику вказаного користувача.
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
 
+    # 1. Перевірка обов'язкових полів
+    user_id = data.get("user_id")
+    item_id = data.get("item_id")
+    
+    if user_id is None or item_id is None:
+        return jsonify({"error": "Поля 'user_id' та 'item_id' є обов'язковими."}), 400
+    
+    # 2. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить remove_item_from_cart
+    try:
+        user_id = int(user_id)
+        item_id = int(item_id)
+    except ValueError:
+        return jsonify({"error": "ID користувача та товару мають бути цілими числами."}), 400
+        
+    was_removed = CartService.remove_item_from_cart(user_id=user_id, item_id=item_id)
+
+    # 3. Обробка результату
+    if was_removed:
+        return jsonify({"message": "Товар успішно видалено з кошика.", "user_id": user_id, "item_id": item_id}), 200
+    else:
+        # Якщо товар не знайдено, повертаємо 404
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено в кошику користувача з ID {user_id}."}), 404
+
+@api.route("/cart/clear", methods=["DELETE"])
+@jwt_required()
+def clear_cart_endpoint():
+    """
+    Очистити весь кошик
+    ---
+    tags:
+      - Cart
+    summary: Повністю видаляє всі товари з кошика поточного автентифікованого користувача.
+    description: Операція не вимагає тіла запиту, оскільки ідентифікатор користувача береться з JWT токена.
+    parameters:
+      # Параметри тіла запиту відсутні
+      # - in: header
+      #   name: Authorization
+      #   required: true
+      #   type: string
+      #   description: Bearer Token
+      []
+    responses:
+      200:
+        description: Кошик користувача успішно очищено.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Ваш кошик успішно очищено.
+      401:
+        description: Користувач не авторизований (відсутній або недійсний JWT токен).
+    security:
+      - Bearer: []
+    """
+    # 1. Отримання ID користувача з токена
+    current_user_id = get_jwt_identity()
+    
+    # 2. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить clear_cart
+    try:
+        CartService.clear_cart(user_id=current_user_id)
+        
+        # 3. Успішна відповідь
+        return jsonify({
+            "message": "Ваш кошик успішно очищено.", 
+            "user_id": current_user_id
+        }), 200
+        
+    except Exception as e:
+        # Обробка можливих помилок бази даних або сервісу
+        print(f"Помилка при очищенні кошика користувача {current_user_id}: {e}")
+        return jsonify({"error": "Не вдалося очистити кошик через внутрішню помилку сервера."}), 500
+
+@api.route("/cart/quantity", methods=["PUT"])
+@jwt_required()
+def update_cart_item_quantity():
+    """
+    Оновити кількість товару в кошику
+    ---
+    tags:
+      - Cart
+    summary: Оновлює кількість конкретного товару в кошику поточного користувача.
+    description: >
+      Використовується для зміни кількості товару (item_id) у кошику користувача, 
+      ідентифікатор якого береться з JWT-токена.
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, кількість якого потрібно змінити.
+              required: true
+            quantity:
+              type: integer
+              format: int32
+              description: Нова кількість товару. Має бути > 0.
+              required: true
+          required:
+            - item_id
+            - quantity
+    responses:
+      200:
+        description: Кількість товару успішно оновлено.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Кількість товару успішно оновлено.
+            item_id:
+              type: integer
+            quantity:
+              type: integer
+      400:
+        description: Недійсні дані (наприклад, quantity < 1) або відсутність обов'язкових полів.
+      401:
+        description: Користувач не авторизований.
+      404:
+        description: Товар не знайдено в кошику користувача.
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
+
+    # 1. Отримання ID користувача з токена
+    current_user_id = get_jwt_identity()
+
+    # 2. Отримання даних з тіла запиту
+    item_id = data.get("item_id")
+    quantity = data.get("quantity")
+    
+    # 3. Валідація вхідних даних
+    if item_id is None or quantity is None:
+        return jsonify({"error": "Поля 'item_id' та 'quantity' є обов'язковими."}), 400
+        
+    try:
+        item_id = int(item_id)
+        quantity = int(quantity)
+    except ValueError:
+        return jsonify({"error": "ID товару та кількість мають бути цілими числами."}), 400
+
+    if quantity <= 0:
+        # Якщо кількість <= 0, краще використати DELETE-запит, але для PUT-запиту це помилка
+        return jsonify({"error": "Кількість повинна бути більше нуля. Для видалення використовуйте DELETE."}), 400
+
+    # 4. Виклик сервісної функції
+    # Припускаємо, що CartService - це клас, який містить update_item_quantity
+    was_updated = CartService.update_item_quantity(
+        user_id=current_user_id, 
+        item_id=item_id, 
+        quantity=quantity
+    )
+
+    # 5. Обробка результату
+    if was_updated:
+        return jsonify({
+            "message": "Кількість товару успішно оновлено.", 
+            "item_id": item_id, 
+            "quantity": quantity
+        }), 200
+    else:
+        # Якщо товар не знайдено в кошику
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}), 404
+    
+####################################################
+#################### DESKTOPS ######################
+####################################################
+
+@api.route("/desktops",methods=["GET"])
+def get_all_desktops():
+    """
+    Отримати список всіх настолок
+    ---
+    tags:
+      - Desktops
+    responses:
+      200:
+        description: Список успішно отримано
+    """
+    desktops = DesktopService.get_all_desktops_service()
+    return jsonify(desktops), 200
+
+
+@api.route("/desktops/<int:desktop_id>",methods=["GET"])
+@jwt_required()
+def get_desktop_by_id(desktop_id):
+    """
+    Отримати деталі одної настолки
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Знайдено
+      404:
+        description: Не знайдено
+    """
+    desktop, error = DesktopService.get_desktop_details_service(desktop_id)
+    
+    if error:
+        return jsonify({"error": error}), 404
+        
+    return jsonify(desktop.to_dict()), 200
+
+
+
+@api.route("/desktops",methods=["POST"])
+@admin_required
+def add_desktop():
+    """
+    Додати настолку (Тільки для адмінів)
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            price:
+              type: number
+            description:
+              type: string
+            image:
+              type: string
+    responses:
+      201:
+        description: Створено
+      400:
+        description: Помилка валідації
+      401:
+        description: Не авторизований
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
+    
+    # Викликаємо сервіс
+    new_desktop = DesktopService.create_desktop_service(data)
+        
+    return jsonify(new_desktop.to_dict()), 201
+
+@api.route("/desktops/<int:desktop_id>",methods=["PATCH"])
+@admin_required
+def edit_desktop_by_id(desktop_id):
+    """
+    Редагувати настолку
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            price:
+              type: number
+            description:
+              type: string
+            image:
+              type: string
+    responses:
+      200:
+        description: Оновлено
+      404:
+        description: Не знайдено
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
+    
+    updated_desktop, error = DesktopService.update_desktop_service(desktop_id, data)
+    
+    if error:
+        # Тут може бути помилка 404 (не знайдено) або 400 (невірна ціна)
+        # Для простоти повернемо 400, але профі роблять перевірку error
+        status_code = 404 if "not found" in error else 400
+        return jsonify({"error": error}), status_code
+
+    return jsonify(updated_desktop.to_dict()), 200
+
+@api.route("/desktops/<int:desktop_id>",methods=["DELETE"])
+@admin_required
+def delete_desktop_by_id(desktop_id):
+    """
+    Видалити настолку
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Видалено
+      404:
+        description: Не знайдено
+    security:
+      - Bearer: []
+    """
+    success, message = DesktopService.delete_desktop_service(desktop_id)
+    
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"error": message}), 404
+
+
+
+####################################################
+#################### FEEDBACKS ######################
+####################################################
+
+@api.route("/feedbacks",methods=["GET"])
+def get_all_feedbacks():
+    """
+    Отримати список всіх відгуків
+    ---
+    tags:
+      - Feedbacks
+    responses:
+      200:
+        description: Список успішно отримано
+    """
+    feedbacks = FeedbackService.get_all_feedbacks_service()
+    return jsonify(feedbacks), 200
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["GET"])
+def get_feedback_by_id(feedback_id):
+    """
+    Отримати один відгук по ID
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Знайдено
+      404:
+        description: Не знайдено
+    """
+    feedback, error = FeedbackService.get_feedback_by_id_service(feedback_id)
+    
+    if error:
+        return jsonify({"error": error}), 404
+        
+    return jsonify(feedback.to_dict()), 200
+
+
+
+@api.route("/feedbacks",methods=["POST"])
+@jwt_required()
+def add_feedback():
+    """
+    Залишити відгук (Потрібна авторизація)
+    ---
+    tags:
+      - Feedbacks
+
+
+
+    """
+    data = request.get_json()
+    
+    new_feedback, error = FeedbackService.create_feedback_service(data, current_user.id)
+    
+    if error:
+        return jsonify({"error": error}), 400
+        
+    return jsonify(new_feedback.to_dict()), 201
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["PATCH"])
+@jwt_required()
+def edit_feedback_by_id(feedback_id):
+    """
+    Редагувати свій відгук
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+    responses:
+      200:
+        description: Оновлено
+      404:
+        description: Не знайдено
+    """
+    data = request.get_json()
+
+    updated_feedback, error = FeedbackService.update_feedback_service(feedback_id, data)
+    
+    if error:
+        status_code = 404 if "not found" in error else 400
+        return jsonify({"error": error}), status_code
+
+    return jsonify(updated_feedback.to_dict()), 200
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["DELETE"])
+@jwt_required()
+def delete_feedback_by_id(feedback_id):
+    """
+    Видалити відгук
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Видалено
+      404:
+        description: Не знайдено
+    """
+    success, message = FeedbackService.delete_feedback_service(feedback_id)
+    
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"error": message}), 404
+          
+
+# ----------------- Orders -----------------
+@api.route("/orders/", methods=["GET"])
+def get_all_orders():
+    """
+    Отримати список усіх замовлень
+    ---
+    tags:
+      - Orders
+    responses:
+        200:
+            description: Список замовлень
+        500:
+            description: Внутрішня помилка сервера
+    """
+
+    orders = OrdersService.get_all_orders()
+    return jsonify([order.to_dict() for order in orders])
+
+@api.route("/order/<int:order_id>", methods=["GET"])
+@jwt_required()
+def get_order(order_id):
+    """
+    Отримати замовлення за ID замовлення
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID замовлення   
+    responses:
+        200:
+            description: Інформація про замовлення
+        404:
+            description: Замовлення не знайдено 
+        500:
+            description: Внутрішня помилка сервера
+    security:
+      - Bearer: []
+    """
+
+    order = OrdersService.get_order(order_id)
+    if not order:
+        return jsonify({"message": "Замовлення не знайдено"}), 404
+    else:
+        return jsonify(order.to_dict()), 200
+    
+@api.route("/add_order/<int:user_id>", methods=["POST"])
+@jwt_required()
+def add_order(user_id):
+    """
+    Створити замовлення для користувача
+    ---
+    tags:
+      - Orders
+    parameters:
+      - name: user_id
+        in: path
+        required: false
+        schema:
+          type: integer
+        description: ID користувача
+    responses:
+        200:
+            description: Замовлення успішно створено
+        400:
+            description: Помилка створення замовлення
+        500:
+            description: Внутрішня помилка сервера
+    security:
+      - Bearer: []
+    """
+    if not user_id:
+        user_id = get_jwt_identity()
+    result = OrdersService.add_order(user_id)
+    if result:
+      return jsonify({"message": f"Замовлення успішно створено: {result}", "data": OrdersService.get_order(user_id).to_dict()}), 200
+    else: 
+      return jsonify({"message": "Помилка створення замовлення"}), 400
+    

@@ -1,6 +1,5 @@
 from .. import db
 from app.models.user import User
-from flask import session
 
 def get_users():
     return User.query.all()
@@ -23,11 +22,6 @@ def add_user(nickname, email, password, password_confirm):
         new_user.set_password(password)  
         db.session.add(new_user)
         db.session.commit()
-
-        session.permanent = True
-        session['user_id'] = new_user.id
-        session['user_nickname'] = new_user.nickname
-        session['user_status'] = new_user.status 
 
         return new_user
     else:
