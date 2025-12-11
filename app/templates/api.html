@@ -3,8 +3,12 @@
 {% block title %}Про нас - Гральна Комора{% endblock %}
 
 {% block content %}
+    <script src="{{ url_for('static', filename='js/api/api.js') }}"></script>
     {# === 1. Повідомлення, що юзер - адмін(user:cat; password:123; token: отримується з айпі) === #}
     <section class="row align-items-center mb-5" id="section-user">
+        <script>
+            login();
+        </script>    
     </section>
     
     {# === 2. Каталог товарів === #}
