@@ -5,6 +5,8 @@ from app.models.user import User
 from app.service.news_service import NewsService
 from app.service.cart_service import CartService
 from app.service.user_service import UserService
+from app.service.desktop_service import DesktopService
+from app.service.feedback_service import FeedbackService
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -544,3 +546,314 @@ def add_to_cart():
         "user_id": cart_item.user_id
     })
 
+####################################################
+#################### DESKTOPS ######################
+####################################################
+
+@api.route("/desktops",methods=["GET"])
+def get_all_desktops():
+    """
+    Отримати список всіх настолок
+    ---
+    tags:
+      - Desktops
+    responses:
+      200:
+        description: Список успішно отримано
+    """
+    desktops = DesktopService.get_all_desktops_service()
+    return jsonify(desktops), 200
+
+
+@api.route("/desktops/<int:desktop_id>",methods=["GET"])
+def get_desktop_by_id(desktop_id):
+    """
+    Отримати деталі одної настолки
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Знайдено
+      404:
+        description: Не знайдено
+    """
+    desktop, error = DesktopService.get_desktop_details_service(desktop_id)
+    
+    if error:
+        return jsonify({"error": error}), 404
+        
+    return jsonify(desktop.to_dict()), 200
+
+
+
+@api.route("/desktops",methods=["POST"])
+@login_required
+def add_desktop():
+    """
+    Додати настолку (Тільки для адмінів)
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            price:
+              type: number
+            description:
+              type: string
+            image:
+              type: string
+    responses:
+      201:
+        description: Створено
+      400:
+        description: Помилка валідації
+      401:
+        description: Не авторизований
+    """
+    data = request.get_json()
+    
+    # Викликаємо сервіс
+    new_desktop, error = DesktopService.create_desktop_service(data)
+    
+    if error:
+        return jsonify({"error": error}), 400
+        
+    return jsonify(new_desktop.to_dict()), 201
+@api.route("/desktops/<int:desktop_id>",methods=["PATCH"])
+@login_required
+def edit_desktop_by_id(desktop_id):
+    """
+    Редагувати настолку
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            price:
+              type: number
+            description:
+              type: string
+            image:
+              type: string
+    responses:
+      200:
+        description: Оновлено
+      404:
+        description: Не знайдено
+    """
+    data = request.get_json()
+    
+    updated_desktop, error = DesktopService.update_desktop_service(desktop_id, data)
+    
+    if error:
+        # Тут може бути помилка 404 (не знайдено) або 400 (невірна ціна)
+        # Для простоти повернемо 400, але профі роблять перевірку error
+        status_code = 404 if "not found" in error else 400
+        return jsonify({"error": error}), status_code
+
+    return jsonify(updated_desktop.to_dict()), 200
+
+@api.route("/desktops/<int:desktop_id>",methods=["DELETE"])
+@login_required
+def delete_desktop_by_id(desktop_id):
+    """
+    Видалити настолку
+    ---
+    tags:
+      - Desktops
+    parameters:
+      - name: desktop_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Видалено
+      404:
+        description: Не знайдено
+    """
+    success, message = DesktopService.delete_desktop_service(desktop_id)
+    
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"error": message}), 404
+
+
+
+####################################################
+#################### FEEDBACKS ######################
+####################################################
+
+@api.route("/feedbacks",methods=["GET"])
+def get_all_feedbacks():
+    """
+    Отримати список всіх відгуків
+    ---
+    tags:
+      - Feedbacks
+    responses:
+      200:
+        description: Список успішно отримано
+    """
+    feedbacks = FeedbackService.get_all_feedbacks_service()
+    return jsonify(feedbacks), 200
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["GET"])
+def get_feedback_by_id(feedback_id):
+    """
+    Отримати один відгук по ID
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Знайдено
+      404:
+        description: Не знайдено
+    """
+    feedback, error = FeedbackService.get_feedback_by_id_service(feedback_id)
+    
+    if error:
+        return jsonify({"error": error}), 404
+        
+    return jsonify(feedback.to_dict()), 200
+
+
+
+@api.route("/feedbacks",methods=["POST"])
+@login_required
+def add_feedback():
+    """
+    Залишити відгук (Потрібна авторизація)
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - title
+            - description
+          properties:
+            title:
+              type: string
+              example: "Чудовий сервіс"
+            description:
+              type: string
+              example: "Все сподобалось, комп'ютер літає!"
+    responses:
+      201:
+        description: Створено
+      400:
+        description: Помилка валідації
+      401:
+        description: Не авторизований
+    """
+    data = request.get_json()
+    
+    new_feedback, error = FeedbackService.create_feedback_service(data, current_user.id)
+    
+    if error:
+        return jsonify({"error": error}), 400
+        
+    return jsonify(new_feedback.to_dict()), 201
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["PATCH"])
+@login_required
+def edit_feedback_by_id(feedback_id):
+    """
+    Редагувати свій відгук
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+    responses:
+      200:
+        description: Оновлено
+      404:
+        description: Не знайдено
+    """
+    data = request.get_json()
+
+    updated_feedback, error = FeedbackService.update_feedback_service(feedback_id, data)
+    
+    if error:
+        status_code = 404 if "not found" in error else 400
+        return jsonify({"error": error}), status_code
+
+    return jsonify(updated_feedback.to_dict()), 200
+
+
+@api.route("/feedbacks/<int:feedback_id>",methods=["DELETE"])
+@login_required
+def delete_feedback_by_id(feedback_id):
+    """
+    Видалити відгук
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Видалено
+      404:
+        description: Не знайдено
+    """
+    success, message = FeedbackService.delete_feedback_service(feedback_id)
+    
+    if success:
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"error": message}), 404
