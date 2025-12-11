@@ -841,6 +841,7 @@ def update_order_status(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(success=False, error=str(e))
+    
 @main.route('/delete_feedback/<int:feedback_id>', methods=['DELETE'])
 def delete_feedback(feedback_id):
     try:
@@ -865,6 +866,7 @@ def set_user_email_in_session(user_id):
     else:
         session.pop('user_email', None)
     return email
+
 @main.route('/user_email/<int:user_id>')
 def user_email_route(user_id):
     email = get_user_email_by_id(user_id)
@@ -872,3 +874,9 @@ def user_email_route(user_id):
         return jsonify(success=True, email=email)
     return jsonify(success=False, error="User not found"), 404
 
+@main.route('/api')
+def api_template():
+    """
+    Сторінка замовлення
+    """
+    return render_template('api.html')
