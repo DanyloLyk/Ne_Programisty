@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error(`Помилка завантаження десктопів: ${response.status}`);
             const data = await response.json();
             renderDesktops(data);
-            attachCartButtons(); // прив'язка кнопок після рендеру
+            attachCartButtons();
         } catch (err) {
             console.error("Помилка завантаження десктопів:", err);
             desktopsContainer.innerHTML = `<div class="text-danger">Не вдалося завантажити каталог</div>`;
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             console.log("Додано в кошик:", data);
 
-            loadCart(); // оновлюємо кошик
+            loadCart();
             cartModal.show();
 
         } catch (err) {
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cartButtons = desktopsContainer.querySelectorAll(".open-cart");
         cartButtons.forEach(btn => {
             btn.addEventListener("click", () => {
-                const colDiv = btn.closest(".col-12, .col-md-3");
+                const colDiv = btn.closest(".col-12");
                 if (!colDiv || !colDiv.dataset.itemId) {
                     console.error("Не знайдено item_id на кнопці");
                     return;
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =========================
-    // RENDER — десктопи
+    // RENDER — десктопи (оновлений дизайн)
     // =========================
     function renderDesktops(items) {
         desktopsContainer.innerHTML = "";
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const perSlide = 4;
+        const perSlide = 3;
         for (let i = 0; i < items.length; i += perSlide) {
             const slideItems = items.slice(i, i + perSlide);
 
@@ -144,24 +144,27 @@ document.addEventListener("DOMContentLoaded", () => {
             if (i === 0) slideDiv.classList.add("active");
 
             const rowDiv = document.createElement("div");
-            rowDiv.classList.add("row", "g-3", "justify-content-center");
+            rowDiv.classList.add("row", "g-3");
 
             slideItems.forEach(item => {
                 const colDiv = document.createElement("div");
-                colDiv.classList.add("col-12", "col-md-3");
+                colDiv.classList.add("col-12", "col-md-6", "col-lg-4", "mb-4");
                 colDiv.dataset.itemId = item.id;
 
                 const imagePath = getImagePath(item.image);
                 colDiv.innerHTML = `
                     <div class="card h-100 shadow-sm d-flex flex-column">
-                        <div class="ratio ratio-1x1">
-                            <img src="${imagePath}" class="w-100 h-100" alt="${item.name}" style="object-fit: cover;">
+
+                        <div class="ratio ratio-16x9">
+                            <img src="${imagePath}" class="card-img-top" alt="${item.name}" style="object-fit: cover;">
                         </div>
+
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">${item.name}</h5>
-                            <p class="card-text text-muted small">${item.description}</p>
+                            <p class="card-text">${item.description}</p>
+
                             <div class="mt-auto">
-                                <div class="text-center text-warning fw-bold mb-2">${item.price} ₴</div>
+                                <div class="fw-bold text-warning mb-2">${item.price} ₴</div>
                                 <button class="btn btn-warning w-100 open-cart">До кошика</button>
                             </div>
                         </div>
