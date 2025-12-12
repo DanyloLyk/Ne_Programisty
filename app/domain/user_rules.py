@@ -77,3 +77,19 @@ def edit_user(user_id, nickname, email, status, privilege, password=None):
     except Exception as e:
         db.session.rollback()
         return None, f"Системна помилка: {str(e)}"
+    
+def get_user_by_email(email):
+    return User.query.filter_by(email=email).first()
+
+def update_password(user_id, new_password):
+    user = User.query.get(user_id)
+    if not user:
+        return False
+    try:
+        user.set_password(new_password)
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating password: {e}")
+        return False

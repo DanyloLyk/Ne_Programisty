@@ -109,6 +109,102 @@ def autorize():
     else:
         return jsonify({"message": "Невірні облікові дані"}), 401
 
+@api.route("/auth/forgot-password", methods=["POST"])
+def forgot_password():
+    """
+    Запит на відновлення пароля
+    ---
+    tags:
+      - Auth
+    summary: Відправляє посилання для скидання пароля (поки що в консоль/відповідь)
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - email
+          properties:
+            email:
+              type: string
+              example: "cat@gmail.com"
+    responses:
+      200:
+        description: Лист відправлено (або імітовано)
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            debug_token:
+              type: string
+              description: Тільки для розробки! Видалити на проді.
+      404:
+        description: Email не знайдено
+    """
+    data = request.get_json()
+    email = data.get("email")
+    
+    token, error = UserService.request_password_reset(email)
+    
+    if error:
+        return jsonify({"message": error}), 404
+        
+    return jsonify({
+        "message": "Посилання для скидання пароля відправлено (дивись консоль сервера)",
+        "debug_token": token # Повертаємо токен, щоб тобі було зручно копіювати
+    }), 200
+
+
+@api.route("/auth/reset-password", methods=["POST"])
+def reset_password():
+    """
+    Встановлення нового пароля
+    ---
+    tags:
+      - Auth
+    summary: Змінює пароль, використовуючи токен відновлення
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - token
+            - new_password
+            - confirm_password
+          properties:
+            token:
+              type: string
+              description: Токен, отриманий на попередньому кроці
+            new_password:
+              type: string
+              description: Новий пароль
+            confirm_password:
+              type: string
+    responses:
+      200:
+        description: Пароль успішно змінено
+      400:
+        description: Помилка (невірний токен або паролі)
+    """
+    data = request.get_json()
+    token = data.get("token")
+    new_password = data.get("new_password")
+    confirm_password = data.get("confirm_password")
+    
+    if not token or not new_password:
+        return jsonify({"message": "Відсутні дані"}), 400
+        
+    success, error = UserService.reset_password_with_token(token, new_password, confirm_password)
+    
+    if error:
+        return jsonify({"message": error}), 400
+        
+    return jsonify({"message": "Пароль успішно змінено! Тепер ви можете увійти."}), 200
+
 # ----------------- User -----------------
 @api.route("/users/", methods=["GET"])
 def get_users():
