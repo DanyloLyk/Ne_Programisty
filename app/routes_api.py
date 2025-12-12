@@ -373,7 +373,7 @@ def registration():
         
     return jsonify({"message": "Успішна реєстрація"}), 200
 
-@api.route("/delete_user/<int:user_id>", methods=["DELETE"])
+@api.route("/user/<int:user_id>", methods=["DELETE"])
 @admin_required
 def delete_user(user_id):
     """
@@ -407,7 +407,7 @@ def delete_user(user_id):
         return jsonify({"message": "Користувача не знайдено"}), 404 
     
 
-@api.route("/edit_user/<int:user_id>", methods=["PATCH"])
+@api.route("/user/<int:user_id>", methods=["PATCH"])
 @admin_required
 def edit_user(user_id):
     """
