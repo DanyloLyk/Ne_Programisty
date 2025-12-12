@@ -872,82 +872,31 @@ def add_to_cart():
     })
     
 @api.route("/cart", methods=["DELETE"])
-@admin_required
+@jwt_required()
 def remove_from_cart():
-    """
-    Видалити товар з кошика користувача
-    ---
-    tags:
-      - Cart
-    summary: Видаляє вказаний товар з кошика користувача. Доступно лише адміністраторам.
-    description: >
-      Використовується для видалення однієї позиції товару з кошика вказаного користувача.
-      Обов'язково вимагає user_id та item_id у тілі запиту.
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          properties:
-            user_id:
-              type: integer
-              format: int64
-              description: Ідентифікатор користувача, з кошика якого потрібно видалити товар.
-              required: true
-            item_id:
-              type: integer
-              format: int64
-              description: Ідентифікатор товару, який потрібно видалити.
-              required: true
-          required:
-            - user_id
-            - item_id
-    responses:
-      200:
-        description: Товар успішно видалено з кошика.
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: Товар успішно видалено з кошика.
-      400:
-        description: Недійсні дані або відсутність обов'язкових полів.
-      401:
-        description: Користувач не авторизований.
-      403:
-        description: Доступ заборонено (Користувач не є адміністратором).
-      404:
-        description: Товар не знайдено в кошику вказаного користувача.
-    security:
-      - Bearer: []
-    """
     data = request.get_json()
-
-    # 1. Перевірка обов'язкових полів
-    user_id = data.get("user_id")
     item_id = data.get("item_id")
-    
-    if user_id is None or item_id is None:
-        return jsonify({"error": "Поля 'user_id' та 'item_id' є обов'язковими."}), 400
-    
-    # 2. Виклик сервісної функції
-    # Припускаємо, що CartService - це клас, який містить remove_item_from_cart
+
+    if item_id is None:
+        return jsonify({"error": "Поле 'item_id' є обов'язковим."}), 400
+
     try:
-        user_id = int(user_id)
         item_id = int(item_id)
     except ValueError:
-        return jsonify({"error": "ID користувача та товару мають бути цілими числами."}), 400
-        
+        return jsonify({"error": "item_id має бути цілим числом."}), 400
+
+    # user_id з JWT
+    user_id = get_jwt_identity()
+    if user_id is None:
+        return jsonify({"error": "Користувач не авторизований."}), 401
+
     was_removed = CartService.remove_item_from_cart(user_id=user_id, item_id=item_id)
 
-    # 3. Обробка результату
     if was_removed:
-        return jsonify({"message": "Товар успішно видалено з кошика.", "user_id": user_id, "item_id": item_id}), 200
+        return jsonify({"message": "Товар успішно видалено з кошика."}), 200
     else:
-        # Якщо товар не знайдено, повертаємо 404
-        return jsonify({"error": f"Товар з ID {item_id} не знайдено в кошику користувача з ID {user_id}."}), 404
+        return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}), 404
+
 
 @api.route("/cart/clear", methods=["DELETE"])
 @jwt_required()

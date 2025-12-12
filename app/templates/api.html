@@ -60,45 +60,54 @@
 {# === 6. Модальні вікна для кошика і замовлень === #}
 <section class="row align-items-center mb-5" id="section-modals">
 
-    <!-- === Cart Modal === -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
 
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title" id="cartModalLabel">
-                        <i class="fa-solid fa-cart-shopping me-2"></i>Ваш кошик
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Кошик</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
                 </div>
 
+                <!-- Body -->
                 <div class="modal-body">
 
-                    <!-- Список товарів у кошику -->
+                    <!-- Cart Items -->
                     <div id="cart-items" class="d-flex flex-column gap-3">
-                        {# JS підставляє картки товарів #}
+                        <!-- JS додає карточки тут -->
                     </div>
 
-                    <hr>
-
-                    <!-- Сума -->
-                    <div class="d-flex justify-content-between fs-5">
-                        <span>Сума:</span>
-                        <span id="cart-total" class="fw-bold">0 ₴</span>
-                    </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                    <button class="btn btn-warning" id="cart-checkout-btn">Оформити замовлення</button>
+                <!-- Footer -->
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+
+                    <!-- Total price -->
+                    <h5 class="mb-0">
+                        Разом: <span id="cart-total" class="fw-bold">0 ₴</span>
+                    </h5>
+
+                    <div class="d-flex gap-2">
+                        <button id="clear-cart" class="btn btn-outline-danger">
+                            Очистити
+                        </button>
+
+                        <button class="btn btn-success" data-bs-dismiss="modal">
+                            Оформити
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
         </div>
     </div>
-    
+
+
 </section>
 
-    <script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script> 
-    <script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
-    {% endblock %}
+<script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
+{% endblock %}
