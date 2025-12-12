@@ -34,24 +34,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // -------------------------
-    // Render desktops (unchanged)
-    // -------------------------
+    // =========================
+    // Прив'язка кнопок "До кошика"
+    // =========================
+    function attachCartButtons() {
+        const cartButtons = desktopsContainer.querySelectorAll(".open-cart");
+        cartButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const colDiv = btn.closest(".col-12, .col-md-3");
+                if (!colDiv || !colDiv.dataset.itemId) {
+                    console.error("Не знайдено item_id на кнопці");
+                    return;
+                }
+                addToCart(colDiv.dataset.itemId);
+            });
+        });
+    }
+
+    // =========================
+    // RENDER — десктопи
+    // =========================
     function renderDesktops(items) {
         desktopsContainer.innerHTML = "";
-        const perSlide = 4;
 
+        if (!items || items.length === 0) {
+            desktopsContainer.innerHTML = `<div class="text-muted">Каталог порожній</div>`;
+            return;
+        }
+
+        const perSlide = 4;
         for (let i = 0; i < items.length; i += perSlide) {
             const slide = document.createElement("div");
             slide.className = "carousel-item" + (i === 0 ? " active" : "");
 
-            const row = document.createElement("div");
-            row.className = "row g-3 justify-content-center";
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("row", "g-3", "justify-content-center");
 
-            items.slice(i, i + perSlide).forEach(item => {
-                const col = document.createElement("div");
-                col.className = "col-12 col-md-3";
-                col.dataset.itemId = item.id;
+            slideItems.forEach(item => {
+                const colDiv = document.createElement("div");
+                colDiv.classList.add("col-12", "col-md-3");
+                colDiv.dataset.itemId = item.id;
 
                 const imagePath = item.image && (item.image.startsWith("http://") || item.image.startsWith("https://"))
                     ? item.image
@@ -60,13 +82,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 col.innerHTML = `
                     <div class="card h-100 shadow-sm d-flex flex-column">
                         <div class="ratio ratio-1x1">
-                            <img src="${imagePath}" class="w-100 h-100" style="object-fit:cover;" alt="${item.name}">
+                            <img src="${imagePath}" class="w-100 h-100" alt="${item.name}" style="object-fit: cover;">
                         </div>
+
                         <div class="card-body d-flex flex-column">
-                            <h5>${item.name}</h5>
-                            <p class="text-muted small">${item.description || ""}</p>
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text text-muted small">${item.description}</p>
                             <div class="mt-auto">
-                                <div class="text-warning fw-bold mb-2">${item.price} ₴</div>
+                                <div class="text-center text-warning fw-bold mb-2">${item.price} ₴</div>
                                 <button class="btn btn-warning w-100 open-cart">До кошика</button>
                             </div>
                         </div>

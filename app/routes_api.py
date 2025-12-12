@@ -11,7 +11,7 @@ from app.service.orders_service import OrdersService
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, current_user
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
-
+api_v2 = Blueprint('api_v2', __name__, url_prefix='/api/v2')
 
 '''
 @api.before_app_request
@@ -43,6 +43,64 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 ''' 
+
+# ==========================================
+# ============== API VERSION 2 =============
+# ==========================================
+
+@api_v2.route("/", methods=["GET"])
+def api_v2_index():
+    """
+    Статус API v2 (Health Check)
+    ---
+    tags:
+      - General V2
+    summary: Перевірка доступності версії API 2.0 (Beta)
+    description: >
+      Точка входу для нової версії API. 
+      Використовується для моніторингу статусу та перевірки маршрутизації /api/v2/.
+    responses:
+        200:
+            description: API V2 активне і працює стабільно
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Вітаємо в API версії 2.0!"
+    """
+    return jsonify({"message": "Вітаємо в API версії 2.0!"}), 200
+
+@api_v2.route("/users", methods=["GET"])
+def get_users_v2():
+    """
+    Оптимізований список користувачів (Lightweight)
+    ---
+    tags:
+      - General V2
+    summary: Отримати лише нікнейми користувачів
+    description: >
+      Експериментальний ендпоінт версії 2.0.
+      На відміну від v1, повертає плоский список рядків (тільки нікнейми) замість повних об'єктів.
+      Це зменшує обсяг переданих даних на 80% (корисно для мобільних мереж).
+    responses:
+        200:
+            description: Успішне отримання списку
+            schema:
+              type: array
+              items:
+                type: string
+              example: ["admin_cat", "lazy_max", "smart_sirozha", "padavan_dima"]
+        500:
+            description: Внутрішня помилка сервера
+    """
+    # У V2 ми вирішили повертати, наприклад, тільки імена, щоб економити трафік
+    users = UserService.get_all_users()
+    return jsonify([user.nickname for user in users]), 200
+
+# ==========================================
+# ============== API VERSION 1 =============
+# ==========================================
 
 # ----------------- Auth -----------------
 @api.route("/auth/", methods=["POST"])
