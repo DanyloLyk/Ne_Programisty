@@ -39,8 +39,15 @@
 
 
 {# === 3. Новини === #}
-<section class="row align-items-center mb-5" id="section-news">
+<section class="mb-5" id="section-news">
+    <div class="container">
+        <h2 class="text-warning mb-4">Новини</h2>
+        <div class="row" id="news-list">
+            <!-- JS підставляє картки новин -->
+        </div>
+    </div>
 </section>
+
 
 {# === 4. Відгуки === #}
 <section class="row align-items-center mb-5" id="section-feedback">
@@ -51,7 +58,7 @@
 </section>
 
 {# === 6. Модальні вікна для кошика і замовлень === #}
-<section class="row align-items-center mb-5" id="section-admin-panel">
+<section class="row align-items-center mb-5" id="section-modals">
 
     <!-- === Cart Modal === -->
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
@@ -89,7 +96,9 @@
             </div>
         </div>
     </div>
-
-    <script src="{{ url_for('static', filename='js/api/cart.js') }}"></script>
+    
 </section>
-{% endblock %}
+
+    <script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script> 
+    <script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
+    {% endblock %}
