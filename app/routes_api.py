@@ -1056,8 +1056,6 @@ def get_all_feedbacks():
     responses:
       200:
         description: Список успішно отримано
-      500:
-        description: Внутрішня помилка сервера
     """
     feedbacks = FeedbackService.get_all_feedbacks_service()
     return jsonify(feedbacks), 200
@@ -1066,96 +1064,65 @@ def get_all_feedbacks():
 @api.route("/feedbacks/<int:feedback_id>",methods=["GET"])
 def get_feedback_by_id(feedback_id):
     """
-  Отримати відгук за ID
-  ---
-  tags:
-    - Feedbacks
-  parameters:
-    - name: feedback_id
-      in: path
-      required: true
-      schema:
+    Отримати один відгук по ID
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: feedback_id
+        in: path
         type: integer
-      description: ID відгуку
-  responses:
+        required: true
+    responses:
       200:
-          description: Інформація про відгук
+        description: Знайдено
       404:
-          description: Відгук не знайдено
-      500:
-          description: Внутрішня помилка сервера
+        description: Не знайдено
     """
     feedback, error = FeedbackService.get_feedback_by_id_service(feedback_id)
     
     if error:
-        return jsonify({"message": "Відгук не знайдено"}), 404
-    else:
-        return jsonify(feedback.to_dict()), 200
+        return jsonify({"error": error}), 404
+        
+    return jsonify(feedback.to_dict()), 200
+
 
 
 @api.route("/feedbacks",methods=["POST"])
 @jwt_required()
 def add_feedback():
     """
-    Створити відгук
+    Залишити відгук (Потрібна авторизація)
     ---
     tags:
       - Feedbacks
-    parameters:
-      - name: user_id
-        in: path
-        required: false
-        schema:
-          type: integer
-        description: ID користувача
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - title
-            - description
-          properties:
-            title:
-              type: string
-            description:
-              type: string
-    responses:
-        200:
-            description: Відгук успішно створено
-        400:
-            description: Помилка створення
-        500:
-            description: Внутрішня помилка сервера
-    security:
-      - Bearer: []
+
+
+
     """
     data = request.get_json()
-    current_user_id = get_jwt_identity() 
-    new_feedback, error = FeedbackService.create_feedback_service(data, current_user_id)
+    
+    new_feedback, error = FeedbackService.create_feedback_service(data, current_user.id)
+    
     if error:
-        return jsonify({"message": error}), 400
-    else:
-        return jsonify(new_feedback.to_dict()), 201
+        return jsonify({"error": error}), 400
+        
+    return jsonify(new_feedback.to_dict()), 201
 
 
 @api.route("/feedbacks/<int:feedback_id>",methods=["PATCH"])
 @jwt_required()
 def edit_feedback_by_id(feedback_id):
     """
-    Редагувати відгук
+    Редагувати свій відгук
     ---
     tags:
       - Feedbacks
-    security:
-      - Bearer: []
     parameters:
       - name: feedback_id
         in: path
+        type: integer
         required: true
-        schema:
-          type: integer
       - in: body
         name: body
         schema:
@@ -1167,21 +1134,19 @@ def edit_feedback_by_id(feedback_id):
               type: string
     responses:
       200:
-        description: Відгук оновлено
+        description: Оновлено
       404:
-        description: Відгук не знайдено
-      400:
-        description: Помилка даних
+        description: Не знайдено
     """
     data = request.get_json()
-    
+
     updated_feedback, error = FeedbackService.update_feedback_service(feedback_id, data)
     
     if error:
-        status_code = 404 if "not found" in str(error) else 400
-        return jsonify({"message": error}), status_code
-    else:
-        return jsonify(updated_feedback.to_dict()), 200
+        status_code = 404 if "not found" in error else 400
+        return jsonify({"error": error}), status_code
+
+    return jsonify(updated_feedback.to_dict()), 200
 
 
 @api.route("/feedbacks/<int:feedback_id>",methods=["DELETE"])
@@ -1192,25 +1157,23 @@ def delete_feedback_by_id(feedback_id):
     ---
     tags:
       - Feedbacks
-    security:
-      - Bearer: []
     parameters:
       - name: feedback_id
         in: path
+        type: integer
         required: true
-        schema:
-          type: integer
     responses:
       200:
-        description: Відгук видалено
+        description: Видалено
       404:
-        description: Відгук не знайдено
+        description: Не знайдено
     """
     success, message = FeedbackService.delete_feedback_service(feedback_id)
-    if not success:
-        return jsonify({"message": "Відгук не знайдено"}), 404
+    
+    if success:
+        return jsonify({"message": message}), 200
     else:
-        return jsonify({"message": "Відгук успішно видалено"}), 200
+        return jsonify({"error": message}), 404
           
 
 # ----------------- Orders -----------------
