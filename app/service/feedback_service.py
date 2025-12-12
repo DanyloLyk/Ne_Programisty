@@ -1,7 +1,10 @@
-from requests import get
-from ..domain.feedback_rules import (get_feedbacks, get_feedback_by_id, add_feedback,delete_feedback_by_id,edit_feedback_by_id)
-from ..models.feedback import Feedback
-from .. import db
+from ..domain.feedback_rules import (
+    get_feedbacks,
+    get_feedback_by_id,
+    add_feedback,
+    delete_feedback_by_id,
+    edit_feedback_by_id,
+)
 
 
 class FeedbackService:
@@ -61,8 +64,10 @@ class FeedbackService:
         updated_feedback = edit_feedback_by_id(
             feedback_id,
             title=data.get('title'),
-            description=data.get('description')
+            description=data.get('description'),
         )
+        if not updated_feedback:
+            return None, "Failed to update feedback"
         return updated_feedback, None
 
     @staticmethod

@@ -1,4 +1,5 @@
 from app.models.feedback import Feedback
+from .. import db
 
 def get_feedbacks():
     """Отримати всі відгуки"""
