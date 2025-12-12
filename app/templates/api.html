@@ -25,7 +25,7 @@
 
         <div id="desktopCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner" id="desktop-list">
-                <!-- JS вставить слайди -->    
+                <!-- JS вставить слайди -->
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#desktopCarousel" data-bs-slide="prev">
@@ -43,7 +43,7 @@
 {# === 3. Новини === #}
 <section class="mb-5" id="section-news">
     <div class="container">
-        <h2 class="text-warning mb-4">Новини</h2>
+        <h2 class="text-warning mb-4 fw-bold">Новини</h2>
 
         <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner" id="news-list">
@@ -53,15 +53,26 @@
             <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
             </button>
+
             <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
                 <span class="carousel-control-next-icon"></span>
             </button>
         </div>
+
+        <!-- === СТИЛЬОВА КНОПКА ДОДАТИ НОВИНУ === -->
+        <div class="text-center my-4">
+            <button class="btn btn-warning fw-bold px-4 py-2 shadow add-news-btn" id="addNewsBtn">
+                ➕ Додати новину
+            </button>
+        </div>
+
     </div>
 </section>
+
+<!-- === МОДАЛЬНЕ ВІКНО ДЕТАЛЕЙ НОВИНИ === -->
 <div class="modal fade" id="newsModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content shadow rounded-3">
 
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="newsModalTitle"></h5>
@@ -69,16 +80,58 @@
             </div>
 
             <div class="modal-body">
-                <img id="newsModalImage" class="w-100 rounded mb-3" style="max-height: 300px; object-fit: cover;">
-                <p id="newsModalDescription"></p>
+                <img id="newsModalImage" class="w-100 rounded mb-3 shadow-sm"
+                     style="max-height: 300px; object-fit: cover;">
+
+                <p id="newsModalDescription" class="fs-5"></p>
                 <hr>
-                <p id="newsModalMore" class="text-muted"></p>
+                <p id="newsModalMore" class="text-muted small"></p>
             </div>
 
         </div>
     </div>
 </div>
 
+
+
+<!-- Modal Add News -->
+<div class="modal fade" id="addNewsModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Додати новину</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Назва</label>
+          <input id="addNewsTitle" type="text" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Опис</label>
+          <textarea id="addNewsDesc" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Додаткова інформація</label>
+          <textarea id="addNewsDesc2" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Посилання на зображення (URL)</label>
+          <input id="addNewsImage" type="text" class="form-control">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+        <button class="btn btn-outline-warning" id="saveNewsBtn">Створити</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 {# === 4. Відгуки === #}
@@ -128,9 +181,9 @@
             </div>
         </div>
     </div>
-    
+
 </section>
 
-    <script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script> 
-    <script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
-    {% endblock %}
+<script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
+{% endblock %}
