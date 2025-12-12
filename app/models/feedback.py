@@ -2,13 +2,13 @@ from .. import db
 
 
 class Feedback(db.Model):
-    __tablename__ = 'feedbacks'
+    __tablename__ = 'feedback'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    user = db.relationship('User', backref=db.backref('feedbacks', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('feedback', lazy='dynamic'))
     def to_dict(self):
         """Перетворює відгук у словник для API"""
         return {
