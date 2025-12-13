@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const rowDiv = document.createElement("div");
             rowDiv.classList.add("row", "g-3", "justify-content-center");
-
+            const slideItems = items.slice(i, i + perSlide);
             slideItems.forEach(item => {
                 const colDiv = document.createElement("div");
                 colDiv.classList.add("col-12", "col-md-3");
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? item.image
                     : `/static/${item.image || "images/default.jpg"}`;
 
-                col.innerHTML = `
+                colDiv.innerHTML = `
                     <div class="card h-100 shadow-sm d-flex flex-column">
                         <div class="ratio ratio-1x1">
                             <img src="${imagePath}" class="w-100 h-100" alt="${item.name}" style="object-fit: cover;">
@@ -95,10 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                 `;
-                row.appendChild(col);
+                rowDiv.appendChild(colDiv);
             });
 
-            slide.appendChild(row);
+            slide.appendChild(rowDiv);
             desktopsContainer.appendChild(slide);
         }
     }

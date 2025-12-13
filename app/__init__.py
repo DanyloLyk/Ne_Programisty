@@ -14,6 +14,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
     app.config['JWT_SECRET_KEY'] = '7ca594aa165516b25042703fbc5f3f16'
+    app.config['SECRET_KEY'] = 'your_secret_key_here'
     app.json.sort_keys = False
     app.config['SWAGGER'] = {
         'title': 'My API',

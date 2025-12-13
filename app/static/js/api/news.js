@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDescription = document.getElementById("newsModalDescription");
     const modalMore = document.getElementById("newsModalMore");
 
+    // NEW
+    const addNewsModal = new bootstrap.Modal(document.getElementById("addNewsModal"));
+    const addNewsBtn = document.getElementById("addNewsBtn");
+    const saveNewsBtn = document.getElementById("saveNewsBtn");
+
     const API_BASE = "/api/v1";
 
     function getImagePath(images) {
@@ -93,6 +98,51 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => console.error("Помилка /news/:id", err));
     }
+
+    // ================================
+    // NEW — Відкрити модалку додавання
+    // ================================
+    addNewsBtn?.addEventListener("click", () => {
+        addNewsModal.show();
+    });
+
+    // ================================
+    // NEW — Створити новину
+    // ================================
+    saveNewsBtn?.addEventListener("click", async () => {
+        const name = document.getElementById("addNewsTitle").value.trim();
+        const description = document.getElementById("addNewsDesc").value.trim();
+        const descriptionSecond = document.getElementById("addNewsDesc2").value.trim();
+        const image = document.getElementById("addNewsImage").value.trim();
+
+        const payload = {
+            name,
+            description,
+            descriptionSecond,
+            image_urls: image ? [image] : []
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/news`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || "Помилка створення новини");
+            }
+
+            addNewsModal.hide();
+            loadNews(); // перезавантажити список
+        } catch (err) {
+            console.error("Помилка додавання:", err);
+            alert(err.message);
+        }
+    });
 
     loadNews();
 });
