@@ -25,32 +25,27 @@ class CartService:
             return None
         return items
     
-    # 2. Видалено старий get_detailed_cart_items, його функціонал тепер у __get_cart_items
-    
     @staticmethod
-    def __get_cart_total(user_id: int) -> float:
+    def __get_cart_total(items: list[dict]) -> float:
         """
         Обчислює загальну вартість товарів у кошику користувача.
-        
+
         Args:
             user_id: ID користувача
-        
+
         Returns:
-            float: Загальна вартість товарів у кошику
+            float: Загальна вартість товарів у кошику.
         """
-        # Використовуємо уніфікований метод для отримання деталізованих товарів
-        items = CartService.__get_cart_items(user_id) 
         if not items:
             return 0.0
-
-        total = 0.0
-        for item in items:
-            # Припускаємо, що структура тепер має ключ 'item_details' (як ми вирішили раніше)
-            # або 'item' (як у вашому старому коді). Я залишаю 'item', як у вашому прикладі.
-            if item.get('item') and item['item'].get('total_price') is not None:
-                price_for_order = item['item']['total_price']
-                total += price_for_order
-        return total
+        
+        total = sum(
+            item['item_details'].get('total_price', 0.0)
+            for item in items
+            if isinstance(item, dict) and item.get('item_details') and isinstance(item['item_details'], dict)
+        )
+        
+        return float(total)
     
     @staticmethod
     def get_cart(user_id: int) -> dict:
@@ -64,7 +59,7 @@ class CartService:
         """
         # Тепер items завжди повертає деталізований кошик
         items = CartService.__get_cart_items(user_id)
-        total = CartService.__get_cart_total(user_id)
+        total = CartService.__get_cart_total(items)
         if not items:
             items = []
         return {

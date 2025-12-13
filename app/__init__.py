@@ -37,10 +37,11 @@ def create_app():
     from .routes import main
     app.register_blueprint(main)
     
-    from .routes_api import api as api_bp
+    from .routes_api import api, api_v2
     # Реєструємо blueprint з API
-    app.register_blueprint(api_bp)
-    
+    app.register_blueprint(api)
+    app.register_blueprint(api_v2)
+
     from flasgger import Swagger
     
     swagger_config = {
@@ -49,10 +50,22 @@ def create_app():
         "headers": [],
         "specs": [
             {
-                "endpoint": 'apispec_1',
-                "route": '/apispec_1.json',
-                "rule_filter": lambda rule: True,
+                "endpoint": 'apispec_v1',
+                "route": '/apispec_v1.json',
+                "rule_filter": lambda rule: rule.rule.startswith("/api/v1"),  # 🔥 Фільтруємо тільки V1
+                "model_filter": lambda tag: True,  # Включаємо всі моделі
+                "title": "API V1 (Production)",
+                "description": "Основна стабільна версія API для магазину.",
+                "version": "1.0.0"
+            },
+            {
+                "endpoint": 'apispec_v2',
+                "route": '/apispec_v2.json',
+                "rule_filter": lambda rule: rule.rule.startswith("/api/v2"),  # 🔥 Фільтруємо тільки V2
                 "model_filter": lambda tag: True,
+                "title": "API V2 (Beta)",
+                "description": "Нова версія API. Знаходиться в розробці.",
+                "version": "2.0.0"
             }
         ],
         "static_url_path": "/flasgger_static",
@@ -69,7 +82,29 @@ def create_app():
         'security': [{'Bearer': []}]
     }
 
-    Swagger(app, config=swagger_config)
+    template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "Ne Programisty Shop API",
+            "description": "Документація для найкращого магазину настільних ігор.",
+            "contact": {
+                "responsibleOrganization": "Ne Programisty Team",
+                "responsibleDeveloper": "Danylo (Team Lead)",
+                "email": "danylo@example.com",
+            },
+            "version": "1.0.0"
+        },
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+            }
+        },
+    }
+
+    Swagger(app, config=swagger_config, template=template)
 
 
     with app.app_context():
