@@ -13,42 +13,12 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
 
     def to_dict(self):
-        from .desktop import Desktop  # Імпортуємо локально, щоб уникнути циклічного імпорту
-        
-        # Розширена інформація про товари
-        items_detail = []
-        for item in self.items:
-            desktop = Desktop.query.get(item.get('item_id'))
-            if desktop:
-                items_detail.append({
-                    'item_id': item.get('item_id'),
-                    'quantity': item.get('quantity'),
-                    'discount': item.get('discount'),
-                    'name': desktop.name,
-                    'price': float(desktop.price) if desktop.price else 0,
-                    'total': float(desktop.price or 0) * item.get('quantity', 0) * item.get('discount', 1.0)
-                })
-            else:
-                items_detail.append({
-                    'item_id': item.get('item_id'),
-                    'quantity': item.get('quantity'),
-                    'discount': item.get('discount'),
-                    'name': 'Невідомий товар',
-                    'price': 0,
-                    'total': 0
-                })
-        
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'user': {
-                'id': self.user.id,
-                'nickname': self.user.nickname,
-                'email': self.user.email
-            } if self.user else None,
             'total_amount': self.total_amount,
             'status': self.status,
-            'items': items_detail  # Детальна інформація про товари
+            'items': self.items # Це вже JSON/список, все ок
         }
     
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]

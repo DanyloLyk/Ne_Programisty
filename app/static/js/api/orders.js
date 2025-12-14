@@ -131,10 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Заповнюємо модальне вікно
             document.getElementById("orderId").textContent = order.id;
             document.getElementById("orderStatus").textContent = order.status;
-            document.getElementById("orderUserNickname").textContent = order.user?.nickname || order.user_nickname || "—";
-            document.getElementById("orderUserEmail").textContent = order.user?.email || order.user_email || "—";
+            document.getElementById("orderUserNickname").textContent = order.user?.nickname || "N/A";
+            document.getElementById("orderUserEmail").textContent = order.user?.email || "N/A";
 
-            // Товари
+            // Товари - якщо немає деталей, використовуємо загальну інформацію
             const tbody = document.getElementById("orderItemsTable");
             tbody.innerHTML = "";
             
@@ -151,20 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 items.forEach(item => {
                     const row = document.createElement("tr");
-                    const itemName = item.name || item.item_name || "—";
-                    const quantity = item.quantity || item.count || 0;
-                    const price = parseFloat(item.price || 0).toFixed(2);
-                    const total = parseFloat(item.total || (price * quantity)).toFixed(2);
-                    
                     row.innerHTML = `
-                        <td>${itemName}</td>
-                        <td>${quantity}</td>
-                        <td>${price} ₴</td>
-                        <td>${total} ₴</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
+                        <td>${item.name || item.item_name || "N/A"}</td>
+                        <td>${item.count || item.quantity || 0}</td>
+                        <td>${item.price || 0} ₴</td>
+                            <td>${item.sum || (item.price * (item.count || item.quantity || 0))} ₴</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
 
             document.getElementById("orderTotal").textContent = order.total_amount || order.total_sum || 0;
 
