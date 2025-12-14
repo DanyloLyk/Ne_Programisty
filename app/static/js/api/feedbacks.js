@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isModerator = window.isModeratorMode();
             
             colDiv.innerHTML = `
-                <div class="card h-100 shadow-sm border border-warning">
+                <div class="card h-100 shadow-sm border-0">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title text-warning">${feedback.title}</h5>
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </div>
                             ` : ""}
                         </div>
-                    <p class="text-muted small mb-2">${feedback.description}</p>
+                        <p class="text-muted small mb-2">${feedback.description}</p>
                         <div class="mt-auto pt-3 border-top border-subtle">
                             <small class="text-warning fw-bold">
                                 <i class="fa-solid fa-user me-1"></i>

@@ -26,9 +26,83 @@
         </svg>
       </button>
 
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="span">
+          Немає облікового запису?
+          <a href="#" id="open-signup">Зареєструватися</a>
+        </span>
+
+        <span class="span">
+          <a href="#" id="open-forgot-password">Забули пароль?</a>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Модалка Відновлення пароля -->
+<div id="forgot-password-modal" class="login-modal">
+  <div class="login-modal-content">
+    <span id="close-forgot-password" class="close">&times;</span>
+    <form id="forgot-password-form" class="form">
+      <p>Відновлення пароля, <span>введіть вашу електронну пошту</span></p>
+
+      <span class="input-span">
+        <label for="forgot-email" class="label">Електронна пошта</label>
+        <input type="email" name="email" id="forgot-email" placeholder="Введіть вашу електронну пошту" required>
+      </span>
+
+      <button type="submit" class="oauthButton submit">
+        Відправити посилання
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 17 5-5-5-5"></path>
+          <path d="m13 17 5-5-5-5"></path>
+        </svg>
+      </button>
+
+      <div id="forgot-message" class="mt-3 text-center" style="font-size: 0.9rem;"></div>
+
       <span class="span">
-        Немає облікового запису?
-        <a href="#" id="open-signup">Зареєструватися</a>
+        Пам'ятаєте пароль?
+        <a href="#" id="back-to-login">Увійти</a>
+      </span>
+    </form>
+
+    <!-- Форма для скидання пароля (показується після відправки email) -->
+    <form id="reset-password-form" class="form" style="display: none;">
+      <p>Встановіть новий пароль, <span>перевірте email пошти, яку ви ввели</span></p>
+
+      <span class="input-span">
+        <label for="reset-token" class="label">Токен відновлення</label>
+        <input type="text" name="token" id="reset-token" placeholder="Введіть токен з email" required>
+      </span>
+
+      <span class="input-span">
+        <label for="reset-password" class="label">Новий пароль</label>
+        <input type="password" name="password" id="reset-password" placeholder="Введіть новий пароль" required>
+      </span>
+
+      <span class="input-span">
+        <label for="reset-confirm" class="label">Підтвердіть пароль</label>
+        <input type="password" name="confirm" id="reset-confirm" placeholder="Повторіть новий пароль" required>
+      </span>
+
+      <button type="submit" class="oauthButton submit" style="margin-top: 15px;">
+        Змінити пароль
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0-1.4 0l-4 4a1 1 0 0 0 0 1.4l4 4a1 1 0 0 0 1.4-1.4L11.42 11H19a1 1 0 0 0 0-2h-7.58l3.3-3.3a1 1 0 0 0 0-1.4z"/>
+        </svg>
+      </button>
+
+      <div id="reset-message" class="mt-3 text-center" style="font-size: 0.9rem;"></div>
+
+      <span class="span">
+        <a href="#" id="back-to-forgot">Назад</a>
       </span>
     </form>
   </div>

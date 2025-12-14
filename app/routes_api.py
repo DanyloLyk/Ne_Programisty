@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, g, request, session
+from flask import Blueprint, render_template, jsonify, g, request, session, url_for
 from functools import wraps
 from app.models import cart
 from app.models.user import User
@@ -209,9 +209,11 @@ def forgot_password():
     if error:
         return jsonify({"message": error}), 404
         
+    reset_link = request.host_url.rstrip('/') + url_for('main.reset_password_page', token=token)
     return jsonify({
-        "message": "Посилання для скидання пароля відправлено (дивись консоль сервера)",
-        "debug_token": token # Повертаємо токен, щоб тобі було зручно копіювати
+        "message": "Посилання для скидання пароля відправлено на вашу електронну пошту.", 
+        "reset_link": reset_link,
+        "debug_token": token
     }), 200
 
 
@@ -1438,10 +1440,10 @@ def add_feedback_by_user(user_id):
     return jsonify(new_feedback.to_dict()), 201
 
 @api.route("/feedbacks/<int:feedback_id>", methods=["PATCH"])
-@jwt_required()
+@admin_required
 def edit_feedback_by_id(feedback_id):
     """
-    Редагувати свій відгук
+    Редагувати відгук по ID відгуку (Адмін)
     ---
     tags:
       - Feedbacks
@@ -1482,7 +1484,7 @@ def edit_feedback_by_id(feedback_id):
 
 
 @api.route("/feedbacks/<int:feedback_id>", methods=["DELETE"])
-@admin_required # Видаляти краще тільки адміну (або автору, але це складніше)
+@admin_required # Видаляти краще тільки адміну 
 def delete_feedback_by_id(feedback_id):
     """
     Видалити відгук (Тільки Адмін)
@@ -1526,7 +1528,7 @@ def get_all_orders():
       - Bearer: []
     """
     orders = OrdersService.get_all_orders()
-    return jsonify([order.to_dict() for order in orders]), 200
+    return jsonify(orders), 200
 
 @api.route("/orders/my", methods=["GET"]) # Змінив URL, щоб не плутатись з ID
 @jwt_required()

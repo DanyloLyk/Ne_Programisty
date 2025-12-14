@@ -528,7 +528,18 @@ def logout():
     session.clear()  # Очищаємо сесію
     flash("Ви вийшли з системи", "info")
     return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
+
+
+@main.route('/reset-password', methods=['GET'])
+def reset_password_page():
+    token = request.args.get('token')
+    if not token:
+        flash('Токен відновлення відсутній.', 'danger')
+        return redirect(url_for('main.index'))
     
+    return render_template('reset_password.html', token=token)
+
+
 @main.route('/admin')
 @privilege_required('Admin', 'Moder')
 def admin():

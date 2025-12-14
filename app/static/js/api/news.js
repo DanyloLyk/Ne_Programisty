@@ -60,13 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const imagePath = getImagePath(item.images);
 
                 colDiv.innerHTML = `
-                    <div class="card h-100 shadow-sm news-card border border-dark">
+                    <div class="card h-100 shadow-sm news-card border-0">
                         <div class="ratio ratio-16x9">
                             <img src="${imagePath}" class="card-img-top" style="object-fit: cover;">
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-warning">${item.name}</h5>
-                            <p class="card-text small">${item.description}</p>
+                            <p class="text-muted small">${item.description}</p>
                             <div class="mt-auto d-flex gap-2">
                                 <button class="btn btn-warning flex-fill open-news">
                                     <i class="fa-solid fa-info-circle me-1"></i> Детальніше

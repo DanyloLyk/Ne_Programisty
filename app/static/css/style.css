@@ -994,33 +994,29 @@ body {
 
 /* Стилі для опису новин - білий/чорний залежно від теми */
 .section-news .card-text {
-  color: var(--bs-body-color) !important;
+  color: var(--bs-secondary) !important;
 }
 
 [data-bs-theme="dark"] .section-news .card-text {
-  color: var(--bs-body-color) !important;
+  color: var(--bs-secondary) !important;
 }
 
 /* Стилі для темного режиму в новинах та відгуках */
 [data-bs-theme="dark"] .section-news .card,
-[data-bs-theme="dark"] .section-feedback .card {
+[data-bs-theme="dark"] .section-feedback .card:not(.border-adaptive) {
   background-color: var(--bs-body-bg);
   border-color: #ffc107 !important;
 }
 
 /* Текст завжди жовтий в новинах та відгуках */
 .section-news .card-title,
-.section-news .card-text,
 .section-feedback .card-title,
-.section-feedback .card-text,
 .section-feedback .form-label {
   color: #ffc107 !important;
 }
 
 [data-bs-theme="dark"] .section-news .card-title,
-[data-bs-theme="dark"] .section-news .card-text,
 [data-bs-theme="dark"] .section-feedback .card-title,
-[data-bs-theme="dark"] .section-feedback .card-text,
 [data-bs-theme="dark"] .section-feedback .form-label {
   color: #ffc107 !important;
 }
@@ -1104,17 +1100,198 @@ body {
   to { opacity: 1; }
 }
 
-/* Стилі для каруселей */
-.carousel-control-prev,
-.carousel-control-next {
-  width: 5%;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+/* ==========================================================================
+   1. ГОЛОВНІ КАРУСЕЛІ (Каталог, Новини, Замовлення на головній)
+   ========================================================================== */
+
+/* Спільні стилі для кнопок-кружечків */
+#desktopCarousel .carousel-control-prev,
+#desktopCarousel .carousel-control-next,
+#newsCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-next,
+#ordersCarousel .carousel-control-prev,
+#ordersCarousel .carousel-control-next {
+    /* Розмір кружечка */
+    width: 50px !important;
+    height: 50px !important;
+    
+    /* ВМИКАЄМО FLEX, ЩОБ ІКОНКА БУЛА ТОЧНО ПО ЦЕНТРУ */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Фон і форма */
+    background-color: #ffc107 !important; 
+    border-radius: 50% !important;        
+    
+    /* Позиціонування */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    
+    /* Рівномірна тінь (без зміщення) */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    border: 2px solid #ffc107 !important; /* Рамка в колір фону для чіткості */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-  opacity: 1;
+/* Зсув вліво */
+#desktopCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-prev,
+#ordersCarousel .carousel-control-prev {
+    left: -65px !important; 
+}
+
+/* Зсув вправо */
+#desktopCarousel .carousel-control-next,
+#newsCarousel .carousel-control-next,
+#ordersCarousel .carousel-control-next {
+    right: -65px !important;
+}
+
+/* Ефект при наведенні */
+#desktopCarousel .carousel-control-prev:hover,
+#desktopCarousel .carousel-control-next:hover,
+#newsCarousel .carousel-control-prev:hover,
+#newsCarousel .carousel-control-next:hover,
+#ordersCarousel .carousel-control-prev:hover,
+#ordersCarousel .carousel-control-next:hover {
+    transform: translateY(-50%) scale(1.15) !important;
+    background-color: #ffc107 !important;
+    
+    /* Рівномірне сяйво навколо всієї кнопки */
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6) !important;
+}
+
+/* Ефект при натисканні */
+#desktopCarousel .carousel-control-prev:active,
+#desktopCarousel .carousel-control-next:active {
+    transform: translateY(-50%) scale(0.95) !important;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* САМІ ІКОНКИ (СТРІЛОЧКИ) */
+#desktopCarousel .carousel-control-prev-icon,
+#desktopCarousel .carousel-control-next-icon,
+#newsCarousel .carousel-control-prev-icon,
+#newsCarousel .carousel-control-next-icon,
+#ordersCarousel .carousel-control-prev-icon,
+#ordersCarousel .carousel-control-next-icon {
+    filter: invert(1) grayscale(100) !important;
+    width: 2rem !important; /* Фіксований розмір */
+    height: 2rem !important;
+    background-size: 100% !important;
+    margin: 0 !important; /* Прибираємо можливі відступи */
+}
+
+/* Адаптивність */
+@media (max-width: 1200px) {
+    #desktopCarousel .carousel-control-prev,
+    #desktopCarousel .carousel-control-next,
+    #newsCarousel .carousel-control-prev,
+    #newsCarousel .carousel-control-next,
+    #ordersCarousel .carousel-control-prev,
+    #ordersCarousel .carousel-control-next {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   1.1. СПЕЦІАЛЬНИЙ ФІКС ДЛЯ СЕКЦІЇ НОВИН (Жовтий фон -> Темні кнопки)
+   ========================================================================== */
+
+/* Перефарбовуємо фон кружечка в темний (#212529 - це колір тексту Bootstrap Dark) */
+#newsCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-next {
+    background-color: #212529 !important; 
+    border-color: #212529 !important;
+    /* Робимо тінь помітнішою, бо фон жовтий */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* При наведенні стає чисто чорним */
+#newsCarousel .carousel-control-prev:hover,
+#newsCarousel .carousel-control-next:hover {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6) !important;
+    transform: translateY(-50%) scale(1.15) !important;
+}
+
+/* Фарбуємо саму стрілочку всередині в ЖОВТИЙ (#ffc107) */
+#newsCarousel .carousel-control-prev-icon {
+    /* Вимикаємо фільтри */
+    filter: none !important;
+    opacity: 1 !important;
+    
+    /* Вставляємо SVG з жовтим кольором (fill='%23ffc107') */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffc107'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e") !important;
+}
+
+#newsCarousel .carousel-control-next-icon {
+    /* Вимикаємо фільтри */
+    filter: none !important;
+    opacity: 1 !important;
+    
+    /* Вставляємо SVG з жовтим кольором (fill='%23ffc107') */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffc107'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+
+/* ==========================================================================
+   2. КАРУСЕЛІ В МОДАЛКАХ ("Pro" варіант - кружечки)
+   ========================================================================== */
+
+/* Стилі для контейнера кнопок (тепер це кружечок) */
+.modal .carousel-control-prev,
+.modal .carousel-control-next {
+    position: absolute !important;
+    top: 50% !important; /* Центруємо по вертикалі */
+    transform: translateY(-50%) !important;
+    z-index: 1;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Робимо їх компактними кружечками */
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    
+    /* Напівпрозорий темний фон */
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border: 0 !important;
+    opacity: 1 !important; /* Завжди видно */
+    transition: all 0.3s ease !important;
+}
+
+/* Відступи від країв картинки */
+.modal .carousel-control-prev {
+    left: 15px !important;
+}
+
+.modal .carousel-control-next {
+    right: 15px !important;
+}
+
+/* Ховер ефект - кружечок стає темнішим і трохи збільшується */
+.modal .carousel-control-prev:hover,
+.modal .carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+/* САМІ ІКОНКИ (СТРІЛОЧКИ)
+   Тут ми залишаємо їх БІЛИМИ (стандартними), бо вони на темному кружечку.
+*/
+.modal .carousel-control-prev-icon,
+.modal .carousel-control-next-icon {
+    filter: none !important; /* Ніяких фільтрів, чистий білий */
+    width: 2rem !important;
+    height: 2rem !important;
+    background-size: 100% !important;
 }
 
 /* Стилі для таблиць */
@@ -1265,4 +1442,14 @@ body {
     padding: 6px 10px;
     font-size: 12px;
   }
+}
+
+/* Smooth Theme Transition for ALL elements */
+body, 
+.card, 
+.modal-content, 
+.landing-section, 
+.form-control, 
+h1, h2, h3, h4, h5, h6, p, span, i, div {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }

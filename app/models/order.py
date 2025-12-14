@@ -13,13 +13,60 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
 
     def to_dict(self):
-        return {
+        from app.models.desktop import Desktop 
+        
+        enriched_items = []
+        
+        for item in self.items:
+            item_data = item.copy()
+            
+            # Шукаємо товар по ID
+            product = Desktop.query.get(item['item_id'])
+            
+            if product:
+                item_data['name'] = product.name
+                item_data['price'] = product.price
+                
+                # === ВИПРАВЛЕННЯ ТУТ ===
+                # 1. Конвертуємо ціну в float, бо вона може бути рядком
+                try:
+                    price_str = str(product.price).replace(' ', '').replace(',', '.')
+                    price_val = float(price_str)
+                except (ValueError, TypeError):
+                    price_val = 0.0
+
+                # 2. Тепер множимо числа на числа
+                discount = float(item.get('discount', 1.0))
+                quantity = int(item['quantity'])
+                
+                item_data['sum'] = round(price_val * quantity * discount, 2)
+                # =======================
+            else:
+                item_data['name'] = "Товар видалено"
+                item_data['price'] = 0
+                item_data['sum'] = 0
+            
+            enriched_items.append(item_data)
+
+        data = {
             'id': self.id,
             'user_id': self.user_id,
             'total_amount': self.total_amount,
             'status': self.status,
-            'items': self.items # Це вже JSON/список, все ок
+            'items': enriched_items,
+            'created_at': self.created_at.isoformat() if hasattr(self, 'created_at') else None
         }
+
+        if self.user:
+            data['user'] = {
+                'id': self.user.id,
+                'nickname': self.user.nickname,
+                'email': self.user.email
+            }
+        else:
+            data['user'] = None
+            
+        return data
     
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
     items = db.Column(db.JSON, nullable=False, default=list)

@@ -2,12 +2,14 @@ from .. import db
 from app.models.order import Order
 from app.models.cart import CartItem
 from app.models.user import User
+from sqlalchemy.orm import joinedload
 
 def get_all_orders():
-    try:
-        return Order.query.all()
-    except Exception:
-        return []
+    orders = Order.query.options(joinedload(Order.user)).order_by(Order.id.desc()).all()
+    
+    # Використовуємо наш оновлений метод to_dict()
+    return [order.to_dict() for order in orders]
+
 
 def get_order_by_id(order_id):
     return Order.query.get(order_id)
