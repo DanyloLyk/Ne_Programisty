@@ -13,13 +13,26 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
 
     def to_dict(self):
-        return {
+        data = {
             'id': self.id,
             'user_id': self.user_id,
             'total_amount': self.total_amount,
             'status': self.status,
-            'items': self.items # Це вже JSON/список, все ок
+            'items': self.items, # JSON поле
+            'created_at': self.created_at.isoformat() if hasattr(self, 'created_at') else None
         }
+
+        # Додаємо дані про юзера, якщо він є
+        if self.user:
+            data['user'] = {
+                'id': self.user.id,
+                'nickname': self.user.nickname,
+                'email': self.user.email
+            }
+        else:
+            data['user'] = None
+            
+        return data
     
     # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
     items = db.Column(db.JSON, nullable=False, default=list)

@@ -1526,7 +1526,7 @@ def get_all_orders():
       - Bearer: []
     """
     orders = OrdersService.get_all_orders()
-    return jsonify([order.to_dict() for order in orders]), 200
+    return jsonify(orders), 200
 
 @api.route("/orders/my", methods=["GET"]) # Змінив URL, щоб не плутатись з ID
 @jwt_required()

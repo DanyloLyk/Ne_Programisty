@@ -1005,17 +1005,13 @@ body {
 
 /* Текст завжди жовтий в новинах та відгуках */
 .section-news .card-title,
-.section-news .card-text,
 .section-feedback .card-title,
-.section-feedback .card-text,
 .section-feedback .form-label {
   color: #ffc107 !important;
 }
 
 [data-bs-theme="dark"] .section-news .card-title,
-[data-bs-theme="dark"] .section-news .card-text,
 [data-bs-theme="dark"] .section-feedback .card-title,
-[data-bs-theme="dark"] .section-feedback .card-text,
 [data-bs-theme="dark"] .section-feedback .form-label {
   color: #ffc107 !important;
 }
@@ -1099,16 +1095,40 @@ body {
   to { opacity: 1; }
 }
 
-/* Стилі для каруселей */
+/* 1. Робимо саму зону стрілки вузькою, щоб вона не закривала кнопки */
 .carousel-control-prev,
 .carousel-control-next {
+    width: 50px !important;  /* Вузька смужка замість 15% */
+    background: none !important; /* Прибираємо стандартний градієнт */
+    opacity: 1 !important;   /* Щоб стрілки завжди було видно */
+}
+
+/* 2. Рухаємо їх */
+.carousel-control-prev {
+    left: -60px !important; /* Виносимо трохи вліво за межі */
+}
+
+.carousel-control-next {
+    right: -60px !important; /* Виносимо трохи вправо за межі */
+}
+
+/* 3. Фарбуємо самі іконки в чорний */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1) grayscale(100) !important; /* Чорний колір */
+    background-size: 2rem !important; /* Розмір самої "пташки" */
+}
+
+/* Стилі для каруселей */
+.carousel-arrow-prev,
+.carousel-arrow-next {
   width: 5%;
   opacity: 0.7;
   transition: opacity 0.3s ease;
 }
 
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
+.carousel-arrow-prev:hover,
+.carousel-arrow-next:hover {
   opacity: 1;
 }
 
