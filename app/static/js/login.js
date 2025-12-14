@@ -19,6 +19,41 @@ document.addEventListener("DOMContentLoaded", function() {
   const cartLinks = document.querySelectorAll('[data-cart-link="true"]');
   const isAuthenticated = document.body.dataset.userAuth === "true";
 
+  // Автоматичний вхід для тестування
+  const autoLoginForTesting = async () => {
+    // Перевіряємо, чи користувач вже авторизований
+    if (document.body.dataset.userAuth === "true") {
+      console.log("Користувач вже авторизований");
+      return;
+    }
+
+    console.log("Спроба автоматичного входу для тестування...");
+
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          email: "dann160309@gmail.com",
+          password: "123"
+        }),
+        redirect: "manual" // Не слідувати за редіректами автоматично
+      });
+
+      if (response.status === 302) {
+        // Успішний вхід - перезавантажуємо сторінку
+        console.log("Автоматичний вхід успішний, перезавантаження сторінки...");
+        window.location.reload();
+      } else {
+        console.log("Автоматичний вхід не вдався, статус:", response.status);
+      }
+    } catch (error) {
+      console.error("Помилка автоматичного входу:", error);
+    }
+  };
+
   if (!loginModal && !signupModal && !forgotPasswordModal) return;
 
   // Overlay для закриття
@@ -213,4 +248,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     });
   }
+
+  // Запускаємо автоматичний вхід через 1 секунду після завантаження
+  autoLoginForTesting();
 });
