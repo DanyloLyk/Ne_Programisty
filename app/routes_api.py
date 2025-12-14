@@ -1393,6 +1393,49 @@ def add_feedback():
         
     return jsonify(new_feedback.to_dict()), 201
 
+@api.route("/feedbacks/user/<int:user_id>", methods=["POST"])
+@admin_required
+def add_feedback_by_user(user_id):
+    """
+    Залишити відгук (Тільки Адмін)
+    ---
+    tags:
+      - Feedbacks
+    parameters:
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+        description: ID користувача, від імені якого створюється відгук
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - title
+            - description
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+    responses:
+      201:
+        description: Відгук створено
+      400:
+        description: Помилка валідації
+    security:
+      - Bearer: []
+    """
+    data = request.get_json()
+    
+    new_feedback, error = FeedbackService.create_feedback_service(data, user_id)
+    
+    if error:
+        return jsonify({"message": error}), 400
+        
+    return jsonify(new_feedback.to_dict()), 201
 
 @api.route("/feedbacks/<int:feedback_id>", methods=["PATCH"])
 @jwt_required()

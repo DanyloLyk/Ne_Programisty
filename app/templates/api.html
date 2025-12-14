@@ -1,26 +1,235 @@
 {% extends 'base.html' %}
 
-{% block title %}Про нас - Гральна Комора{% endblock %}
+{% block title %}API Landing Page - Гральна Комора{% endblock %}
 
 {% block content %}
 <script src="{{ url_for('static', filename='js/api/api.js') }}"></script>
-{# === 1. Повідомлення, що юзер - адмін(user:cat; password:123; token: отримується з айпі) === #}
-<section class="row align-items-center mb-5" id="section-user">
-    <script>
-        login();
-    </script>
+
+{# Автоматичний логін при завантаженні сторінки #}
+<script>
+// Виконуємо автоматичний логін після завантаження DOM
+document.addEventListener('DOMContentLoaded', async function() {
+    // Перевіряємо чи є токен
+    const existingToken = localStorage.getItem('accessToken');
+    
+    if (!existingToken) {
+        // Чекаємо поки api.js завантажиться (максимум 1 секунда)
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const tryLogin = async () => {
+            if (typeof login === 'function') {
+                try {
+                    await login();
+                    console.log('Автоматичний логін виконано');
+                    // Перезавантажуємо сторінку після успішного логіну
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                } catch (error) {
+                    console.error('Помилка автоматичного логіну:', error);
+                }
+            } else if (attempts < maxAttempts) {
+                attempts++;
+                setTimeout(tryLogin, 100);
+            }
+        };
+        
+        tryLogin();
+    } else {
+        console.log('Токен вже існує:', existingToken.substring(0, 20) + '...');
+        // Перевіряємо чи токен валідний, викликаючи API
+        try {
+            const testResponse = await fetch('/api/v1/cart', {
+                headers: {
+                    'Authorization': `Bearer ${existingToken}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (testResponse.status === 401) {
+                console.log('Токен невалідний, виконуємо повторний логін...');
+                localStorage.removeItem('accessToken');
+                if (typeof login === 'function') {
+                    await login();
+                    window.location.reload();
+                }
+            } else {
+                console.log('Токен валідний');
+            }
+        } catch (error) {
+            console.error('Помилка перевірки токена:', error);
+        }
+    }
+});
+</script>
+
+{# === 1. Про нас (білий/темний фон) === #}
+<section class="landing-section section-about py-5 scroll-animate" id="section-about">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6 scroll-animate fade-left">
+                <img src="/static/images/about1.jpg" 
+                     alt="Історія крамниці" 
+                     class="img-fluid rounded shadow-sm border border-warning"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=About+Us'">
+            </div>
+            <div class="col-md-6 scroll-animate fade-right">
+                <h2 class="fw-bold text-warning mb-3">Наша історія</h2>
+                <p class="fs-5">
+                    Все почалося з невеликого клубу настільних ігор, де збиралися друзі після роботи.  
+                    З часом ми перетворили це захоплення у справжню крамницю,  
+                    щоб кожен міг знайти гру до душі — від стратегій до веселих вечірок.
+                </p>
+            </div>
+        </div>
+
+        {# Що ми пропонуємо #}
+        <div class="row text-center mb-5 border-top pt-5 scroll-animate fade-up">
+            <h2 class="fw-bold text-warning mb-4">Що ми пропонуємо</h2>
+
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-body-secondary border border-warning card-hover-animate">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">🎯 Великий вибір</h5>
+                        <p class="card-text">Більше 300 настільних ігор — для будь-якої компанії та настрою.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-body-secondary border border-warning card-hover-animate">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">☕ Ігрова зона</h5>
+                        <p class="card-text">Затишне місце, де можна спробувати гру перед покупкою.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-body-secondary border border-warning card-hover-animate">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">🎁 Подарунки</h5>
+                        <p class="card-text">Сертифікати та коробкові набори для друзів і близьких.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Наші цінності #}
+        <div class="row align-items-center border-top pt-5 scroll-animate fade-up">
+            <div class="col-md-6 scroll-animate fade-left">
+                <h2 class="fw-bold text-warning mb-3">Наші цінності</h2>
+                <p class="fs-5">
+                    Ми віримо, що настільні ігри — це більше, ніж розвага.  
+                    Це можливість спілкуватися, сміятися, мислити стратегічно і просто бути поруч.  
+                    Кожна партія — це нова історія, яку ти створюєш разом з іншими 💛
+                </p>
+            </div>
+            <div class="col-md-6 scroll-animate fade-right">
+                <img src="/static/images/about2.jpg" 
+                     alt="Настільні ігри та команда" 
+                     class="img-fluid rounded shadow-sm border border-warning"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=Our+Values'">
+            </div>
+        </div>
+    </div>
 </section>
 
-{# === 2. Каталог товарів === #}
-<section class="mb-5" id="section-dekstops">
+{# === 2. Контакти (жовтий фон) === #}
+<section class="landing-section section-contacts py-5 bg-warning scroll-animate" id="section-contacts">
     <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-4 text-dark">Завітай до нас!</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-dark shadow-sm h-100 contact-card">
+                            <div class="card-body">
+                                <i class="fa-solid fa-location-dot fa-3x text-dark mb-3"></i>
+                                <h5 class="card-title text-dark fw-bold">Адреса</h5>
+                                <p class="card-text text-dark">
+                                    проспект Соборності, 43<br>
+                                    м. Луцьк (Port City)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-dark shadow-sm h-100 contact-card">
+                            <div class="card-body">
+                                <i class="fa-solid fa-phone fa-3x text-dark mb-3"></i>
+                                <h5 class="card-title text-dark fw-bold">Телефон</h5>
+                                <p class="card-text text-dark">
+                                    <a href="tel:+380681234567" class="text-dark text-decoration-none">+380 68 123 45 67</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-dark shadow-sm h-100 contact-card">
+                            <div class="card-body">
+                                <i class="fa-solid fa-envelope fa-3x text-dark mb-3"></i>
+                                <h5 class="card-title text-dark fw-bold">Email</h5>
+                                <p class="card-text text-dark">
+                                    <a href="mailto:info@komora.ua" class="text-dark text-decoration-none">info@komora.ua</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="ratio ratio-16x9 shadow-lg rounded">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2609.123456789!2d25.345678!3d50.745678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47245b123456789%3A0xabcdef123456789!2s%D0%9F%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D1%81%D1%82%D1%96%2043%2C%20%D0%9B%D1%83%D1%86%D1%8C%D0%BA!5e0!3m2!1suk!2sua!4v1690000000000!5m2!1suk!2sua"
+                        width="600"
+                        height="450"
+                        style="border:0; border-radius: 8px;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
 
+        <!-- Соціальні мережі -->
+        <div class="row text-center">
+            <div class="col-12">
+                <h3 class="fw-bold text-dark mb-4">Ми в соцмережах</h3>
+                <div class="social-icons justify-content-center">
+                    <a href="https://facebook.com/komora" target="_blank" aria-label="Facebook" class="text-dark">
+                        <i class="fa-brands fa-facebook fa-2x"></i>
+                    </a>
+                    <a href="https://instagram.com/komora" target="_blank" aria-label="Instagram" class="text-dark">
+                        <i class="fa-brands fa-instagram fa-2x"></i>
+                    </a>
+                    <a href="https://t.me/komora" target="_blank" aria-label="Telegram" class="text-dark">
+                        <i class="fa-brands fa-telegram fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# === 3. Каталог товарів (білий/темний фон) === #}
+<section class="landing-section section-catalog py-5 scroll-animate" id="section-dekstops">
+    <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-warning m-0">Каталог товарів</h2>
-            <button class="btn btn-outline-warning d-flex align-items-center" data-bs-toggle="modal"
-                data-bs-target="#cartModal">
-                <i class="fa-solid fa-cart-shopping me-2"></i> Кошик
-            </button>
+            <h2 class="text-warning m-0 fw-bold">Каталог товарів</h2>
+            <div class="d-flex gap-2">
+                <button id="addItemBtn" class="btn btn-warning fw-bold moderator-only" style="display: none;">
+                    ➕ Додати товар
+                </button>
+                <button class="btn btn-outline-warning d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <i class="fa-solid fa-cart-shopping me-2"></i> Кошик
+                </button>
+            </div>
         </div>
 
         <div id="desktopCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -36,14 +245,25 @@
             </button>
         </div>
 
+        <!-- Кнопка перемикання режиму модератора -->
+        <div class="text-center mt-5">
+            <button id="moderatorToggleBtnBottom" class="btn btn-lg btn-warning shadow-lg moderator-toggle-btn">
+                <i class="fa-solid fa-user-shield me-2"></i>
+                <span id="moderatorToggleTextBottom">Режим клієнта</span>
+            </button>
+        </div>
     </div>
 </section>
 
-
-{# === 3. Новини === #}
-<section class="mb-5" id="section-news">
+{# === 4. Новини (жовтий фон) === #}
+<section class="landing-section section-news py-5 bg-warning scroll-animate" id="section-news">
     <div class="container">
-        <h2 class="text-warning mb-4 fw-bold">Новини</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-dark mb-0 fw-bold">Новини</h2>
+            <button id="addNewsBtn" class="btn btn-dark fw-bold px-4 py-2 shadow moderator-only" style="display: none;">
+                ➕ Додати новину
+            </button>
+        </div>
 
         <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner" id="news-list">
@@ -58,140 +278,541 @@
                 <span class="carousel-control-next-icon"></span>
             </button>
         </div>
-
-        <!-- === СТИЛЬОВА КНОПКА ДОДАТИ НОВИНУ === -->
-        <div class="text-center my-4">
-            <button class="btn btn-warning fw-bold px-4 py-2 shadow add-news-btn" id="addNewsBtn">
-                ➕ Додати новину
-            </button>
-        </div>
-
     </div>
 </section>
 
-<!-- === МОДАЛЬНЕ ВІКНО ДЕТАЛЕЙ НОВИНИ === -->
+{# === 5. Замовлення (білий/темний фон) === #}
+<section class="landing-section section-orders py-5 scroll-animate" id="section-orders">
+    <div class="container">
+        <h2 class="text-warning mb-4 fw-bold">Замовлення</h2>
+
+        <div id="ordersCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" id="orders-list">
+                <!-- JS вставляє слайди -->
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#ordersCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#ordersCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+</section>
+
+{# === 6. Відгуки (жовтий фон) === #}
+<section class="landing-section section-feedback py-5 bg-warning scroll-animate" id="section-feedback">
+    <div class="container">
+        <h2 class="text-dark mb-4 fw-bold">Відгуки</h2>
+
+        <!-- Форма відгуку -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-warning mb-3">Залиш свій відгук</h4>
+                        <form id="feedback-form">
+                            <div class="mb-3">
+                                <label for="feedback-title" class="form-label text-warning fw-bold">Тема / Заголовок</label>
+                                <input type="text" class="form-control" id="feedback-title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="feedback-description" class="form-label text-warning fw-bold">Опис вашого відгуку</label>
+                                <textarea class="form-control" id="feedback-description" name="description" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Відправити
+                            </button>
+                        </form>
+                        <div id="feedback-message" class="mt-3 text-center"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список відгуків -->
+        <div class="d-flex justify-content-end mb-3">
+            <button id="addFeedbackBtn" class="btn btn-dark fw-bold moderator-only" style="display: none;">
+                ➕ Додати відгук
+            </button>
+        </div>
+
+        <div id="feedbacks-list" class="row g-4">
+            <!-- JS вставляє карточки відгуків -->
+        </div>
+    </div>
+</section>
+
+{# === 7. Користувачі (білий/темний фон) === #}
+<section class="landing-section section-users py-5 scroll-animate" id="section-users">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-warning mb-0 fw-bold">Користувачі</h2>
+            <button id="addUserBtn" class="btn btn-warning fw-bold moderator-only" style="display: none;">
+                ➕ Додати користувача
+            </button>
+        </div>
+
+        <div id="users-list" class="row g-4">
+            <!-- JS вставляє карточки користувачів -->
+        </div>
+    </div>
+</section>
+
+{# === МОДАЛЬНІ ВІКНА === #}
+
+<!-- Модальне вікно деталей новини -->
 <div class="modal fade" id="newsModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content shadow rounded-3">
-
             <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="newsModalTitle"></h5>
+                <h5 class="modal-title text-dark" id="newsModalTitle"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body">
-                <img id="newsModalImage" class="w-100 rounded mb-3 shadow-sm"
-                     style="max-height: 300px; object-fit: cover;">
-
+                <img id="newsModalImage" class="w-100 rounded mb-3 shadow-sm" style="max-height: 300px; object-fit: cover;">
                 <p id="newsModalDescription" class="fs-5"></p>
                 <hr>
                 <p id="newsModalMore" class="text-muted small"></p>
             </div>
-
         </div>
     </div>
 </div>
 
-
-
-<!-- Modal Add News -->
+<!-- Модальне вікно додавання новини -->
 <div class="modal fade" id="addNewsModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Додати новину</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label">Назва</label>
-          <input id="addNewsTitle" type="text" class="form-control">
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Опис</label>
-          <textarea id="addNewsDesc" class="form-control"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Додаткова інформація</label>
-          <textarea id="addNewsDesc2" class="form-control"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Посилання на зображення (URL)</label>
-          <input id="addNewsImage" type="text" class="form-control">
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-        <button class="btn btn-outline-warning" id="saveNewsBtn">Створити</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-{# === 4. Відгуки === #}
-<section class="row align-items-center mb-5" id="section-feedback">
-</section>
-
-{# === 5. Адмін панель === #}
-<section class="row align-items-center mb-5" id="section-admin-panel">
-</section>
-
-{# === 6. Модальні вікна для кошика і замовлень === #}
-<section class="row align-items-center mb-5" id="section-modals">
-
-    <!-- Cart Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-            <div class="modal-content">
-
-                <!-- Header -->
-                <div class="modal-header">
-                    <h5 class="modal-title">Кошик</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">➕ Додати новину</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Назва</label>
+                    <input id="addNewsTitle" type="text" class="form-control" required>
                 </div>
-
-                <!-- Body -->
-                <div class="modal-body">
-
-                    <!-- Cart Items -->
-                    <div id="cart-items" class="d-flex flex-column gap-3">
-                        <!-- JS додає карточки тут -->
-                    </div>
-
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="addNewsDesc" class="form-control" rows="3" required></textarea>
                 </div>
-
-                <!-- Footer -->
-                <div class="modal-footer d-flex justify-content-between align-items-center">
-
-                    <!-- Total price -->
-                    <h5 class="mb-0">
-                        Разом: <span id="cart-total" class="fw-bold">0 ₴</span>
-                    </h5>
-
-                    <div class="d-flex gap-2">
-                        <button id="clear-cart" class="btn btn-outline-danger">
-                            Очистити
-                        </button>
-
-                        <button class="btn btn-success" data-bs-dismiss="modal">
-                            Оформити
-                        </button>
-                    </div>
-
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Додаткова інформація</label>
+                    <textarea id="addNewsDesc2" class="form-control" rows="3"></textarea>
                 </div>
-
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Посилання на зображення (URL)</label>
+                    <input id="addNewsImage" type="text" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="saveNewsBtn">Створити</button>
             </div>
         </div>
     </div>
+</div>
 
-</section>
+<!-- Модальне вікно редагування новини -->
+<div class="modal fade" id="editNewsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати новину</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editNewsId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Назва</label>
+                    <input id="editNewsTitle" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="editNewsDesc" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Додаткова інформація</label>
+                    <textarea id="editNewsDesc2" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Посилання на зображення (URL через кому)</label>
+                    <input id="editNewsImage" type="text" class="form-control" placeholder="https://img1.jpg, https://img2.jpg">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="updateNewsBtn">Оновити</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Модальне вікно додавання товару -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">➕ Додати товар</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Назва товару</label>
+                    <input id="addItemName" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="addItemDescription" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ціна (₴)</label>
+                    <input id="addItemPrice" type="number" step="0.01" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">URL зображення</label>
+                    <input id="addItemImage" type="url" class="form-control" placeholder="https://example.com/photo.jpg" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="saveItemBtn">Зберегти</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно редагування товару -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати товар</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editItemId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Назва товару</label>
+                    <input id="editItemName" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="editItemDescription" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ціна (₴)</label>
+                    <input id="editItemPrice" type="number" step="0.01" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Посилання на зображення</label>
+                    <input id="editItemImage" type="url" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="updateItemBtn">Оновити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно перегляду замовлення -->
+<div class="modal fade" id="viewOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">🧾 Перегляд замовлення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h5 class="mb-2">Основна інформація</h5>
+                    <p><strong>ID:</strong> <span id="orderId"></span></p>
+                    <p><strong>Статус:</strong> <span id="orderStatus" class="badge bg-info"></span></p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="mb-2">Користувач</h5>
+                    <p><strong>Нікнейм:</strong> <span id="orderUserNickname"></span></p>
+                    <p><strong>Email:</strong> <span id="orderUserEmail"></span></p>
+                </div>
+                <h5 class="mt-4 mb-2">Товари</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>Назва</th>
+                                <th>Кількість</th>
+                                <th>Ціна</th>
+                                <th>Сума</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderItemsTable"></tbody>
+                    </table>
+                </div>
+                <h4 class="text-end mt-3">Разом: <span id="orderTotal"></span> грн</h4>
+            </div>
+            <div class="modal-footer" id="orderActions">
+                <!-- Кнопки підтягнуться через JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно редагування відгуку -->
+<div class="modal fade" id="editFeedbackModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати відгук</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editFeedbackId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Тема / Заголовок</label>
+                    <input id="editFeedbackTitle" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="editFeedbackDescription" class="form-control" rows="5" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="updateFeedbackBtn">Оновити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно додавання відгуку від користувача -->
+<div class="modal fade" id="addFeedbackUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">➕ Додати відгук від користувача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ID користувача</label>
+                    <input id="addFeedbackUserId" type="number" class="form-control" required placeholder="Введіть ID користувача">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Тема / Заголовок</label>
+                    <input id="addFeedbackUserTitle" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Опис</label>
+                    <textarea id="addFeedbackUserDescription" class="form-control" rows="5" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="saveFeedbackUserBtn">Створити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно додавання користувача -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">➕ Додати користувача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Нікнейм</label>
+                    <input id="addUserNickname" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input id="addUserEmail" type="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Пароль</label>
+                    <input id="addUserPassword" type="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Підтвердження пароля</label>
+                    <input id="addUserPasswordConfirm" type="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Статус</label>
+                    <select id="addUserStatus" class="form-select">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Moder">Moder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Привілегія</label>
+                    <select id="addUserPrivilege" class="form-select">
+                        <option value="Default">Default</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Diamond">Diamond</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="saveUserBtn">Створити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно редагування користувача -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border border-warning shadow-lg">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold">✏️ Редагувати користувача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Нікнейм</label>
+                    <input id="editUserNickname" type="text" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input id="editUserEmail" type="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Статус</label>
+                    <select id="editUserStatus" class="form-select">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Moder">Moder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Привілегія</label>
+                    <select id="editUserPrivilege" class="form-select">
+                        <option value="Default">Default</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Diamond">Diamond</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Новий пароль (залишити порожнім, щоб не змінювати)</label>
+                    <input id="editUserPassword" type="password" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button class="btn btn-warning fw-bold" id="updateUserBtn">Оновити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно підтвердження видалення -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border border-danger shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">⚠️ Підтвердження видалення</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmDeleteText">Ви впевнені, що хочете видалити цей елемент?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-danger fw-bold" id="confirmDeleteBtn">Видалити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Кошик Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Кошик</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cart-items" class="d-flex flex-column gap-3">
+                    <!-- JS додає карточки тут -->
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    Разом: <span id="cart-total" class="fw-bold">0 ₴</span>
+                </h5>
+                <div class="d-flex gap-2">
+                    <button id="clear-cart" class="btn btn-outline-danger">Очистити</button>
+                    <button class="btn btn-success" data-bs-dismiss="modal">Оформити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Підключення скриптів -->
+<script src="{{ url_for('static', filename='js/api/moderator.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/api/cart.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/api/news.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/api/orders.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/api/feedbacks.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/api/users.js') }}" defer></script>
+
+<!-- Скрипт для анімації при скролі для всіх блоків -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    // Анімація для всіх секцій та елементів з класом scroll-animate
+    document.querySelectorAll('.scroll-animate').forEach((el) => {
+        observer.observe(el);
+    });
+
+    // Анімація для карток з затримкою
+    const cardObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+                cardObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    // Спостерігаємо за картками після їх створення
+    setTimeout(() => {
+        document.querySelectorAll('.card:not(.animated)').forEach((card) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            cardObserver.observe(card);
+        });
+    }, 500);
+});
+</script>
 {% endblock %}

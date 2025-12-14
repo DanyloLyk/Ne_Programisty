@@ -743,3 +743,443 @@ body {
 .mobile-user-row span:last-child {
   font-weight: 600;
 }
+
+/* ========================================== */
+/* Landing Page Styles */
+/* ========================================== */
+
+/* Блоки лендінгу з різними фонами */
+.landing-section {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  min-height: 400px;
+}
+
+.section-about,
+.section-catalog,
+.section-orders,
+.section-users {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.section-contacts,
+.section-news,
+.section-feedback {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+/* Кнопка перемикання режиму модератора */
+.moderator-toggle-btn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+  z-index: 1051;
+}
+
+.moderator-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.moderator-toggle-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.moderator-toggle-btn:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.6);
+}
+
+.moderator-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.moderator-toggle-btn i {
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.moderator-toggle-btn:hover i {
+  transform: rotate(360deg) scale(1.2);
+}
+
+/* Анімація появи кнопок редагування/видалення */
+.edit-item-btn,
+.edit-news-btn,
+.edit-feedback-btn,
+.edit-user-btn,
+.delete-item-btn,
+.delete-news-btn,
+.delete-feedback-btn,
+.delete-user-btn,
+.delete-order-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.edit-item-btn::before,
+.edit-news-btn::before,
+.edit-feedback-btn::before,
+.edit-user-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 193, 7, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.edit-item-btn:hover::before,
+.edit-news-btn:hover::before,
+.edit-feedback-btn:hover::before,
+.edit-user-btn:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.delete-item-btn::before,
+.delete-news-btn::before,
+.delete-feedback-btn::before,
+.delete-user-btn::before,
+.delete-order-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.delete-item-btn:hover::before,
+.delete-news-btn:hover::before,
+.delete-feedback-btn:hover::before,
+.delete-user-btn:hover::before,
+.delete-order-btn:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.edit-item-btn:hover,
+.edit-news-btn:hover,
+.edit-feedback-btn:hover,
+.edit-user-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.delete-item-btn:hover,
+.delete-news-btn:hover,
+.delete-feedback-btn:hover,
+.delete-user-btn:hover,
+.delete-order-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+/* Анімація появи карточок */
+.card {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Затримка для карточок */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Стилі для модальних вікон */
+.modal-content {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Плавна анімація для кнопок в карточках */
+.card .btn {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.card .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Стилі для жовтих блоків */
+.bg-warning .card {
+  border-color: #212529 !important;
+}
+
+.bg-warning .card-title {
+  color: #212529 !important;
+}
+
+.bg-warning .text-dark {
+  color: #212529 !important;
+}
+
+/* Стилі для карток контактів в темній темі */
+[data-bs-theme="dark"] .section-contacts .contact-card {
+  background-color: #ffc107 !important;
+  border-color: #212529 !important;
+}
+
+[data-bs-theme="dark"] .section-contacts .contact-card .card-body,
+[data-bs-theme="dark"] .section-contacts .contact-card .card-title,
+[data-bs-theme="dark"] .section-contacts .contact-card .card-text,
+[data-bs-theme="dark"] .section-contacts .contact-card i,
+[data-bs-theme="dark"] .section-contacts .contact-card a {
+  color: #212529 !important;
+}
+
+/* Стилі для модального вікна новини */
+.modal-header.bg-warning .modal-title {
+  color: #212529 !important;
+}
+
+/* Стилі для опису новин - білий/чорний залежно від теми */
+.section-news .card-text {
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .section-news .card-text {
+  color: var(--bs-body-color) !important;
+}
+
+/* Стилі для темного режиму в новинах та відгуках */
+[data-bs-theme="dark"] .section-news .card,
+[data-bs-theme="dark"] .section-feedback .card {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107 !important;
+}
+
+/* Текст завжди жовтий в новинах та відгуках */
+.section-news .card-title,
+.section-news .card-text,
+.section-feedback .card-title,
+.section-feedback .card-text,
+.section-feedback .form-label {
+  color: #ffc107 !important;
+}
+
+[data-bs-theme="dark"] .section-news .card-title,
+[data-bs-theme="dark"] .section-news .card-text,
+[data-bs-theme="dark"] .section-feedback .card-title,
+[data-bs-theme="dark"] .section-feedback .card-text,
+[data-bs-theme="dark"] .section-feedback .form-label {
+  color: #ffc107 !important;
+}
+
+/* Кнопки в новинах та відгуках */
+.section-news .btn-warning,
+.section-feedback .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.section-news .btn-warning:hover,
+.section-feedback .btn-warning:hover {
+  background-color: #ffca2c;
+  border-color: #ffca2c;
+  color: #212529;
+}
+
+.section-news .btn-outline-warning,
+.section-feedback .btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.section-news .btn-outline-warning:hover,
+.section-feedback .btn-outline-warning:hover {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+/* Форма відгуку */
+.section-feedback .form-control {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .section-feedback .form-control {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+}
+
+.section-feedback .form-control:focus {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Анімація для scroll-animate */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-animate.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Стилі для кнопок в режимі модератора */
+.moderator-only {
+  display: none;
+}
+
+.moderator-mode .moderator-only {
+  display: block !important;
+}
+
+/* Плавна анімація при зміні режиму */
+.moderator-only {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Стилі для каруселей */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1;
+}
+
+/* Стилі для таблиць */
+.table {
+  animation: fadeIn 0.4s ease-in;
+}
+
+/* Стилі для форм */
+.form-control:focus,
+.form-select:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Анімація для badge */
+.badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Стилі для карточок замовлень */
+.card.border-warning {
+  transition: all 0.3s ease;
+}
+
+.card.border-warning:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Стилі для відгуків */
+#feedbacks-list .card {
+  transition: all 0.3s ease;
+}
+
+#feedbacks-list .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Стилі для користувачів */
+#users-list .card {
+  transition: all 0.3s ease;
+}
+
+#users-list .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.2);
+}
+
+/* Responsive стилі */
+@media (max-width: 768px) {
+  .moderator-toggle-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .edit-item-btn,
+  .edit-news-btn,
+  .delete-item-btn,
+  .delete-news-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}

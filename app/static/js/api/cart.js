@@ -8,12 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const API = "/api/v1";
 
     function token() {
-        return localStorage.getItem("accessToken");
+        return localStorage.getItem("accessToken") || get_token();
     }
 
     function authHeaders() {
+        const tokenValue = token();
+        if (!tokenValue) {
+            console.warn("Токен не знайдено в localStorage");
+            return {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            };
+        }
         return {
-            "Authorization": `Bearer ${token()}`,
+            "Authorization": `Bearer ${tokenValue}`,
             "Accept": "application/json",
             "Content-Type": "application/json"
         };
@@ -62,6 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const isModerator = window.isModeratorMode ? window.isModeratorMode() : false;
+
         const perSlide = 4;
         for (let i = 0; i < items.length; i += perSlide) {
             const slide = document.createElement("div");
@@ -80,17 +90,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     : `/static/${item.image || "images/default.jpg"}`;
 
                 colDiv.innerHTML = `
-                    <div class="card h-100 shadow-sm d-flex flex-column">
+                    <div class="card h-100 shadow-sm d-flex flex-column border border-warning">
                         <div class="ratio ratio-1x1">
                             <img src="${imagePath}" class="w-100 h-100" alt="${item.name}" style="object-fit: cover;">
                         </div>
 
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">${item.name}</h5>
-                            <p class="card-text text-muted small">${item.description}</p>
+                            <h5 class="card-title text-warning">${item.name}</h5>
+                            <p class="card-text text-muted small">${item.description || ""}</p>
                             <div class="mt-auto">
                                 <div class="text-center text-warning fw-bold mb-2">${item.price} ₴</div>
-                                <button class="btn btn-warning w-100 open-cart">До кошика</button>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-warning flex-fill open-cart">
+                                        <i class="fa-solid fa-cart-plus me-1"></i> До кошика
+                                    </button>
+                                    ${isModerator ? `
+                                        <button class="btn btn-outline-warning edit-item-btn" data-item-id="${item.id}">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger delete-item-btn" data-item-id="${item.id}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    ` : ""}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -100,6 +122,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
             slide.appendChild(rowDiv);
             desktopsContainer.appendChild(slide);
+        }
+
+        attachCartButtons();
+        if (isModerator) {
+            attachModeratorButtons();
+        }
+    }
+
+    function attachModeratorButtons() {
+        if (!window.isModeratorMode || !window.isModeratorMode()) return;
+        
+        // Кнопка редагування товару
+        document.querySelectorAll(".edit-item-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const itemId = btn.dataset.itemId;
+                await editItem(itemId);
+            });
+        });
+
+        // Кнопка видалення товару
+        document.querySelectorAll(".delete-item-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const itemId = btn.dataset.itemId;
+                if (confirm("Видалити товар?")) {
+                    deleteItem(itemId);
+                }
+            });
+        });
+    }
+
+    async function editItem(itemId) {
+        if (!window.isModeratorMode || !window.isModeratorMode()) {
+            alert("Ця функція доступна тільки в режимі модератора");
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${API}/desktops/${itemId}`);
+            if (!response.ok) throw new Error("Failed to load item");
+
+            const item = await response.json();
+            
+            document.getElementById("editItemId").value = item.id;
+            document.getElementById("editItemName").value = item.name;
+            document.getElementById("editItemDescription").value = item.description || "";
+            document.getElementById("editItemPrice").value = item.price;
+            document.getElementById("editItemImage").value = item.image || "";
+
+            const modal = new bootstrap.Modal(document.getElementById("editItemModal"));
+            modal.show();
+        } catch (err) {
+            console.error("Помилка завантаження товару:", err);
+            alert("Не вдалося завантажити товар");
+        }
+    }
+
+    async function deleteItem(itemId) {
+        if (!window.isModeratorMode || !window.isModeratorMode()) {
+            alert("Ця функція доступна тільки в режимі модератора");
+            return;
+        }
+        
+        try {
+            const headers = authHeaders();
+            const response = await fetch(`${API}/desktops/${itemId}`, {
+                method: "DELETE",
+                headers
+            });
+
+            if (!response.ok) throw new Error("Failed to delete item");
+
+            await loadDesktops();
+            alert("Товар видалено");
+        } catch (err) {
+            console.error("Помилка видалення товару:", err);
+            alert("Не вдалося видалити товар");
         }
     }
 
@@ -318,6 +416,112 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(e);
             alert("Помилка при очищенні кошика. Перевірте підключення.");
         }
+    });
+
+    // Додавання товару (тільки для модератора)
+    document.getElementById("addItemBtn")?.addEventListener("click", () => {
+        if (!window.isModeratorMode || !window.isModeratorMode()) {
+            alert("Ця функція доступна тільки в режимі модератора");
+            return;
+        }
+        const modal = new bootstrap.Modal(document.getElementById("addItemModal"));
+        modal.show();
+    });
+
+    document.getElementById("saveItemBtn")?.addEventListener("click", async () => {
+        if (!window.isModeratorMode || !window.isModeratorMode()) {
+            alert("Ця функція доступна тільки в режимі модератора");
+            return;
+        }
+        
+        const name = document.getElementById("addItemName").value.trim();
+        const description = document.getElementById("addItemDescription").value.trim();
+        const price = parseFloat(document.getElementById("addItemPrice").value);
+        const image = document.getElementById("addItemImage").value.trim();
+
+        if (!name || !description || !price || !image) {
+            alert("Заповніть всі поля");
+            return;
+        }
+
+        try {
+            const headers = authHeaders();
+            const response = await fetch(`${API}/desktops`, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({ name, description, price, image })
+            });
+
+            if (!response.ok) {
+                const err = await safeParseJSON(response);
+                throw new Error(err?.message || "Failed to create item");
+            }
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById("addItemModal"));
+            modal.hide();
+            
+            // Очищаємо форму
+            document.getElementById("addItemName").value = "";
+            document.getElementById("addItemDescription").value = "";
+            document.getElementById("addItemPrice").value = "";
+            document.getElementById("addItemImage").value = "";
+
+            await loadDesktops();
+            alert("Товар додано");
+        } catch (err) {
+            console.error("Помилка додавання товару:", err);
+            alert(err.message || "Не вдалося додати товар");
+        }
+    });
+
+    // Оновлення товару
+    document.getElementById("updateItemBtn")?.addEventListener("click", async () => {
+        if (!window.isModeratorMode || !window.isModeratorMode()) {
+            alert("Ця функція доступна тільки в режимі модератора");
+            return;
+        }
+        
+        const itemId = document.getElementById("editItemId").value;
+        const name = document.getElementById("editItemName").value.trim();
+        const description = document.getElementById("editItemDescription").value.trim();
+        const price = parseFloat(document.getElementById("editItemPrice").value);
+        const image = document.getElementById("editItemImage").value.trim();
+
+        if (!name || !description || !price) {
+            alert("Заповніть всі обов'язкові поля");
+            return;
+        }
+
+        try {
+            const headers = authHeaders();
+            const data = { name, description, price };
+            if (image) data.image = image;
+
+            const response = await fetch(`${API}/desktops/${itemId}`, {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const err = await safeParseJSON(response);
+                throw new Error(err?.message || "Failed to update item");
+            }
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById("editItemModal"));
+            modal.hide();
+            
+            await loadDesktops();
+            alert("Товар оновлено");
+        } catch (err) {
+            console.error("Помилка оновлення товару:", err);
+            alert(err.message || "Не вдалося оновити товар");
+        }
+    });
+
+    // Слухаємо зміни режиму модератора
+    window.addEventListener("moderatorModeChanged", () => {
+        loadDesktops();
     });
 
     // init

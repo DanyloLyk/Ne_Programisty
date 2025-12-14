@@ -1,4 +1,6 @@
-document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+// Перевіряємо чи ми не на api.html сторінці
+if (!window.location.pathname.includes('/api')) {
+document.getElementById('addItemForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const formData = new FormData(this);
@@ -29,7 +31,10 @@ document.getElementById('addItemForm').addEventListener('submit', async function
         alert("Помилка при відправці форми");
     }
 });
+}
 
+// Перевіряємо чи ми не на api.html сторінці
+if (!window.location.pathname.includes('/api')) {
 document.addEventListener('DOMContentLoaded', () => {
     const editForm = document.getElementById('editItemForm');
     if (!editForm) return;
@@ -385,3 +390,4 @@ document.addEventListener('click', async function (e) {
     console.error(err);
   }
 });
+}
