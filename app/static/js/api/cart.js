@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartItemsContainer = document.getElementById("cart-items");
     const cartTotalField = document.getElementById("cart-total");
     const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
+    const confirmDeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
 
     const API = "/api/v1";
 
@@ -145,9 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".delete-item-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const itemId = btn.dataset.itemId;
-                if (confirm("Видалити товар?")) {
-                    deleteItem(itemId);
-                }
+                showDeleteConfirmCatalog(itemId, "товар");
             });
         });
     }
@@ -199,6 +198,39 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Помилка видалення товару:", err);
             window.showToast("Не вдалося видалити товар", 'danger');
         }
+    }
+
+    function showDeleteConfirmCatalog(itemId, type) {
+        document.getElementById("confirmDeleteText").textContent = 
+            `Ви впевнені, що хочете видалити цей ${type}?`;
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                const headers = authHeaders();
+                const response = await fetch(`${API}/desktops/${itemId}`, {
+                    method: "DELETE",
+                    headers
+                });
+
+                if (!response.ok) throw new Error("Failed to delete item");
+
+                confirmDeleteModal.hide();
+                await loadDesktops();
+                window.showToast("Товар видалено", 'success');
+            } catch (err) {
+                console.error("Помилка видалення товару:", err);
+                window.showToast("Не вдалося видалити товар", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+
+        confirmDeleteModal.show();
     }
 
     // -------------------------

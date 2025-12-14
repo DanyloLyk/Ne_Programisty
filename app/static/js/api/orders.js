@@ -2,6 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const ordersContainer = document.getElementById("orders-list");
     const viewOrderModal = new bootstrap.Modal(document.getElementById("viewOrderModal"));
+    const confirmDeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
     const API_BASE = "/api/v1";
 
     async function loadOrders() {
@@ -102,11 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Кнопка видалення
         if (window.isModeratorMode()) {
             document.querySelectorAll(".delete-order-btn").forEach(btn => {
-                btn.addEventListener("click", async () => {
+                btn.addEventListener("click", () => {
                     const orderId = btn.dataset.orderId;
-                    if (confirm("Видалити замовлення?")) {
-                        await deleteOrder(orderId);
-                    }
+                    showDeleteConfirmOrder(orderId, "замовлення");
                 });
             });
         }
@@ -156,11 +155,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${item.name || item.item_name || "N/A"}</td>
                         <td>${item.count || item.quantity || 0}</td>
                         <td>${item.price || 0} ₴</td>
-                        <td>${item.sum || (item.price * (item.count || item.quantity || 0))} ₴</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
+                            <td>${item.sum || (item.price * (item.count || item.quantity || 0))} ₴</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
 
             document.getElementById("orderTotal").textContent = order.total_amount || order.total_sum || 0;
 
@@ -216,6 +215,40 @@ document.addEventListener("DOMContentLoaded", () => {
             window.showToast("Не вдалося оновити статус замовлення", 'danger');
         }
     };
+
+    function showDeleteConfirmOrder(orderId, type) {
+        document.getElementById("confirmDeleteText").textContent = 
+            `Ви впевнені, що хочете видалити це ${type}?`;
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                const headers = window.getAuthHeaders();
+                const response = await fetch(`${API_BASE}/orders/${orderId}`, {
+                    method: "DELETE",
+                    headers
+                });
+
+                if (!response.ok) throw new Error("Failed to delete order");
+
+                confirmDeleteModal.hide();
+                allOrdersCache = []; // Очищаємо кеш
+                await loadOrders();
+                window.showToast("Замовлення видалено", 'success');
+            } catch (err) {
+                console.error("Помилка видалення замовлення:", err);
+                window.showToast("Не вдалося видалити замовлення", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+
+        confirmDeleteModal.show();
+    }
 
     async function deleteOrder(orderId) {
         try {

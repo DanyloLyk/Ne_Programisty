@@ -181,6 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
             `Ви впевнені, що хочете видалити цей ${type}?`;
         
         const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        
         confirmBtn.onclick = async () => {
             try {
                 const headers = window.getAuthHeaders();
@@ -198,6 +200,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Помилка видалення відгуку:", err);
                 window.showToast("Не вдалося видалити відгук", 'danger');
             }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
         };
 
         confirmDeleteModal.show();

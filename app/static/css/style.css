@@ -929,6 +929,11 @@ body {
 .card:nth-child(3) { animation-delay: 0.3s; }
 .card:nth-child(4) { animation-delay: 0.4s; }
 
+/* Видалення анімації для карток у кошику */
+#cart-items .card {
+  animation: none !important;
+}
+
 /* Стилі для модальних вікон */
 .modal-content {
   animation: modalSlideIn 0.3s ease-out;
