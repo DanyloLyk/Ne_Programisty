@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function editItem(itemId) {
         if (!window.isModeratorMode || !window.isModeratorMode()) {
-            alert("Ця функція доступна тільки в режимі модератора");
+            window.showToast("Ця функція доступна тільки в режимі модератора", 'warning');
             return;
         }
         
@@ -174,13 +174,13 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.show();
         } catch (err) {
             console.error("Помилка завантаження товару:", err);
-            alert("Не вдалося завантажити товар");
+            window.showToast("Не вдалося завантажити товар", 'danger');
         }
     }
 
     async function deleteItem(itemId) {
         if (!window.isModeratorMode || !window.isModeratorMode()) {
-            alert("Ця функція доступна тільки в режимі модератора");
+            window.showToast("Ця функція доступна тільки в режимі модератора", 'warning');
             return;
         }
         
@@ -194,10 +194,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("Failed to delete item");
 
             await loadDesktops();
-            alert("Товар видалено");
+            window.showToast("Товар видалено", 'success');
         } catch (err) {
             console.error("Помилка видалення товару:", err);
-            alert("Не вдалося видалити товар");
+            window.showToast("Не вдалося видалити товар", 'danger');
         }
     }
 
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
             cartModal.show();
         } catch (e) {
             console.error(e);
-            alert(e.message);
+            window.showToast(e.message, 'danger');
         }
     }
 
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await loadCart();
         } catch (e) {
             console.error(e);
-            alert(e.message);
+            window.showToast(e.message, 'danger');
         }
     }
 
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await loadCart();
         } catch (e) {
             console.error(e);
-            alert(e.message);
+            window.showToast(e.message, 'danger');
         }
     }
 
@@ -405,23 +405,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await safeParseJSON(r);
 
             if (r.ok) {
-                alert(data.message || "Ваш кошик успішно очищено.");
+                window.showToast(data.message || "Ваш кошик успішно очищено.", 'success');
                 await loadCart();  // оновлюємо відображення кошика
             } else if (r.status === 401) {
-                alert("Користувач не авторизований. Будь ласка, увійдіть.");
+                window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
             } else {
-                alert(data?.error || `Не вдалося очистити кошик (${r.status})`);
+                window.showToast(data?.error || `Не вдалося очистити кошик (${r.status})`, 'danger');
             }
         } catch (e) {
             console.error(e);
-            alert("Помилка при очищенні кошика. Перевірте підключення.");
+            window.showToast("Помилка при очищенні кошика. Перевірте підключення.", 'danger');
         }
     });
 
     // Додавання товару (тільки для модератора)
     document.getElementById("addItemBtn")?.addEventListener("click", () => {
         if (!window.isModeratorMode || !window.isModeratorMode()) {
-            alert("Ця функція доступна тільки в режимі модератора");
+            window.showToast("Ця функція доступна тільки в режимі модератора", 'warning');
             return;
         }
         const modal = new bootstrap.Modal(document.getElementById("addItemModal"));
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("saveItemBtn")?.addEventListener("click", async () => {
         if (!window.isModeratorMode || !window.isModeratorMode()) {
-            alert("Ця функція доступна тільки в режимі модератора");
+            window.showToast("Ця функція доступна тільки в режимі модератора", 'warning');
             return;
         }
         
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById("addItemImage").value.trim();
 
         if (!name || !description || !price || !image) {
-            alert("Заповніть всі поля");
+            window.showToast("Заповніть всі поля", 'warning');
             return;
         }
 
@@ -467,17 +467,17 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("addItemImage").value = "";
 
             await loadDesktops();
-            alert("Товар додано");
+            window.showToast("Товар додано", 'success');
         } catch (err) {
             console.error("Помилка додавання товару:", err);
-            alert(err.message || "Не вдалося додати товар");
+            window.showToast(err.message || "Не вдалося додати товар", 'danger');
         }
     });
 
     // Оновлення товару
     document.getElementById("updateItemBtn")?.addEventListener("click", async () => {
         if (!window.isModeratorMode || !window.isModeratorMode()) {
-            alert("Ця функція доступна тільки в режимі модератора");
+            window.showToast("Ця функція доступна тільки в режимі модератора", 'warning');
             return;
         }
         
@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById("editItemImage").value.trim();
 
         if (!name || !description || !price) {
-            alert("Заповніть всі обов'язкові поля");
+            window.showToast("Заповніть всі обов'язкові поля", 'warning');
             return;
         }
 
@@ -512,10 +512,10 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.hide();
             
             await loadDesktops();
-            alert("Товар оновлено");
+            window.showToast("Товар оновлено", 'success');
         } catch (err) {
             console.error("Помилка оновлення товару:", err);
-            alert(err.message || "Не вдалося оновити товар");
+            window.showToast(err.message || "Не вдалося оновити товар", 'danger');
         }
     });
 

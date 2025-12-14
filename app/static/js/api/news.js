@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.show();
         } catch (err) {
             console.error("Помилка завантаження новини:", err);
-            alert("Не вдалося завантажити новину");
+            window.showToast("Не вдалося завантажити новину", 'danger');
         }
     }
 
@@ -147,10 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("Failed to delete news");
 
             await loadNews();
-            alert("Новину видалено");
+            window.showToast("Новину видалено", 'success');
         } catch (err) {
             console.error("Помилка видалення новини:", err);
-            alert("Не вдалося видалити новину");
+            window.showToast("Не вдалося видалити новину", 'danger');
         }
     }
 
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById("addNewsImage").value.trim();
 
         if (!name || !description) {
-            alert("Заповніть обов'язкові поля (назва та опис)");
+            window.showToast("Заповніть обов'язкові поля (назва та опис)", 'warning');
             return;
         }
 
@@ -233,10 +233,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("addNewsImage").value = "";
 
             await loadNews();
-            alert("Новину створено");
+            window.showToast("Новину створено", 'success');
         } catch (err) {
             console.error("Помилка додавання:", err);
-            alert(err.message);
+            window.showToast(err.message, 'danger');
         }
     });
 
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById("editNewsImage").value.trim();
 
         if (!name || !description) {
-            alert("Заповніть обов'язкові поля (назва та опис)");
+            window.showToast("Заповніть обов'язкові поля (назва та опис)", 'warning');
             return;
         }
 
@@ -280,10 +280,10 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.hide();
             
             await loadNews();
-            alert("Новину оновлено");
+            window.showToast("Новину оновлено", 'success');
         } catch (err) {
             console.error("Помилка оновлення:", err);
-            alert(err.message);
+            window.showToast(err.message, 'danger');
         }
     });
 

@@ -37,3 +37,29 @@ async function login() {
 async function get_token() {
     return localStorage.getItem('accessToken');
 }
+
+// Функція для показу красивих повідомлень
+// type може бути: 'success' (зелене), 'danger' (червоне), 'warning' (жовте)
+window.showToast = function(message, type = 'success') {
+const toastEl = document.getElementById('liveToast');
+    const toastBody = document.getElementById('toastMessage');
+    
+    // Встановлюємо текст
+    toastBody.textContent = message;
+    
+    // Скидаємо старі класи кольорів
+    toastEl.className = 'toast align-items-center border-0';
+    
+    // Додаємо колір залежно від типу
+    if (type === 'success') {
+        toastEl.classList.add('text-bg-success'); // Зелений
+    } else if (type === 'danger') {
+        toastEl.classList.add('text-bg-danger');  // Червоний
+    } else {
+        toastEl.classList.add('text-bg-warning'); // Жовтий
+    }
+
+    // Показуємо повідомлення (використовуємо Bootstrap API)
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}

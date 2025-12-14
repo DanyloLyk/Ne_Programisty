@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
             viewOrderModal.show();
         } catch (err) {
             console.error("Помилка перегляду замовлення:", err);
-            alert("Не вдалося завантажити замовлення");
+            window.showToast("Не вдалося завантажити замовлення", 'danger');
         }
     }
 
@@ -210,10 +210,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             allOrdersCache = []; // Очищаємо кеш
             await loadOrders();
-            alert("Статус замовлення оновлено");
+            window.showToast("Статус замовлення оновлено", 'success');
         } catch (err) {
             console.error("Помилка оновлення статусу:", err);
-            alert("Не вдалося оновити статус замовлення");
+            window.showToast("Не вдалося оновити статус замовлення", 'danger');
         }
     };
 
@@ -229,10 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             allOrdersCache = []; // Очищаємо кеш
             await loadOrders();
-            alert("Замовлення видалено");
+            window.showToast("Замовлення видалено", 'success');
         } catch (err) {
             console.error("Помилка видалення замовлення:", err);
-            alert("Не вдалося видалити замовлення");
+            window.showToast("Не вдалося видалити замовлення", 'danger');
         }
     }
 

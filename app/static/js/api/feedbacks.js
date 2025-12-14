@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editFeedbackModal.show();
         } catch (err) {
             console.error("Помилка завантаження відгуку:", err);
-            alert("Не вдалося завантажити відгук");
+            window.showToast("Не вдалося завантажити відгук", 'danger');
         }
     }
 
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const description = document.getElementById("editFeedbackDescription").value.trim();
 
         if (!title || !description) {
-            alert("Заповніть всі поля");
+            window.showToast("Заповніть всі поля", 'warning ');
             return;
         }
 
@@ -169,10 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editFeedbackModal.hide();
             await loadFeedbacks();
-            alert("Відгук оновлено");
+            window.showToast("Відгук оновлено", 'success');
         } catch (err) {
             console.error("Помилка оновлення відгуку:", err);
-            alert("Не вдалося оновити відгук");
+            window.showToast("Не вдалося оновити відгук", 'danger');
         }
     });
 
@@ -193,10 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 confirmDeleteModal.hide();
                 await loadFeedbacks();
-                alert("Відгук видалено");
+                window.showToast("Відгук видалено", 'success');
             } catch (err) {
                 console.error("Помилка видалення відгуку:", err);
-                alert("Не вдалося видалити відгук");
+                window.showToast("Не вдалося видалити відгук", 'danger');
             }
         };
 
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const description = document.getElementById("addFeedbackUserDescription").value.trim();
 
         if (!userId || !title || !description) {
-            alert("Заповніть всі поля");
+            window.showToast("Заповніть всі поля", 'warning ');
             return;
         }
 
@@ -238,10 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("addFeedbackUserDescription").value = "";
             
             await loadFeedbacks();
-            alert("Відгук від користувача створено");
+            window.showToast("Відгук від користувача створено", 'success');
         } catch (err) {
             console.error("Помилка створення відгуку:", err);
-            alert(err.message || "Не вдалося створити відгук");
+            window.showToast(err.message || "Не вдалося створити відгук", 'danger');
         }
     });
 

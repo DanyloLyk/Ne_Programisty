@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editUserModal.show();
         } catch (err) {
             console.error("Помилка завантаження користувача:", err);
-            alert("Не вдалося завантажити користувача");
+            window.showToast("Не вдалося завантажити користувача", 'danger');
         }
     }
 
@@ -139,12 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const privilege = document.getElementById("addUserPrivilege").value;
 
         if (!nickname || !email || !password) {
-            alert("Заповніть всі обов'язкові поля");
+            window.showToast("Заповніть всі обов'язкові поля", 'warning');
             return;
         }
 
         if (password !== passwordConfirm) {
-            alert("Паролі не співпадають");
+            window.showToast("Паролі не співпадають", 'danger');
             return;
         }
 
@@ -169,10 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Або просто перезавантажуємо список
             addUserModal.hide();
             await loadUsers();
-            alert("Користувача створено");
+            window.showToast("Користувача створено", 'success');
         } catch (err) {
             console.error("Помилка створення користувача:", err);
-            alert(err.message || "Не вдалося створити користувача");
+            window.showToast(err.message || "Не вдалося створити користувача", 'danger');
         }
     });
 
@@ -205,10 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editUserModal.hide();
             await loadUsers();
-            alert("Користувача оновлено");
+            window.showToast("Користувача оновлено", 'success');
         } catch (err) {
             console.error("Помилка оновлення користувача:", err);
-            alert(err.message || "Не вдалося оновити користувача");
+            window.showToast(err.message || "Не вдалося оновити користувача", 'danger');
         }
     });
 
@@ -229,10 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 confirmDeleteModal.hide();
                 await loadUsers();
-                alert("Користувача видалено");
+                window.showToast("Користувача видалено", 'success');
             } catch (err) {
                 console.error("Помилка видалення користувача:", err);
-                alert("Не вдалося видалити користувача");
+                window.showToast("Не вдалося видалити користувача", 'danger');
             }
         };
 
