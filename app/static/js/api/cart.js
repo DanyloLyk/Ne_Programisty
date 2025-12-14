@@ -519,6 +519,97 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // -------------------------
+    // Оформлення замовлення
+    // -------------------------
+    document.getElementById("checkout-btn")?.addEventListener("click", async () => {
+        const checkoutBtn = document.getElementById("checkout-btn");
+        const originalText = checkoutBtn?.textContent;
+        
+        try {
+            // Перевіряємо чи кошик не порожній
+            const cartTotal = cartTotalField.textContent.trim();
+            if (cartTotal === "0 ₴" || !cartTotal || cartTotal === "0") {
+                window.showToast("Кошик порожній. Додайте товари перед оформленням замовлення.", 'warning');
+                return;
+            }
+
+            // Перевіряємо чи є товари в кошику через API
+            const cartCheck = await fetch(`${API}/cart`, { headers: authHeaders() });
+            if (cartCheck.ok) {
+                const cartData = await cartCheck.json();
+                if (!cartData.items || cartData.items.length === 0) {
+                    window.showToast("Кошик порожній. Додайте товари перед оформленням замовлення.", 'warning');
+                    return;
+                }
+            }
+
+            // Показуємо індикатор завантаження
+            if (checkoutBtn) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Оформлення...';
+            }
+
+            // Викликаємо API для створення замовлення
+            const response = await fetch(`${API}/orders`, {
+                method: "POST",
+                headers: authHeaders()
+            });
+
+            if (!response.ok) {
+                const err = await safeParseJSON(response);
+                if (response.status === 401) {
+                    window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
+                    cartModal.hide();
+                    return;
+                }
+                throw new Error(err?.message || `Помилка створення замовлення (${response.status})`);
+            }
+
+            const result = await response.json();
+            
+            // Показуємо повідомлення про успіх
+            window.showToast(result.message || "Замовлення успішно створено!", 'success');
+
+            // Закриваємо модальне вікно
+            cartModal.hide();
+
+            // Очищаємо кошик після успішного оформлення
+            try {
+                const clearResponse = await fetch(`${API}/cart/clear`, {
+                    method: "DELETE",
+                    headers: authHeaders()
+                });
+                
+                if (clearResponse.ok) {
+                    await loadCart();
+                }
+            } catch (clearErr) {
+                console.error("Помилка очищення кошика:", clearErr);
+            }
+
+            // Оновлюємо список замовлень (якщо є такий блок)
+            if (window.loadOrders && typeof window.loadOrders === 'function') {
+                setTimeout(() => {
+                    window.loadOrders();
+                }, 500);
+            } else {
+                // Викликаємо подію для оновлення замовлень
+                window.dispatchEvent(new CustomEvent('orderCreated'));
+            }
+
+        } catch (err) {
+            console.error("Помилка оформлення замовлення:", err);
+            window.showToast(err.message || "Не вдалося оформити замовлення", 'danger');
+        } finally {
+            // Відновлюємо кнопку
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.textContent = originalText || "Оформити";
+            }
+        }
+    });
+
     // Слухаємо зміни режиму модератора
     window.addEventListener("moderatorModeChanged", () => {
         loadDesktops();

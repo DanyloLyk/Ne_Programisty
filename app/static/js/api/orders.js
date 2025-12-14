@@ -116,81 +116,127 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function viewOrder(orderId) {
         try {
-            // Використовуємо дані з кешу або завантажуємо знову
-            if (allOrdersCache.length === 0) {
+            // 1. Перевіряємо кеш, якщо порожній — вантажимо з сервера
+            if (!allOrdersCache || allOrdersCache.length === 0) {
                 const headers = window.getAuthHeaders();
                 const response = await fetch(`${API_BASE}/orders/`, { headers });
                 if (!response.ok) throw new Error("Failed to load orders");
                 allOrdersCache = await response.json();
             }
 
+            // 2. ВАЖЛИВО: Знаходимо конкретне замовлення в масиві
             const order = allOrdersCache.find(o => o.id === parseInt(orderId));
+            
             if (!order) {
-                throw new Error("Order not found");
+                throw new Error("Замовлення не знайдено в списку");
             }
 
-            // Заповнюємо модальне вікно
+            // 3. Заповнюємо шапку модалки (Інфо про юзера та статус)
             document.getElementById("orderId").textContent = order.id;
-            document.getElementById("orderStatus").textContent = order.status;
-            document.getElementById("orderUserNickname").textContent = order.user?.nickname || "N/A";
+            
+            // Фарбуємо статус
+            const statusBadge = document.getElementById("orderStatus");
+            statusBadge.textContent = order.status;
+            statusBadge.className = 'badge ' + ({
+                "In process": "bg-warning",
+                "Shipped": "bg-info",
+                "Completed": "bg-success",
+                "Cancelled": "bg-danger"
+            }[order.status] || "bg-secondary");
+
+            // Дані юзера (безпечний доступ)
+            document.getElementById("orderUserNickname").textContent = order.user?.nickname || "Невідомий";
             document.getElementById("orderUserEmail").textContent = order.user?.email || "N/A";
 
-            // Товари - якщо немає деталей, використовуємо загальну інформацію
+            // 4. Очищаємо і заповнюємо таблицю товарів
             const tbody = document.getElementById("orderItemsTable");
             tbody.innerHTML = "";
-            
+
+            // Шукаємо items (сумісність з різними версіями API)
             const items = order.items || order.order_items || [];
+
             if (items.length === 0) {
-                // Якщо немає деталей товарів, показуємо загальну інформацію
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            Деталі товарів недоступні. Загальна сума: ${order.total_amount || 0} ₴
+                        <td colspan="4" class="text-center text-muted p-4">
+                            Деталі товарів відсутні.<br>
+                            <small>Можливо, структура даних змінилася.</small>
                         </td>
                     </tr>
                 `;
             } else {
                 items.forEach(item => {
+                    // Визначаємо змінні (якщо раптом бекенд щось не додав)
+                    const itemName = item.name || "Товар видалено/Невідомий";
+                    const quantity = item.quantity || item.count || 0;
+                    const price = item.price || 0;
+                    
+                    // Якщо сума прийшла з бекенду (item.sum) — беремо її.
+                    // Якщо ні — рахуємо тут (price * quantity * discount).
+                    const totalSum = item.sum !== undefined
+                        ? item.sum 
+                        : (price * quantity * (item.discount || 1.0)).toFixed(2);
+
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${item.name || item.item_name || "N/A"}</td>
-                        <td>${item.count || item.quantity || 0}</td>
-                        <td>${item.price || 0} ₴</td>
-                        <td>${item.sum || (item.price * (item.count || item.quantity || 0))} ₴</td>
+                        <td>
+                            <span class="fw-bold">${itemName}</span>
+                            ${item.discount && item.discount < 1.0 
+                                ? `<span class="badge bg-danger ms-1">-${Math.round((1 - item.discount) * 100)}%</span>` 
+                                : ''}
+                        </td>
+                        <td class="text-center">${quantity}</td>
+                        <td>${price} ₴</td>
+                        <td class="fw-bold text-warning">${totalSum} ₴</td>
                     `;
                     tbody.appendChild(row);
                 });
             }
 
-            document.getElementById("orderTotal").textContent = order.total_amount || order.total_sum || 0;
+            // 5. Загальна сума
+            document.getElementById("orderTotal").textContent = order.total_amount || 0;
 
-            // Кнопки дій (тільки для модератора)
+            // 6. Кнопки дій (Тільки для модератора)
             const actions = document.getElementById("orderActions");
-            actions.innerHTML = "";
+            actions.innerHTML = ""; // Очищаємо старі кнопки
 
-            if (window.isModeratorMode()) {
+            if (window.isModeratorMode && window.isModeratorMode()) {
+                let buttonsHtml = '';
+                
                 if (order.status === "In process") {
-                    actions.innerHTML = `
+                    buttonsHtml = `
                         <button class="btn btn-success" onclick="updateOrderStatus(${order.id}, 'Shipped')">
-                            <i class="fa-solid fa-check me-1"></i> Підтвердити відправку
+                            <i class="fa-solid fa-truck-fast me-1"></i> Відправити
                         </button>
                         <button class="btn btn-danger" onclick="updateOrderStatus(${order.id}, 'Cancelled')">
-                            <i class="fa-solid fa-times me-1"></i> Скасувати
+                            <i class="fa-solid fa-ban me-1"></i> Скасувати
                         </button>
                     `;
                 } else if (order.status === "Shipped") {
-                    actions.innerHTML = `
+                    buttonsHtml = `
                         <button class="btn btn-success" onclick="updateOrderStatus(${order.id}, 'Completed')">
                             <i class="fa-solid fa-check-double me-1"></i> Завершити
                         </button>
                     `;
                 }
+                // Для Completed/Cancelled кнопок не треба
+                actions.innerHTML = buttonsHtml;
+            } else {
+                // Для звичайного юзера можна додати кнопку "Закрити"
+                actions.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>`;
             }
 
+            // 7. Відкриваємо модалку
             viewOrderModal.show();
+
         } catch (err) {
-            console.error("Помилка перегляду замовлення:", err);
-            window.showToast("Не вдалося завантажити замовлення", 'danger');
+            console.error("Помилка відображення замовлення:", err);
+            // Використовуємо твій новий гарний тост, якщо він є, або алерт
+            if (window.showToast) {
+                window.showToast("Не вдалося відкрити замовлення", 'danger');
+            } else {
+                alert("Помилка завантаження замовлення");
+            }
         }
     }
 
@@ -235,6 +281,14 @@ document.addEventListener("DOMContentLoaded", () => {
             window.showToast("Не вдалося видалити замовлення", 'danger');
         }
     }
+
+    // Експортуємо функцію для використання в інших скриптах
+    window.loadOrders = loadOrders;
+
+    // Слухаємо подію створення замовлення
+    window.addEventListener("orderCreated", () => {
+        loadOrders();
+    });
 
     // Слухаємо зміни режиму модератора
     window.addEventListener("moderatorModeChanged", () => {

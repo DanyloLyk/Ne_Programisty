@@ -989,16 +989,16 @@ body {
 
 /* Стилі для опису новин - білий/чорний залежно від теми */
 .section-news .card-text {
-  color: var(--bs-body-color) !important;
+  color: var(--bs-secondary) !important;
 }
 
 [data-bs-theme="dark"] .section-news .card-text {
-  color: var(--bs-body-color) !important;
+  color: var(--bs-secondary) !important;
 }
 
 /* Стилі для темного режиму в новинах та відгуках */
 [data-bs-theme="dark"] .section-news .card,
-[data-bs-theme="dark"] .section-feedback .card {
+[data-bs-theme="dark"] .section-feedback .card:not(.border-adaptive) {
   background-color: var(--bs-body-bg);
   border-color: #ffc107 !important;
 }
@@ -1202,4 +1202,14 @@ body {
     padding: 6px 10px;
     font-size: 12px;
   }
+}
+
+/* Smooth Theme Transition for ALL elements */
+body, 
+.card, 
+.modal-content, 
+.landing-section, 
+.form-control, 
+h1, h2, h3, h4, h5, h6, p, span, i, div {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }

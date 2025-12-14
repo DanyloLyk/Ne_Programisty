@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, g, request, session
+from flask import Blueprint, render_template, jsonify, g, request, session, url_for
 from functools import wraps
 from app.models import cart
 from app.models.user import User
@@ -209,9 +209,11 @@ def forgot_password():
     if error:
         return jsonify({"message": error}), 404
         
+    reset_link = request.host_url.rstrip('/') + url_for('main.reset_password_page', token=token)
     return jsonify({
-        "message": "Посилання для скидання пароля відправлено (дивись консоль сервера)",
-        "debug_token": token # Повертаємо токен, щоб тобі було зручно копіювати
+        "message": "Посилання для скидання пароля відправлено на вашу електронну пошту.", 
+        "reset_link": reset_link,
+        "debug_token": token
     }), 200
 
 
