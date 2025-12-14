@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    # Збери контейнер з поточної папки
+    build: .
+    container_name: shop_container
+    # Прокинь порт: "мій комп'ютер 5000" -> "контейнер 5000"
+    ports:
+      - "5000:5000"
+    # Налаштування (з файлу .env)
+    env_file:
+      - .env
+    # "Флешка" для бази даних. Якщо видалиш контейнер, дані залишаться тут.
+    volumes:
+      - sqlite_data:/app/data
+    # Якщо впаде - перезапусти
+    restart: unless-stopped
+
+# Оголошення "флешки" (тому що ми просили Volume)
+volumes:
+  sqlite_data:
