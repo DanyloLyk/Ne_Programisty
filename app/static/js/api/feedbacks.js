@@ -53,11 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </div>
                             ` : ""}
                         </div>
-                        <p class="card-text text-warning small mb-2">${feedback.description}</p>
-                        <div class="mt-auto">
-                            <small class="text-warning">
+                    <p class="text-muted small mb-2">${feedback.description}</p>
+                        <div class="mt-auto pt-3 border-top border-subtle">
+                            <small class="text-warning fw-bold">
                                 <i class="fa-solid fa-user me-1"></i>
-                                ${feedback.user?.nickname || feedback.nickname || "Анонімний користувач"}
+                                ${feedback.user?.nickname || "Анонімний користувач"}
                             </small>
                             ${feedback.created_at ? `<div class="text-muted small mt-1"><i class="fa-solid fa-calendar me-1"></i>${new Date(feedback.created_at).toLocaleDateString('uk-UA')}</div>` : ""}
                         </div>

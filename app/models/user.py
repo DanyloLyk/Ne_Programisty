@@ -24,7 +24,7 @@ class User(db.Model):
         'VIP': {
             'label': 'VIP',
             'discount_percent': 20,
-            'badge_class': 'success'
+            'badge_class': 'purple'
         },
     }
 

@@ -36,29 +36,42 @@ document.addEventListener("DOMContentLoaded", () => {
             const isModerator = window.isModeratorMode();
             
             const statusBadgeClass = {
-                "Admin": "bg-danger",
-                "Moder": "bg-warning",
+                "Admin": "bg-admin",
+                "Moder": "bg-moder",
                 "User": "bg-info"
             }[user.status] || "bg-secondary";
+            
+            const statusIcon = {
+                "Admin": "👨‍💼 ",
+                "Moder": "👨‍⚖️ ",
+                "User": ""
+            }[user.status] || "";
 
             const privilegeBadgeClass = {
                 "VIP": "bg-purple",
-                "Diamond": "bg-primary",
-                "Gold": "bg-warning",
+                "Diamond": "bg-diamond",
+                "Gold": "bg-gold",
                 "Default": "bg-secondary"
             }[user.privilege] || "bg-secondary";
+            
+            const privilegeIcon = {
+                "VIP": "👑 ",
+                "Diamond": "💎 ",
+                "Gold": "⭐ ",
+                "Default": ""
+            }[user.privilege] || "";
 
             colDiv.innerHTML = `
-                <div class="card h-100 shadow-sm border border-warning">
+                <div class="card h-100 shadow-sm bg-body-secondary border border-warning card-hover-animate">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title text-warning">${user.nickname}</h5>
                             ${isModerator ? `
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-warning edit-user-btn" data-user-id="${user.id}">
+                                    <button class="btn btn-sm btn-outline-warning edit-user-btn" data-user-id="${user.id}" title="Редагувати">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${user.id}">
+                                    <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${user.id}" title="Видалити">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
@@ -68,12 +81,14 @@ document.addEventListener("DOMContentLoaded", () => {
                             <i class="fa-solid fa-envelope me-1"></i> ${user.email}
                         </p>
                         <div class="mb-2">
-                            <span class="badge ${statusBadgeClass} me-1">${user.status}</span>
-                            <span class="badge ${privilegeBadgeClass}">${user.privilege}</span>
+                            <span class="badge ${statusBadgeClass} me-1">${statusIcon}${user.status}</span>
+                            <span class="badge ${privilegeBadgeClass}">${privilegeIcon}${user.privilege}</span>
                         </div>
                         ${user.discount_percent ? `
-                            <p class="text-warning small mb-0">
-                                <i class="fa-solid fa-percent me-1"></i> Знижка: ${user.discount_percent}%
+                            <p class="mt-2">
+                                <span class="discount-badge">
+                                    <i class="fa-solid fa-percent me-1"></i> Знижка: ${user.discount_percent}%
+                                </span>
                             </p>
                         ` : ""}
                     </div>
