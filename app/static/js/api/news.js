@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const confirmBtn = document.getElementById("confirmDeleteBtn");
         const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
         
         confirmBtn.onclick = async () => {
             try {
@@ -142,6 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         
         cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
             confirmDeleteModal.hide();
         };
 

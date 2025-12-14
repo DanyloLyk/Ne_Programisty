@@ -16,6 +16,11 @@ class Feedback(db.Model):
             "title": self.title,
             "description": self.description,
             "user_id": self.user_id,
+            "user": {
+                "id": self.user.id,
+                "nickname": self.user.nickname,
+                "email": self.user.email
+            } if self.user else None,
             # Конвертуємо дату в рядок, щоб JSON не лаявся
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

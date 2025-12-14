@@ -57,8 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="mt-auto">
                             <small class="text-warning">
                                 <i class="fa-solid fa-user me-1"></i>
-                                ${feedback.user?.nickname || "Анонімний користувач"}
+                                ${feedback.user?.nickname || feedback.nickname || "Анонімний користувач"}
                             </small>
+                            ${feedback.created_at ? `<div class="text-muted small mt-1"><i class="fa-solid fa-calendar me-1"></i>${new Date(feedback.created_at).toLocaleDateString('uk-UA')}</div>` : ""}
                         </div>
                     </div>
                 </div>
@@ -182,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const confirmBtn = document.getElementById("confirmDeleteBtn");
         const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
         
         confirmBtn.onclick = async () => {
             try {
@@ -203,6 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         
         cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
             confirmDeleteModal.hide();
         };
 
