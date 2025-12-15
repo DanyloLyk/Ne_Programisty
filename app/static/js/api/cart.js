@@ -411,8 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const del = e.target.closest(".cart-delete");
         if (del) {
             const itemId = del.dataset.itemId;
-            if (!confirm("Видалити позицію з кошика?")) return;
-            removeFromCart(itemId);
+            showDeleteConfirmCart(itemId, "товар");
             return;
         }
     });
@@ -556,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+<<<<<<< HEAD
     // -------------------------
     // Оформлення замовлення
     // -------------------------
@@ -647,7 +647,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+=======
+>>>>>>> 27d8d9e2 (fix vizitka white team)
     // Слухаємо зміни режиму модератора
+    function showDeleteConfirmCart(itemId, type) {
+        document.getElementById("confirmDeleteText").textContent = 
+            `Ви впевнені, що хочете видалити цей ${type} з кошика?`;
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                await removeFromCart(itemId);
+                confirmDeleteModal.hide();
+                window.showToast("Товар видалено з кошика", 'success');
+            } catch (err) {
+                console.error("Помилка видалення товару:", err);
+                window.showToast("Не вдалося видалити товар", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        confirmDeleteModal.show();
+    }
+
     window.addEventListener("moderatorModeChanged", () => {
         loadDesktops();
     });

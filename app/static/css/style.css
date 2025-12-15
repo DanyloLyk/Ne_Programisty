@@ -49,6 +49,7 @@
   z-index: 1050; /* або навіть більше, якщо треба */
 }
 
+
 /* Анімація underline при hover */
 .nav-link {
   position: relative;
@@ -532,7 +533,29 @@ body {
 
 /* ефект при наведенні — застосовується тільки коли кнопка всередині НЕ наведена
    (клас .btn-hover додається JS при наведені на .buy-btn) */
-.card-hover-animate:not(.btn-hover):hover {
+/* Контактні картки - БЕЗ НІЯКИХ ЕФЕКТІВ ПРИ HOVER */
+.section-contacts .card-hover-animate:not(.btn-hover):hover {
+  background-color: inherit !important;
+  border-color: inherit !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-title,
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-text,
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-subtitle,
+.section-contacts .card-hover-animate:not(.btn-hover):hover p {
+  color: inherit !important;
+}
+
+.section-contacts .card-hover-animate:not(.btn-hover):hover .text-warning {
+  color: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* Інші картки - мають hover ефекти */
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover {
   background-color: #ffc107 !important; /* жовтий фон */
   border-color: #ffc107 !important;
   color: #212529 !important; /* чорний колір для всього тексту */
@@ -540,21 +563,21 @@ body {
 }
 
 /* щоб усередині картки весь текст став чорним */
-.card-hover-animate:not(.btn-hover):hover .card-title,
-.card-hover-animate:not(.btn-hover):hover .card-text,
-.card-hover-animate:not(.btn-hover):hover .card-subtitle,
-.card-hover-animate:not(.btn-hover):hover p {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-title,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-text,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-subtitle,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover p {
   color: #212529 !important;
 }
 
 /* опціонально — щоб ціна теж стала контрастною */
-.card-hover-animate:not(.btn-hover):hover .text-warning {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .text-warning {
   color: #212529 !important;
   font-weight: 700;
 }
 
 /* Забезпечити, що hover картки НЕ змінює фон кнопки — кнопка має свій власний hover */
-.card-hover-animate:not(.btn-hover):hover .buy-btn:not(:hover) {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .buy-btn:not(:hover) {
   /* не змінюємо фон кнопки при hover картки, але дозволяємо кнопці мати свій hover */
   background: transparent !important;
   color: inherit !important;
@@ -562,7 +585,7 @@ body {
 }
 
 /* Якщо потрібно — зробити кнопку темною при hover картки (навіть коли сама кнопка не наведена) */
-.card-hover-animate:hover .buy-btn {
+.card-hover-animate:not(.section-contacts .card-hover-animate):hover .buy-btn {
   background-color: black !important;
   color: white !important;
   border-color: black !important;
@@ -970,6 +993,20 @@ body {
 }
 
 .bg-warning .text-dark {
+  color: #212529 !important;
+}
+
+/* Стилі для карток контактів - на білій темі жовті, без hover ефектів */
+.section-contacts .contact-card {
+  background-color: #ffc107 !important;
+  border-color: #212529 !important;
+}
+
+.section-contacts .contact-card .card-body,
+.section-contacts .contact-card .card-title,
+.section-contacts .contact-card .card-text,
+.section-contacts .contact-card i,
+.section-contacts .contact-card a {
   color: #212529 !important;
 }
 
