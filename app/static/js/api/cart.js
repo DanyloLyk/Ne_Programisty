@@ -429,29 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    document.getElementById("clear-cart")?.addEventListener("click", async () => {
-        if (!confirm("Ви дійсно хочете очистити весь кошик?")) return;
-
-        try {
-            const r = await fetch(`${API}/carts/clear`, {
-                method: "DELETE",
-                headers: authHeaders()
-            });
-
-            const data = await safeParseJSON(r);
-
-            if (r.ok) {
-                window.showToast(data.message || "Ваш кошик успішно очищено.", 'success');
-                await loadCart();  // оновлюємо відображення кошика
-            } else if (r.status === 401) {
-                window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
-            } else {
-                window.showToast(data?.error || `Не вдалося очистити кошик (${r.status})`, 'danger');
-            }
-        } catch (e) {
-            console.error(e);
-            window.showToast("Помилка при очищенні кошика. Перевірте підключення.", 'danger');
-        }
+    document.getElementById("clear-cart")?.addEventListener("click", () => {
+        showDeleteConfirmClearCart();
     });
 
     // Додавання товару (тільки для модератора)
@@ -582,6 +561,44 @@ document.addEventListener("DOMContentLoaded", () => {
         closeBtn.onclick = () => {
             confirmDeleteModal.hide();
         };
+        
+        confirmDeleteModal.show();
+    }
+
+    function showDeleteConfirmClearCart() {
+        document.getElementById("confirmDeleteText").textContent = 
+            "Ви впевнені, що хочете очистити весь кошик?";
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                const r = await fetch(`${API}/carts/clear`, {
+                    method: "DELETE",
+                    headers: authHeaders()
+                });
+
+                const data = await safeParseJSON(r);
+
+                if (r.ok) {
+                    confirmDeleteModal.hide();
+                    window.showToast(data.message || "Ваш кошик успішно очищено.", 'success');
+                    await loadCart();
+                } else if (r.status === 401) {
+                    window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
+                } else {
+                    window.showToast(data?.error || `Не вдалося очистити кошик (${r.status})`, 'danger');
+                }
+            } catch (e) {
+                console.error("Помилка при очищенні кошика:", e);
+                window.showToast("Помилка при очищенні кошика. Перевірте підключення.", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => confirmDeleteModal.hide();
+        closeBtn.onclick = () => confirmDeleteModal.hide();
         
         confirmDeleteModal.show();
     }

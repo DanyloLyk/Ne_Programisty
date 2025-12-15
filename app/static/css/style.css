@@ -48,6 +48,13 @@
 .navbar.fixed-top {
   z-index: 1050; /* або навіть більше, якщо треба */
 }
+#confirmDeleteModal.modal {
+  z-index: 2500 !important;
+}
+
+#confirmDeleteModal + .modal-backdrop {
+  z-index: 2490 !important;
+}
 
 
 /* Анімація underline при hover */
