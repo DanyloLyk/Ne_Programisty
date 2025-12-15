@@ -12,7 +12,7 @@ def get_user_by_username(username):
     return User.query.filter_by(nickname=username).first()
 
 def add_user(nickname, email, password, password_confirm, status, privilege):
-    mistakes = "Помилки при реєстрації користувача:"
+    mistakes = ["Помилки при реєстрації користувача:"]
     
     # 1. Валідація паролів
     if password != password_confirm:
@@ -25,12 +25,12 @@ def add_user(nickname, email, password, password_confirm, status, privilege):
 
     if status not in ['User', 'Admin', 'Moder']:
         status = 'User'  # Встановлюємо статус за замовчуванням
-        mistakes += "\nНекоректний статус користувача. Допустимі значення: User, Admin, Moder. Поточний статус: User"
+        mistakes.append("Некоректний статус користувача. Допустимі значення: User, Admin, Moder. Поточний статус: User")
     
     # 3. Валідація привілеїв та статусів
     if privilege not in ['Default', 'Gold', 'Diamond', 'VIP']:
         privilege = 'Default'  # Встановлюємо привілеї за замовчуванням
-        mistakes += "\nНекоректний рівень привілеїв користувача. Допустимі значення: Default, Gold, Diamond, VIP. Поточний рівень: Default"
+        mistakes.append("Некоректний рівень привілеїв користувача. Допустимі значення: Default, Gold, Diamond, VIP. Поточний рівень: Default")
     
     # 4. Створення користувача
     try:
@@ -40,7 +40,7 @@ def add_user(nickname, email, password, password_confirm, status, privilege):
         db.session.add(new_user)
         db.session.commit()
         
-        if mistakes != "Помилки при реєстрації користувача:":
+        if len(mistakes) > 1:
             return new_user, mistakes  # Повертаємо користувача з попередженнями
         else:
             return new_user, None

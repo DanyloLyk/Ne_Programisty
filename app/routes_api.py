@@ -437,14 +437,21 @@ def add_user():
     privilege = data.get("privilege")
 
     # Оновлений виклик сервісу (повертає user, error)
-    user, error_message = UserService.registration(nickname, email, password, password_confirm, status, privilege)
+    new_user, error_message = UserService.registration(nickname, email, password, password_confirm, status, privilege)
+    if new_user:
+      response = {
+          "message": "Успішна реєстрація користувача"
+      }
+      # Якщо result не пустий (це список warning-ів)
+      if error_message:
+          response["message"] += " з попередженнями"
+          response["warnings"] = error_message # Передаємо список окремим полем
 
-    if error_message:
-        if "Помилки при реєстрації користувача:" in error_message:
-            return jsonify({"message": "Успішна реєстрація користувача з попередженнями: " + error_message}), 200
-        return jsonify({"message": error_message}), 400
-        
-    return jsonify({"message": "Успішна реєстрація користувача"}), 200
+      return jsonify(response), 200
+    else:
+      # Якщо new_user is None, значить error_message - це рядок з критичною помилкою
+      return jsonify({"message": error_message}), 400
+
 
 @api.route("/users/<int:user_id>", methods=["DELETE"])
 @admin_required
