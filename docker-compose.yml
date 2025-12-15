@@ -2,21 +2,36 @@ version: '3.8'
 
 services:
   web:
-    # Збираємо контейнер з поточної папки
     build: .
     container_name: shop_container
-    # Прокидаємо порт: "мій комп'ютер 5000" -> "контейнер 5000"
-    ports:
-      - "5000:5000"
-    # Налаштування (з файлу .env)
+    # ports:  <-- ПРИБИРАЄМО! Flask тепер доступний тільки для Nginx всередині мережі
+    #   - "5000:5000"
     env_file:
       - .env
-    # "Флешка" для бази даних. Якщо видалимо контейнер, дані залишаться тут.
     volumes:
       - sqlite_data:/app/data
-    # Якщо впаде сервер - перезапусти
+      - static_volume:/app/static # Ділимося папкою static з Nginx
+    restart: unless-stopped
+    # Додаємо healthcheck згідно з вимогами
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    image: nginx:alpine
+    container_name: shop_nginx
+    ports:
+      - "80:80" # Тепер вхід через порт 80 (стандартний для вебу)
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro # Наш конфіг
+      - static_volume:/app/static # Nginx бере картинки звідси
+    depends_on:
+      - web # Nginx запуститься тільки після Flask
     restart: unless-stopped
 
-# Оголошення "флешки" (тому що ми просили Volume)
 volumes:
   sqlite_data:
+  static_volume: # Новий том для статики

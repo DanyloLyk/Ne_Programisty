@@ -1,0 +1,515 @@
+{
+	"info": {
+		"_postman_id": "867b3d10-52c0-4f0d-999a-7ce43454595a",
+		"name": "Scenario3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50782189",
+		"_collection_link": "https://danylolyk-9805131.postman.co/workspace/Ne_Programisty's-Workspace~17f22747-aeb6-4a5b-8727-5361967d3242/collection/50830603-867b3d10-52c0-4f0d-999a-7ce43454595a?action=share&source=collection_link&creator=50782189"
+	},
+	"item": [
+		{
+			"name": "1.RegistAdmin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Admin registered\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    var requestData = JSON.parse(pm.request.body.raw);\r",
+							"\r",
+							"    // Зберігаємо дані адміна\r",
+							"    pm.collectionVariables.set(\"admin_email\", requestData.email);\r",
+							"    pm.collectionVariables.set(\"admin_password\", requestData.password);\r",
+							"    pm.collectionVariables.set(\"admin_nickname\", requestData.nickname);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"nickname\": \"admin_{{$randomInt}}\",\n      \"email\": \"admin_{{$randomInt}}@ne-programisty.com\",\n      \"password\": \"SuperSecretPassword1!\",\n      \"password_confirm\": \"SuperSecretPassword1!\",\n      \"status\": \"Admin\",\n      \"privilege\": \"VIP\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/users/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.LoginAdmin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Admin login successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Перезаписуємо токен на адмінський\r",
+							"    pm.collectionVariables.set(\"access_token\", jsonData.access_token);\r",
+							"    console.log(\"Admin Token Set!\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"username\": \"{{admin_nickname}}\",\n      \"password\": \"{{admin_password}}\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3.CreateNews",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"News created (201 Created)\", function () {\r",
+							"        // У деяких API створення це 200, у деяких 201. \r",
+							"        // Судячи з твоєї доки, там 201.\r",
+							"        pm.response.to.have.status(201); \r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\n      \"name\": \"Турнір з CS2 для програмістів\",\n      \"description\": \"Приходьте всі, буде весело! Розігруємо механічну клавіатуру.\",\n      \"descriptionSecond\": \"Деталі у нас в діскорді.\",\n      \"image_urls\": [\n        \"images/catalog2.jpg\"\n      ]\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/news",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4.GetAllNews",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Шукаємо новину з нашою назвою\r",
+							"    // (Або просто беремо останню, якщо ми впевнені, що ми єдині адміни)\r",
+							"    var myNews = jsonData.find(n => n.name === \"Турнір з CS2 для програмістів\");\r",
+							"\r",
+							"    if (myNews) {\r",
+							"        pm.collectionVariables.set(\"news_id\", myNews.id);\r",
+							"        console.log(\"News ID found: \" + myNews.id);\r",
+							"    } else {\r",
+							"        // Якщо не знайшли по імені, беремо останню додану (у списку зазвичай остання в кінці або на початку)\r",
+							"        // Припустимо, нові в кінці:\r",
+							"        var lastNews = jsonData[jsonData.length - 1];\r",
+							"        pm.collectionVariables.set(\"news_id\", lastNews.id);\r",
+							"        console.log(\"Took last news ID: \" + lastNews.id);\r",
+							"    }\r",
+							"\r",
+							"    pm.test(\"News ID extracted\", function () {\r",
+							"        pm.expect(pm.collectionVariables.get(\"news_id\")).to.not.be.undefined;\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"username\": \"{{current_nickname}}\",\n      \"password\": \"{{current_password}}\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/news",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5.UpdateNews",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"News updated successfully\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"name\": \"Турнір з CS2 [FIXED]\",\r\n      \"description\": \"Увага! Дата змінилася. Приз тепер - RTX 4090!\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/news/{{news_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news",
+						"{{news_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6.ReadNews",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" pm.test(\"Read news success\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"Changes applied\", function () {\r",
+							"        // Перевіряємо, що назва змінилася\r",
+							"        pm.expect(jsonData.name).to.include(\"[FIXED]\");\r",
+							"        // Перевіряємо, що опис змінився\r",
+							"        pm.expect(jsonData.description).to.include(\"RTX 4090\");\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/news/{{news_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news",
+						"{{news_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7.DeleteNews",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"News deleted\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/news/{{news_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news",
+						"{{news_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8.Verify404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"News is gone (404)\", function () {\r",
+							"        // Ми ОЧІКУЄМО помилку 404. Це означає, що тест успішний.\r",
+							"        pm.response.to.have.status(404);\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/news/{{news_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"news",
+						"{{news_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "admin_email",
+			"value": ""
+		},
+		{
+			"key": "admin_password",
+			"value": ""
+		},
+		{
+			"key": "admin_nickname",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "news_id",
+			"value": ""
+		}
+	]
+}

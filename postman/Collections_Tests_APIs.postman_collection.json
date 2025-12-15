@@ -1,0 +1,5136 @@
+{
+	"info": {
+		"_postman_id": "17a4085e-d45c-43b6-bf3c-0599a46ca0d0",
+		"name": "Ne Programisty Shop API",
+		"description": "Документація для найкращого магазину настільних ігор.\n\nContact Support:\n Email: danylo@example.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50782189",
+		"_collection_link": "https://danylolyk-9805131.postman.co/workspace/Ne_Programisty's-Workspace~17f22747-aeb6-4a5b-8727-5361967d3242/collection/50782189-17a4085e-d45c-43b6-bf3c-0599a46ca0d0?action=share&source=collection_link&creator=50782189"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "v1",
+					"item": [
+						{
+							"name": "auth",
+							"item": [
+								{
+									"name": "Встановлення нового пароля",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"token\": \"string\",\n  \"new_password\": \"string\",\n  \"confirm_password\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/auth/reset-password",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"reset-password"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Пароль успішно змінено",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"token\": \"string\",\n  \"new_password\": \"string\",\n  \"confirm_password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/reset-password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														"reset-password"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка (невірний токен або паролі)",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"token\": \"string\",\n  \"new_password\": \"string\",\n  \"confirm_password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/reset-password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														"reset-password"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Запит на відновлення пароля",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"cat@gmail.com\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"forgot-password"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Лист відправлено (або імітовано)",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"cat@gmail.com\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														"forgot-password"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"string\",\n  \"debug_token\": \"string\"\n}"
+										},
+										{
+											"name": "Email не знайдено",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"cat@gmail.com\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														"forgot-password"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Авторизація користувача",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"// Отримуємо відповідь у форматі JSON",
+													"var jsonData = pm.response.json();",
+													"",
+													"// Перевіряємо, чи прийшов токен",
+													"if (jsonData.access_token) {",
+													"    // Зберігаємо токен у змінну середовища \"jwt_token\"",
+													"    pm.environment.set(\"jwt_token\", jsonData.access_token);",
+													"    ",
+													"    // Для перевірки виводимо в консоль Postman (внизу зліва кнопка Console)",
+													"    console.log(\"Token saved successfully:\", jsonData.access_token);",
+													"} else {",
+													"    console.error(\"Token not found in response!\");",
+													"}",
+													"",
+													"// Перевірка, що статус 200 (для краси)",
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"cat\",\n  \"password\": \"123\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/auth/",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												""
+											]
+										},
+										"description": "Перевіряє логін та пароль користувача. Якщо дані вірні, повертає `access_token`,  який потрібно використовувати для доступу до захищених маршрутів.\n"
+									},
+									"response": [
+										{
+											"name": "Успішна авторизація",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"username\": \"cat\",\n  \"password\": \"123\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														""
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"access_token\": \"string\",\n  \"message\": \"Успішна авторизація\"\n}"
+										},
+										{
+											"name": "Помилка авторизації",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"username\": \"cat\",\n  \"password\": \"123\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/auth/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"auth",
+														""
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Невірні облікові дані\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "users",
+							"item": [
+								{
+									"name": "Отримати профіль користувача за ID(Авторизація)",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/users/:user_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"users",
+												":user_id"
+											],
+											"variable": [
+												{
+													"key": "user_id",
+													"value": "string",
+													"description": "Унікальний ID користувача"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Користувача знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "Унікальний ID користувача"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 5278,\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"string\"\n}"
+										},
+										{
+											"name": "Користувача не знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "Унікальний ID користувача"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Користувача не знайдено\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Видалити користувача (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/users/:user_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"users",
+												":user_id"
+											],
+											"variable": [
+												{
+													"key": "user_id",
+													"value": "string",
+													"description": "ID користувача для видалення"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Успішне видалення",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача для видалення"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Доступ заборонено (не адмін)",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача для видалення"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Користувача не знайдено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача для видалення"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Редагувати дані користувача (Тільки Адмін)",
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"VIP\",\n  \"password\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/users/:user_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"users",
+												":user_id"
+											],
+											"variable": [
+												{
+													"key": "user_id",
+													"value": "string",
+													"description": "ID користувача"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Інформація успішно оновлена",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"VIP\",\n  \"password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"string\",\n  \"data\": {}\n}"
+										},
+										{
+											"name": "Помилка валідації (наприклад, нікнейм зайнятий)",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"VIP\",\n  \"password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Доступ заборонено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"VIP\",\n  \"password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Користувача не знайдено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"VIP\",\n  \"password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати список усіх користувачів",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/users/",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"users",
+												""
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список користувачів успішно отримано",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														""
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 2706,\n    \"nickname\": \"string\",\n    \"email\": \"string\",\n    \"status\": \"string\",\n    \"privilege\": \"string\",\n    \"discount_percent\": 4447\n  },\n  {\n    \"id\": 1586,\n    \"nickname\": \"string\",\n    \"email\": \"string\",\n    \"status\": \"string\",\n    \"privilege\": \"string\",\n    \"discount_percent\": 8821\n  }\n]"
+										},
+										{
+											"name": "Внутрішня помилка сервера",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														""
+													]
+												}
+											},
+											"status": "Internal Server Error",
+											"code": 500,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Реєстрація нового користувача",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"kinJbXeOM@OhOodcExObqQOAWruvCage.vmdz\",\n  \"password\": \"string\",\n  \"password_confirm\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"Default\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/users/",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"users",
+												""
+											]
+										},
+										"description": "Реєструє нового користувача. Вимагає унікальний email та нікнейм. Паролі повинні співпадати.\n"
+									},
+									"response": [
+										{
+											"name": "Успішна реєстрація",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"kinJbXeOM@OhOodcExObqQOAWruvCage.vmdz\",\n  \"password\": \"string\",\n  \"password_confirm\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"Default\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														""
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Успішна реєстрація\"\n}"
+										},
+										{
+											"name": "Помилка валідації або конфлікт даних",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"nickname\": \"string\",\n  \"email\": \"kinJbXeOM@OhOodcExObqQOAWruvCage.vmdz\",\n  \"password\": \"string\",\n  \"password_confirm\": \"string\",\n  \"status\": \"Moder\",\n  \"privilege\": \"Default\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/users/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"users",
+														""
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Паролі не співпадають\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "news",
+							"item": [
+								{
+									"name": "Отримати одну новину за ID",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/news/:news_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"news",
+												":news_id"
+											],
+											"variable": [
+												{
+													"key": "news_id",
+													"value": "8407",
+													"description": "ID новини"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Новина знайдена",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407",
+															"description": "ID новини"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Новина не знайдена",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407",
+															"description": "ID новини"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Видалити новину (Тільки Адмін)",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/news/:news_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"news",
+												":news_id"
+											],
+											"variable": [
+												{
+													"key": "news_id",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Новина успішно видалена",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Новина не знайдена",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Редагувати новину (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/news/:news_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"news",
+												":news_id"
+											],
+											"variable": [
+												{
+													"key": "news_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Новина успішно оновлена",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка оновлення",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Новина не знайдена",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news/:news_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news",
+														":news_id"
+													],
+													"variable": [
+														{
+															"key": "news_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати список всіх новин",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/news",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"news"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список новин успішно отримано",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 3886,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"descriptionSecond\": \"string\",\n    \"images\": [\n      \"string\",\n      \"string\"\n    ]\n  },\n  {\n    \"id\": 44,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"descriptionSecond\": \"string\",\n    \"images\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "Додати новину (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/news",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"news"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Новина успішно додана",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка додавання",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"descriptionSecond\": \"string\",\n  \"image_urls\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/news",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"news"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "carts",
+							"item": [
+								{
+									"name": "Оновити кількість товару в кошику",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"item_id\": 2036,\n  \"quantity\": 5076\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts/quantity",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts",
+												"quantity"
+											]
+										},
+										"description": "Використовується для зміни кількості товару (item_id) у кошику користувача,  ідентифікатор якого береться з JWT-токена.\n"
+									},
+									"response": [
+										{
+											"name": "Кількість товару успішно оновлено.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 2036,\n  \"quantity\": 5076\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/quantity",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"quantity"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Кількість товару успішно оновлено.\",\n  \"item_id\": 9305,\n  \"quantity\": 6889\n}"
+										},
+										{
+											"name": "Недійсні дані (наприклад, quantity < 1) або відсутність обов'язкових полів.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 2036,\n  \"quantity\": 5076\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/quantity",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"quantity"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Користувач не авторизований.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 2036,\n  \"quantity\": 5076\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/quantity",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"quantity"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Товар не знайдено в кошику користувача.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 2036,\n  \"quantity\": 5076\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/quantity",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"quantity"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Очистити весь кошик",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts/clear",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts",
+												"clear"
+											]
+										},
+										"description": "Операція не вимагає тіла запиту, оскільки ідентифікатор користувача береться з JWT токена."
+									},
+									"response": [
+										{
+											"name": "Кошик користувача успішно очищено.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/clear",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"clear"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Ваш кошик успішно очищено.\"\n}"
+										},
+										{
+											"name": "Користувач не авторизований (відсутній або недійсний JWT токен).",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/clear",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														"clear"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати детальний кошик для заданого користувача по ID (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts/:user_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts",
+												":user_id"
+											],
+											"variable": [
+												{
+													"key": "user_id",
+													"value": "string",
+													"description": "ID користувача, детальний кошик якого потрібно отримати."
+												}
+											]
+										},
+										"description": "Використовується адміністратором для перегляду кошика будь-якого користувача за його ID. Повертає повну інформацію про товари (детальний кошик).\n"
+									},
+									"response": [
+										{
+											"name": "Повертає деталізований список позицій кошика.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача, детальний кошик якого потрібно отримати."
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"item_id\": 9075,\n    \"quantity\": 5076,\n    \"name\": \"string\",\n    \"price\": 9272.488739861172\n  },\n  {\n    \"item_id\": 7660,\n    \"quantity\": 8807,\n    \"name\": \"string\",\n    \"price\": 9480.460533910364\n  }\n]"
+										},
+										{
+											"name": "Користувач не авторизований.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача, детальний кошик якого потрібно отримати."
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"error\": \"Missing Authorization Header\"\n}"
+										},
+										{
+											"name": "Доступ заборонено (Користувач не є адміністратором).",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "string",
+															"description": "ID користувача, детальний кошик якого потрібно отримати."
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"error\": \"Admin privileges required\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Отримати власний кошик (Детальні дані, авторизація)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts"
+											]
+										},
+										"description": "Використовує ID користувача з JWT-токена. Завжди повертає повну інформацію про товари, включаючи їх назви та ціни.\n"
+									},
+									"response": [
+										{
+											"name": "Повертає деталізований список позицій кошика.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"item_id\": 9075,\n    \"quantity\": 5076,\n    \"name\": \"string\",\n    \"price\": 9272.488739861172\n  },\n  {\n    \"item_id\": 7660,\n    \"quantity\": 8807,\n    \"name\": \"string\",\n    \"price\": 9480.460533910364\n  }\n]"
+										},
+										{
+											"name": "Користувач не авторизований.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"error\": \"Користувач не авторизований\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Додати товар до кошика (Адмін або вказаний користувач)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"item_id\": 6185,\n  \"quantity\": 1,\n  \"user_id\": 9396\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts"
+											]
+										},
+										"description": "Якщо user_id передано в тілі запиту, товар додається до кошика цього користувача (потрібні права адміністратора).  Якщо user_id не передано, товар додається до кошика користувача, визначеного за JWT токеном (поточний автентифікований користувач).\n"
+									},
+									"response": [
+										{
+											"name": "Успішно додано товар в кошик. Повертає деталі нової позиції кошика.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 6185,\n  \"quantity\": 1,\n  \"user_id\": 9396\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 8838,\n  \"item_id\": 5021,\n  \"quantity\": 7078,\n  \"user_id\": 3317\n}"
+										},
+										{
+											"name": "Недійсні дані або відсутність обов'язкових полів (item_id або quantity).",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 6185,\n  \"quantity\": 1,\n  \"user_id\": 9396\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Користувач не авторизований (відсутній JWT токен).",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 6185,\n  \"quantity\": 1,\n  \"user_id\": 9396\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Доступ заборонено (наприклад, якщо користувач без прав адміністратора намагається передати чужий user_id).",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 6185,\n  \"quantity\": 1,\n  \"user_id\": 9396\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Видалити товар з кошика (Авторизація)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"item_id\": 8171\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/carts",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"carts"
+											]
+										},
+										"description": "Використовується для видалення товару (item_id) з кошика користувача,  ідентифікатор якого береться з JWT-токена.\n"
+									},
+									"response": [
+										{
+											"name": "Товар успішно видалено з кошика.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 8171\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"message\": \"Товар успішно видалено з кошика.\"\n}"
+										},
+										{
+											"name": "Недійсні дані або відсутність обов'язкових полів (item_id).",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 8171\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Користувач не авторизований.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 8171\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Товар не знайдено в кошику користувача.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"item_id\": 8171\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/carts",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"carts"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "desktops",
+							"item": [
+								{
+									"name": "Отримати деталі однієї настолки",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"desktops",
+												":desktop_id"
+											],
+											"variable": [
+												{
+													"key": "desktop_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": 0,\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"price\": 8505.938331249745\n}"
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Редагувати настолку (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"price\": 6228.504261970116,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"desktops",
+												":desktop_id"
+											],
+											"variable": [
+												{
+													"key": "desktop_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Оновлено успішно",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"price\": 6228.504261970116,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"price\": 6228.504261970116,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Видалити настолку (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"desktops",
+												":desktop_id"
+											],
+											"variable": [
+												{
+													"key": "desktop_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Видалено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops/:desktop_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops",
+														":desktop_id"
+													],
+													"variable": [
+														{
+															"key": "desktop_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати список всіх настолок",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/desktops",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"desktops"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список успішно отримано",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 3987,\n    \"name\": \"string\",\n    \"price\": 4779.388624923508,\n    \"image\": \"string\"\n  },\n  {\n    \"id\": 3828,\n    \"name\": \"string\",\n    \"price\": 8443.583632330445,\n    \"image\": \"string\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "Додати настолку (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"price\": 3375.1236496827187,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/desktops",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"desktops"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Створено успішно",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"price\": 3375.1236496827187,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка валідації",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"name\": \"string\",\n  \"price\": 3375.1236496827187,\n  \"description\": \"string\",\n  \"image\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/desktops",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"desktops"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "feedbacks",
+							"item": [
+								{
+									"name": "Редагувати відгук по ID відгуку (Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks",
+												":feedback_id"
+											],
+											"variable": [
+												{
+													"key": "feedback_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Оновлено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Видалити відгук (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks",
+												":feedback_id"
+											],
+											"variable": [
+												{
+													"key": "feedback_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Видалено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Залишити відгук (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks/user/:user_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks",
+												"user",
+												":user_id"
+											],
+											"variable": [
+												{
+													"key": "user_id",
+													"value": "8407",
+													"description": "ID користувача, від імені якого створюється відгук"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Відгук створено",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "8407",
+															"description": "ID користувача, від імені якого створюється відгук"
+														}
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка валідації",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/user/:user_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														"user",
+														":user_id"
+													],
+													"variable": [
+														{
+															"key": "user_id",
+															"value": "8407",
+															"description": "ID користувача, від імені якого створюється відгук"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати один відгук по ID",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks",
+												":feedback_id"
+											],
+											"variable": [
+												{
+													"key": "feedback_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks/:feedback_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks",
+														":feedback_id"
+													],
+													"variable": [
+														{
+															"key": "feedback_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати список всіх відгуків",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список успішно отримано",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": 6898,\n    \"title\": \"string\",\n    \"description\": \"string\",\n    \"user_id\": 7674\n  },\n  {\n    \"id\": 4698,\n    \"title\": \"string\",\n    \"description\": \"string\",\n    \"user_id\": 609\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "Залишити відгук (Авторизація)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/feedbacks",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"feedbacks"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Відгук створено",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка валідації",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/feedbacks",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"feedbacks"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "orders",
+							"item": [
+								{
+									"name": "Оновити статус замовлення (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"status\": \"Completed\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"orders",
+												":order_id"
+											],
+											"variable": [
+												{
+													"key": "order_id",
+													"value": "8407",
+													"description": "ID замовлення"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Статус оновлено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"status\": \"Completed\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														":order_id"
+													],
+													"variable": [
+														{
+															"key": "order_id",
+															"value": "8407",
+															"description": "ID замовлення"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Замовлення не знайдено",
+											"originalRequest": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"status\": \"Completed\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														":order_id"
+													],
+													"variable": [
+														{
+															"key": "order_id",
+															"value": "8407",
+															"description": "ID замовлення"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Видалити замовлення (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"orders",
+												":order_id"
+											],
+											"variable": [
+												{
+													"key": "order_id",
+													"value": "8407"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Видалено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														":order_id"
+													],
+													"variable": [
+														{
+															"key": "order_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Не знайдено",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/:order_id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														":order_id"
+													],
+													"variable": [
+														{
+															"key": "order_id",
+															"value": "8407"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати історію своїх замовлень",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/orders/my",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"orders",
+												"my"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список замовлень користувача",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/my",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														"my"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Замовлень не знайдено",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/my",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														"my"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Отримати список усіх замовлень (Тільки Адмін)",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/orders/",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"orders",
+												""
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Список замовлень",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders/",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders",
+														""
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Створити замовлення з кошика",
+									"request": {
+										"auth": {
+											"type": "apikey",
+											"apikey": [
+												{
+													"key": "key",
+													"value": "Authorization",
+													"type": "string"
+												},
+												{
+													"key": "value",
+													"value": "{{apiKey}}",
+													"type": "string"
+												},
+												{
+													"key": "in",
+													"value": "header",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/orders",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"orders"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Замовлення успішно створено",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Помилка (пустий кошик тощо)",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "<API Key>",
+														"description": "Added as a part of security scheme: apikey"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/orders",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"orders"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "v2",
+					"item": [
+						{
+							"name": "Статус API v2 (Health Check)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										""
+									]
+								},
+								"description": "Точка входу для нової версії API.  Використовується для моніторингу статусу та перевірки маршрутизації /api/v2/.\n"
+							},
+							"response": [
+								{
+									"name": "API V2 активне і працює стабільно",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v2/",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												""
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"message\": \"Вітаємо в API версії 2.0!\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Оптимізований список користувачів (Lightweight)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/v2/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"users"
+									]
+								},
+								"description": "Експериментальний ендпоінт версії 2.0. На відміну від v1, повертає плоский список рядків (тільки нікнейми) замість повних об'єктів. Це зменшує обсяг переданих даних на 80% (корисно для мобільних мереж).\n"
+							},
+							"response": [
+								{
+									"name": "Успішне отримання списку",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/v2/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"users"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  \"admin_cat\",\n  \"lazy_max\",\n  \"smart_sirozha\",\n  \"padavan_dima\"\n]"
+								},
+								{
+									"name": "Внутрішня помилка сервера",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v2/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v2",
+												"users"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/"
+		}
+	]
+}

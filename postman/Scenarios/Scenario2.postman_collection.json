@@ -1,0 +1,423 @@
+{
+	"info": {
+		"_postman_id": "833dbbcd-38dc-458c-b390-5c8ef20e813d",
+		"name": "Scenario2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50782189",
+		"_collection_link": "https://danylolyk-9805131.postman.co/workspace/Ne_Programisty's-Workspace~17f22747-aeb6-4a5b-8727-5361967d3242/collection/50782189-833dbbcd-38dc-458c-b390-5c8ef20e813d?action=share&source=collection_link&creator=50782189"
+	},
+	"item": [
+		{
+			"name": "1.Registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" pm.test(\"Successful registration\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    // Отримуємо те, що ми відправили на сервер\r",
+							"    var requestData = JSON.parse(pm.request.body.raw);\r",
+							"\r",
+							"    // Зберігаємо email, пароль та нікнейм у пам'ять Postman\r",
+							"    pm.collectionVariables.set(\"current_email\", requestData.email);\r",
+							"    pm.collectionVariables.set(\"current_password\", requestData.password);\r",
+							"    pm.collectionVariables.set(\"current_nickname\", requestData.nickname); \r",
+							"\r",
+							"    console.log(\"Registered: \" + requestData.nickname);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"nickname\": \"user_{{$randomInt}}\",\n      \"email\": \"user_{{$randomInt}}@test.com\",\n      \"password\": \"Password123!\",\n      \"password_confirm\": \"Password123!\",\n      \"status\": \"User\",\n      \"privilege\": \"Default\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/users/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var token = jsonData.access_token;\r",
+							"\r",
+							"    // 1. Зберігаємо токен, щоб інші запити його бачили\r",
+							"    pm.collectionVariables.set(\"access_token\", token);\r",
+							"\r",
+							"    // 2. Розшифровуємо токен, щоб дістати ID юзера\r",
+							"    var base64Url = token.split('.')[1];\r",
+							"    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+							"    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {\r",
+							"        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);\r",
+							"    }).join(''));\r",
+							"\r",
+							"    var tokenData = JSON.parse(jsonPayload);\r",
+							"\r",
+							"    // 3. Шукаємо ID (воно може називатися 'sub', 'id' або 'user_id')\r",
+							"    // Твій бекенд скоріше за все використовує 'sub' (стандарт) або 'identity'\r",
+							"    if(tokenData.sub) {\r",
+							"        pm.collectionVariables.set(\"user_id\", tokenData.sub);\r",
+							"    } else if (tokenData.id) {\r",
+							"         pm.collectionVariables.set(\"user_id\", tokenData.id);\r",
+							"    } else if (tokenData.user_id) {\r",
+							"         pm.collectionVariables.set(\"user_id\", tokenData.user_id);\r",
+							"    } else if (tokenData.identity) {\r",
+							"         pm.collectionVariables.set(\"user_id\", tokenData.identity);\r",
+							"    }\r",
+							"\r",
+							"    console.log(\"Token saved. User ID: \" + pm.collectionVariables.get(\"user_id\"));"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"username\": \"{{current_nickname}}\",\n      \"password\": \"{{current_password}}\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3.GetProfile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Profile received\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    // Перевіряємо, чи це той самий емейл, який ми реєстрували\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.test(\"Email matches\", function () {\r",
+							"        pm.expect(jsonData.email).to.eql(pm.collectionVariables.get(\"current_email\"));\r",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"nickname\": \"user_{{$randomInt}}\",\n      \"email\": \"user_{{$randomInt}}@test.com\",\n      \"password\": \"Password123!\",\n      \"password_confirm\": \"Password123!\",\n      \"status\": \"User\",\n      \"privilege\": \"Default\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/users/{{user_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4.GetProducts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Products loaded\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Перевіряємо, чи є хоч один товар\r",
+							"    if (jsonData.length > 0) {\r",
+							"        // Беремо перший товар (індекс 0)\r",
+							"        var firstProduct = jsonData[0];\r",
+							"        \r",
+							"        // Зберігаємо його ID в пам'ять\r",
+							"        pm.collectionVariables.set(\"product_id\", firstProduct.id);\r",
+							"        \r",
+							"        console.log(\"Selected Product ID: \" + firstProduct.id);\r",
+							"    } else {\r",
+							"        console.log(\"No products found!\");\r",
+							"    }"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"username\": \"{{current_nickname}}\",\n      \"password\": \"{{current_password}}\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/desktops",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"desktops"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5.AddCart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Item added successfully\", function () {",
+							"    // Очікуємо 200 ОК (або 201 Created, залежно від беку)",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Перевірка: чи повернув сервер саме те, що ми просили (id=2, кількість=3)",
+							"pm.test(\"Correct item added\", function () {",
+							"    pm.expect(jsonData.item_id).to.eql(2);",
+							"    pm.expect(jsonData.quantity).to.eql(3);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"item_id\": 2,\n  \"quantity\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/carts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"carts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6.GetCart",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cart accessed successfully\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Cart has our item\", function () {\r",
+							"    // 1. Тепер ми перевіряємо поле 'items', а не всю відповідь\r",
+							"    pm.expect(jsonData.items).to.be.an('array');\r",
+							"    \r",
+							"    // 2. Шукаємо товар всередині списку 'items'\r",
+							"    var myItem = jsonData.items.find(item => item.item_id == 2);\r",
+							"    \r",
+							"    // 3. Перевірки\r",
+							"    pm.expect(myItem, \"Товар з ID 2 не знайдено у списку items!\").to.not.be.undefined;\r",
+							"    pm.expect(myItem.quantity).to.eql(3);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n      \"username\": \"{{current_nickname}}\",\n      \"password\": \"{{current_password}}\"\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/carts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"carts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "current_email",
+			"value": ""
+		},
+		{
+			"key": "current_password",
+			"value": ""
+		},
+		{
+			"key": "current_nickname",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "product_id",
+			"value": ""
+		}
+	]
+}
