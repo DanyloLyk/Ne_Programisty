@@ -1,8 +1,7 @@
 # === ЕТАП 1: Будівельник (Builder) ===
-# Беремо легкий Linux (Alpine) з Python 3.11
 FROM python:3.11-alpine AS builder
 
-# Робимо робочу папку /app
+# Робоча папка
 WORKDIR /app
 
 # Встановлюємо компілятори, потрібні для деяких бібліотек Python
@@ -12,35 +11,35 @@ RUN apk add --no-cache gcc musl-dev libffi-dev
 # Копіюємо список бібліотек
 COPY requirements.txt .
 
-# Встановлюємо бібліотеки в спеціальну папку (.local)
+# Встановлюємо залежності в user site-packages
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # === ЕТАП 2: Фінальний (Final) ===
-# Беремо чистий Linux знову
 FROM python:3.11-alpine
 
-# Щоб показувало відразу логи, а не збирало їх
+# Щоб Python показував логи відразу
 ENV PYTHONUNBUFFERED=1
 
 # Робоча папка
 WORKDIR /app
 
-# Встановлюємо wget для перевірки здоров'я сервера (Healthcheck)
-RUN apk add --no-cache wget
-
-# Копіюємо встановлені бібліотеки з першого етапу (щоб не компілювати знову)
+# Копіюємо встановлені бібліотеки з етапу builder
 COPY --from=builder /root/.local /root/.local
-
-# Налаштовуємо шляхи, щоб Python бачив бібліотеки
 ENV PATH=/root/.local/bin:$PATH
 
-# Створюємо папку для бази даних і даємо їй права (щоб не було помилок доступу)
-RUN mkdir -p /app/data && chmod 777 /app/data
+# Встановлюємо wget для healthcheck
+RUN apk add --no-cache wget
 
 # Копіюємо ВЕСЬ код проекту в контейнер
 COPY . .
 
-# Відкриваємо порт 5000 (стандарт Flask)
+# Підвантажуємо змінні середовища з .env
+RUN pip install --no-cache-dir python-dotenv
+
+# Створюємо папку для бази даних
+RUN mkdir -p /app/data && chmod 755 /app/data
+
+# Відкриваємо порт Flask
 EXPOSE 5000
 
 # Перевірка: чи живий сервер? 
