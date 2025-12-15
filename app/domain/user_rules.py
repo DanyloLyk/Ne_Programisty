@@ -14,11 +14,15 @@ def get_user_by_username(username):
 def add_user(nickname, email, password, password_confirm, status, privilege):
     mistakes = ["Помилки при реєстрації користувача:"]
     
-    # 1. Валідація паролів
+    # 1. Валідація електронної пошти
+    if '@' not in email or '.' not in email:
+        return None, "Некоректний формат email"
+
+    # 2. Валідація паролів
     if password != password_confirm:
         return None, "Паролі не співпадають"
 
-    # 2. Перевірка на існування (email АБО nickname)
+    # 3. Перевірка на існування (email АБО nickname)
     existing_user = User.query.filter((User.email == email) | (User.nickname == nickname)).first()
     if existing_user:        
         return None, "Користувач з таким email або нікнеймом вже існує"
@@ -27,12 +31,12 @@ def add_user(nickname, email, password, password_confirm, status, privilege):
         status = 'User'  # Встановлюємо статус за замовчуванням
         mistakes.append("Некоректний статус користувача. Допустимі значення: User, Admin, Moder. Поточний статус: User")
     
-    # 3. Валідація привілеїв та статусів
+    # 4. Валідація привілеїв та статусів
     if privilege not in ['Default', 'Gold', 'Diamond', 'VIP']:
         privilege = 'Default'  # Встановлюємо привілеї за замовчуванням
         mistakes.append("Некоректний рівень привілеїв користувача. Допустимі значення: Default, Gold, Diamond, VIP. Поточний рівень: Default")
     
-    # 4. Створення користувача
+    # 5. Створення користувача
     try:
         new_user = User(nickname=nickname, email=email, status=status, privilege=privilege)
         new_user.set_password(password)  
