@@ -1,5 +1,5 @@
 import pytest
-from app import create_app
+from app import create_app, db
 from unittest.mock import MagicMock
 from app.models.cart import CartItem
 from app.models.user import User
@@ -8,10 +8,14 @@ from app.models.feedback import Feedback
 from app.models.news import News, NewsImage
 from app.models.order import Order
 
+# ============================================================
+# APP & DB FIXTURES
+# ============================================================
+
 @pytest.fixture(scope="session")
 def app():
     """Створює Flask додаток для тестів."""
-    app = create_app()
+    app = create_app("testing")  # Використовуємо тестову конфігурацію
     return app
 
 @pytest.fixture
@@ -20,9 +24,17 @@ def app_context(app):
     with app.app_context():
         yield
 
-# ===============================================
+@pytest.fixture
+def session(app_context):
+    """Тестова сесія SQLAlchemy для інтеграційних тестів."""
+    db.create_all()
+    yield db.session
+    db.session.rollback()
+    db.drop_all()
+
+# ============================================================
 # CART FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
 def mock_cart_item():
