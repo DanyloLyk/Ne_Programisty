@@ -1,12 +1,13 @@
 import pytest
-from app import create_app, db
 from unittest.mock import MagicMock
+from app import create_app, db
 from app.models.cart import CartItem
 from app.models.user import User
 from app.models.desktop import Desktop
 from app.models.feedback import Feedback
 from app.models.news import News, NewsImage
 from app.models.order import Order
+from sqlalchemy.orm import sessionmaker
 
 # ============================================================
 # APP & DB FIXTURES
@@ -14,30 +15,35 @@ from app.models.order import Order
 
 @pytest.fixture(scope="session")
 def app():
-    """Створює Flask додаток для тестів."""
-    app = create_app("testing")  # Використовуємо тестову конфігурацію
+    app = create_app("testing")
     return app
 
 @pytest.fixture
 def app_context(app):
-    """Контекст додатку для тестів, де потрібна база даних."""
+    """Контекст додатку для тестів"""
     with app.app_context():
         yield
 
 @pytest.fixture
 def session(app_context):
-    """Тестова сесія SQLAlchemy для інтеграційних тестів."""
-    db.create_all()
+    """Тестова сесія для Flask-SQLAlchemy 3.x"""
     yield db.session
-    db.session.rollback()
-    db.drop_all()
+    db.session.rollback()  # повертаємо базу у чистий стан після кожного тесту
+    
+@pytest.fixture(scope="function", autouse=True)
+def clean_db(session):
+    # Очищаємо всі таблиці перед тестом
+    for table in reversed(db.metadata.sorted_tables):
+        session.execute(table.delete())
+    session.commit()
+    yield
 
 # ============================================================
 # CART FIXTURES
 # ============================================================
 
 @pytest.fixture
-def mock_cart_item():
+def mock_cart_item(app_context):
     """Повертає mock CartItem з item"""
     item_mock = MagicMock()
     item_mock.id = 1
@@ -56,7 +62,7 @@ def mock_cart_item():
     return cart_item
 
 @pytest.fixture
-def mock_cart_item_no_item():
+def mock_cart_item_no_item(app_context):
     """CartItem без item (item=None)"""
     cart_item = MagicMock(spec=CartItem)
     cart_item.id = 11
@@ -66,12 +72,12 @@ def mock_cart_item_no_item():
     cart_item.item = None
     return cart_item
 
-# ===============================================
+# ============================================================
 # USER FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
-def mock_user():
+def mock_user(app_context):
     """Mock користувача з базовим статусом"""
     user = MagicMock(spec=User)
     user.id = 1
@@ -83,7 +89,7 @@ def mock_user():
     return user
 
 @pytest.fixture
-def mock_admin_user():
+def mock_admin_user(app_context):
     """Mock адміністратора"""
     user = MagicMock(spec=User)
     user.id = 2
@@ -94,12 +100,12 @@ def mock_admin_user():
     user.check_password = MagicMock(return_value=True)
     return user
 
-# ===============================================
+# ============================================================
 # DESKTOP FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
-def mock_desktop():
+def mock_desktop(app_context):
     """Mock товару"""
     desktop = MagicMock(spec=Desktop)
     desktop.id = 1
@@ -110,7 +116,7 @@ def mock_desktop():
     return desktop
 
 @pytest.fixture
-def mock_desktop_list():
+def mock_desktop_list(app_context):
     """Mock список товарів"""
     desktop1 = MagicMock(spec=Desktop)
     desktop1.id = 1
@@ -128,12 +134,12 @@ def mock_desktop_list():
     
     return [desktop1, desktop2]
 
-# ===============================================
+# ============================================================
 # FEEDBACK FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
-def mock_feedback():
+def mock_feedback(app_context):
     """Mock відгуку"""
     feedback = MagicMock(spec=Feedback)
     feedback.id = 1
@@ -144,7 +150,7 @@ def mock_feedback():
     return feedback
 
 @pytest.fixture
-def mock_feedback_list():
+def mock_feedback_list(app_context):
     """Mock список відгуків"""
     feedback1 = MagicMock(spec=Feedback)
     feedback1.id = 1
@@ -160,12 +166,12 @@ def mock_feedback_list():
     
     return [feedback1, feedback2]
 
-# ===============================================
+# ============================================================
 # NEWS FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
-def mock_news():
+def mock_news(app_context):
     """Mock новини"""
     news = MagicMock(spec=News)
     news.id = 1
@@ -176,7 +182,7 @@ def mock_news():
     return news
 
 @pytest.fixture
-def mock_news_with_images():
+def mock_news_with_images(app_context):
     """Mock новини з зображеннями"""
     image1 = MagicMock(spec=NewsImage)
     image1.img_url = "news1.png"
@@ -193,12 +199,12 @@ def mock_news_with_images():
     
     return news
 
-# ===============================================
+# ============================================================
 # ORDER FIXTURES
-# ===============================================
+# ============================================================
 
 @pytest.fixture
-def mock_order():
+def mock_order(app_context):
     """Mock замовлення"""
     user_mock = MagicMock()
     user_mock.id = 1
@@ -216,7 +222,7 @@ def mock_order():
     return order
 
 @pytest.fixture
-def mock_order_shipped():
+def mock_order_shipped(app_context):
     """Mock замовлення зі статусом Shipped"""
     user_mock = MagicMock()
     user_mock.id = 1

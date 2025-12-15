@@ -2,21 +2,21 @@ version: '3.8'
 
 services:
   web:
-    # Збери контейнер з поточної папки
     build: .
     container_name: shop_container
-    # Прокинь порт: "мій комп'ютер 5000" -> "контейнер 5000"
     ports:
-      - "5000:5000"
-    # Налаштування (з файлу .env)
+      - "5000:5000"  # Прокинути порт 5000 на хості до 5000 в контейнері
     env_file:
-      - .env
-    # "Флешка" для бази даних. Якщо видалиш контейнер, дані залишаться тут.
+      - .env         # Підвантаження змінних середовища
     volumes:
-      - sqlite_data:/app/data
-    # Якщо впаде - перезапусти
+      - sqlite_data:/app/data  # Volume для збереження бази даних між перезапусками
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
-# Оголошення "флешки" (тому що ми просили Volume)
 volumes:
   sqlite_data:
