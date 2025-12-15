@@ -5,7 +5,7 @@ FROM python:3.11-alpine AS builder
 # Робимо робочу папку /app
 WORKDIR /app
 
-# Встановлюємо системні штуки (компілятори), потрібні для деяких бібліотек Python
+# Встановлюємо компілятори, потрібні для деяких бібліотек Python
 # Це потрібно, щоб pip install не впав з помилкою
 RUN apk add --no-cache gcc musl-dev libffi-dev
 
@@ -37,15 +37,15 @@ ENV PATH=/root/.local/bin:$PATH
 # Створюємо папку для бази даних і даємо їй права (щоб не було помилок доступу)
 RUN mkdir -p /app/data && chmod 777 /app/data
 
-# Копіюємо ВЕСЬ твій код проекту в контейнер
+# Копіюємо ВЕСЬ код проекту в контейнер
 COPY . .
 
 # Відкриваємо порт 5000 (стандарт Flask)
 EXPOSE 5000
 
-# Перевірка: чи живий сервер? (Вимога на 12 балів)
+# Перевірка: чи живий сервер? 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:5000/ || exit 1
 
-# Команда запуску програми (заміни app.py на run.py, якщо в тебе так називається файл запуску)
+# Команда запуску програми 
 CMD ["python", "app.py"]
