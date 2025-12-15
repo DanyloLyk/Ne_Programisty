@@ -7,3 +7,5 @@ Thumbs.db
 instance/
 *.db
 instance/mydatabase.db
+.coverage
+htmlcov/
