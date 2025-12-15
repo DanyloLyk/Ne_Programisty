@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------------------
     async function loadCart() {
         try {
-            const r = await fetch(`${API}/cart`, { headers: authHeaders() });
+            const r = await fetch(`${API}/carts`, { headers: authHeaders() });
             if (!r.ok) {
                 if (r.status === 401) {
                     console.warn("Неавторизований при loadCart");
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function addToCart(itemId, quantity = 1) {
         try {
-            const r = await fetch(`${API}/cart`, {
+            const r = await fetch(`${API}/carts`, {
                 method: "POST",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId), quantity: Number(quantity) })
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const r = await fetch(`${API}/cart/quantity`, {
+            const r = await fetch(`${API}/carts/quantity`, {
                 method: "PUT",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId), quantity: Number(newQuantity) })
@@ -312,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function removeFromCart(itemId) {
         try {
-            const r = await fetch(`${API}/cart`, {
+            const r = await fetch(`${API}/carts`, {
                 method: "DELETE",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId) })
@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!confirm("Ви дійсно хочете очистити весь кошик?")) return;
 
         try {
-            const r = await fetch(`${API}/cart/clear`, {
+            const r = await fetch(`${API}/carts/clear`, {
                 method: "DELETE",
                 headers: authHeaders()
             });
@@ -572,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Перевіряємо чи є товари в кошику через API
-            const cartCheck = await fetch(`${API}/cart`, { headers: authHeaders() });
+            const cartCheck = await fetch(`${API}/carts`, { headers: authHeaders() });
             if (cartCheck.ok) {
                 const cartData = await cartCheck.json();
                 if (!cartData.items || cartData.items.length === 0) {
@@ -613,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Очищаємо кошик після успішного оформлення
             try {
-                const clearResponse = await fetch(`${API}/cart/clear`, {
+                const clearResponse = await fetch(`${API}/carts/clear`, {
                     method: "DELETE",
                     headers: authHeaders()
                 });

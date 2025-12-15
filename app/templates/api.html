@@ -9,53 +9,40 @@
 <script>
 // Виконуємо автоматичний логін після завантаження DOM
 document.addEventListener('DOMContentLoaded', async function() {
-    // Перевіряємо чи є токен
-    const existingToken = localStorage.getItem('accessToken');
     
+    // Перевірка на сторінку API
+    if (!window.location.pathname.includes('/api')) {
+        return;
+    }
+
+    const existingToken = get_token(); // Тепер це рядок, а не Promise!
+
     if (!existingToken) {
-        // Чекаємо поки api.js завантажиться (максимум 1 секунда)
-        let attempts = 0;
-        const maxAttempts = 10;
-        
-        const tryLogin = async () => {
-            if (typeof login === 'function') {
-                try {
-                    await login();
-                    console.log('Автоматичний логін виконано');
-                    // Перезавантажуємо сторінку після успішного логіну
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                } catch (error) {
-                    console.error('Помилка автоматичного логіну:', error);
-                }
-            } else if (attempts < maxAttempts) {
-                attempts++;
-                setTimeout(tryLogin, 100);
-            }
-        };
-        
-        tryLogin();
+        console.log('Токен відсутній, виконуємо вхід...');
+        await login();
+        window.location.reload();
     } else {
-        console.log('Токен вже існує:', existingToken.substring(0, 20) + '...');
-        // Перевіряємо чи токен валідний, викликаючи API
+        // === ВИПРАВЛЕННЯ 2: Правильна валідація ===
+        console.log('Перевірка існуючого токена...');
         try {
             const testResponse = await fetch('/api/v1/cart', {
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${existingToken}`,
+                    'Authorization': `Bearer ${existingToken}`, // Тут буде нормальний рядок
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }
             });
-            if (testResponse.status === 401) {
-                console.log('Токен невалідний, виконуємо повторний логін...');
+
+            // Якщо 401 (протух) АБО 404 (не знайдено) АБО 422 (кривий формат) -> перелогін
+            if (testResponse.status === 401 || testResponse.status === 404 || testResponse.status === 422) {
+                console.warn(`⚠️ Токен невалідний (Status: ${testResponse.status}). Оновлюємо...`);
                 localStorage.removeItem('accessToken');
-                if (typeof login === 'function') {
-                    await login();
-                    window.location.reload();
-                }
+                await login();
+            } else if (testResponse.ok) {
+                console.log('✅ Токен валідний.');
             } else {
-                console.log('Токен валідний');
+                console.log('❓ Невідома помилка при перевірці токена:', testResponse.status);
             }
         } catch (error) {
             console.error('Помилка перевірки токена:', error);

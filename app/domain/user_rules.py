@@ -11,7 +11,9 @@ def get_user_by_id(user_id):
 def get_user_by_username(username):
     return User.query.filter_by(nickname=username).first()
 
-def add_user(nickname, email, password, password_confirm):
+def add_user(nickname, email, password, password_confirm, status, privilege):
+    mistakes = "Помилки при реєстрації користувача:"
+    
     # 1. Валідація паролів
     if password != password_confirm:
         return None, "Паролі не співпадають"
@@ -21,14 +23,27 @@ def add_user(nickname, email, password, password_confirm):
     if existing_user:        
         return None, "Користувач з таким email або нікнеймом вже існує"
 
+    if status not in ['User', 'Admin', 'Moder']:
+        status = 'User'  # Встановлюємо статус за замовчуванням
+        mistakes += "\nНекоректний статус користувача. Допустимі значення: User, Admin, Moder. Поточний статус: User"
+    
+    # 3. Валідація привілеїв та статусів
+    if privilege not in ['Default', 'Gold', 'Diamond', 'VIP']:
+        privilege = 'Default'  # Встановлюємо привілеї за замовчуванням
+        mistakes += "\nНекоректний рівень привілеїв користувача. Допустимі значення: Default, Gold, Diamond, VIP. Поточний рівень: Default"
+    
+    # 4. Створення користувача
     try:
-        new_user = User(nickname=nickname, email=email)
+        new_user = User(nickname=nickname, email=email, status=status, privilege=privilege)
         new_user.set_password(password)  
         
         db.session.add(new_user)
         db.session.commit()
         
-        return new_user, None
+        if mistakes != "Помилки при реєстрації користувача:":
+            return new_user, mistakes  # Повертаємо користувача з попередженнями
+        else:
+            return new_user, None
     except Exception as e:
         db.session.rollback()
         return None, f"Помилка бази даних: {str(e)}"

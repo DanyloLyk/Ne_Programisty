@@ -162,14 +162,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/register/`, {
+            const response = await fetch(`${API_BASE}/users/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     nickname,
                     email,
                     password,
-                    password_confirm: passwordConfirm
+                    password_confirm: passwordConfirm,
+                    status,
+                    privilege
                 })
             });
 
@@ -205,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const headers = window.getAuthHeaders();
-            const response = await fetch(`${API_BASE}/user/${userId}`, {
+            const response = await fetch(`${API_BASE}/users/${userId}`, {
                 method: "PATCH",
                 headers,
                 body: JSON.stringify(data)
@@ -233,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmBtn.onclick = async () => {
             try {
                 const headers = window.getAuthHeaders();
-                const response = await fetch(`${API_BASE}/user/${userId}`, {
+                const response = await fetch(`${API_BASE}/users/${userId}`, {
                     method: "DELETE",
                     headers
                 });

@@ -327,25 +327,25 @@ def seed_data(db):
                 user_id=1,
                 total_amount=70000.0,
                 status="In process",
-                items = [{"item_id": 4, "quantity": 2, "discount": 1.0}, {"item_id": 9, "quantity": 1, "discount": 1.0}]
+                items = [{"item_id": 1, "quantity": 2, "discount": 1.0}, {"item_id": 4, "quantity": 1, "discount": 1.0}]
             ),
             Order(
                 user_id=1,
                 total_amount=9853450.4,
                 status="Shipped",
-                items = [{"item_id": 10, "quantity": 3, "discount": 0.8}, {"item_id": 11, "quantity": 1, "discount": 0.8}]
+                items = [{"item_id": 5, "quantity": 3, "discount": 0.8}, {"item_id": 6, "quantity": 1, "discount": 0.8}]
             ),
             Order(
                 user_id=2,
                 total_amount=208000,
                 status="Completed",
-                items = [{"item_id": 8, "quantity": 4, "discount": 0.9}]
+                items = [{"item_id": 3, "quantity": 4, "discount": 0.9}]
             ),
             Order(
                 user_id=5,
                 total_amount=124000,
                 status="Cancelled",
-                items = [{"item_id": 4, "quantity": 6, "discount": 0.8}, {"item_id": 8, "quantity": 1, "discount": 0.95}]
+                items = [{"item_id": 4, "quantity": 6, "discount": 0.8}, {"item_id": 9, "quantity": 1, "discount": 0.95}]
             )
         ]
 
