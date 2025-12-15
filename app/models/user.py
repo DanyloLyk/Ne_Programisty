@@ -1,31 +1,14 @@
 from .. import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 class User(db.Model):
     __tablename__ = 'users'
 
     PRIVILEGE_TIERS = {
-        'Default': {
-            'label': 'Default',
-            'discount_percent': 0,
-            'badge_class': 'secondary'
-        },
-        'Gold': {
-            'label': 'Gold',
-            'discount_percent': 5,
-            'badge_class': 'warning'
-        },
-        'Diamond': {
-            'label': 'Diamond',
-            'discount_percent': 10,
-            'badge_class': 'info'
-        },
-        'VIP': {
-            'label': 'VIP',
-            'discount_percent': 20,
-            'badge_class': 'purple'
-        },
+        'Default': {'label': 'Default', 'discount_percent': 0, 'badge_class': 'secondary'},
+        'Gold': {'label': 'Gold', 'discount_percent': 5, 'badge_class': 'warning'},
+        'Diamond': {'label': 'Diamond', 'discount_percent': 10, 'badge_class': 'info'},
+        'VIP': {'label': 'VIP', 'discount_percent': 20, 'badge_class': 'purple'},
     }
 
     ALLOWED_STATUSES = {'User', 'Admin', 'Moder'}
@@ -36,6 +19,12 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(20), default='User')
     privilege = db.Column(db.String(20), default='Default')
+
+    # 👇 ВАЖЛИВО: Каскадне видалення зв'язаних даних 👇
+    # Якщо видаляємо User -> видаляємо його Orders, CartItems, Feedbacks
+    orders = db.relationship('Order', backref='user', lazy=True, cascade="all, delete-orphan")
+    feedbacks = db.relationship('Feedback', backref='user', lazy=True, cascade="all, delete-orphan")
+    cart_items = db.relationship('CartItem', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

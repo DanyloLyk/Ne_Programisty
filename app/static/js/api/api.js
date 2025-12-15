@@ -1,4 +1,3 @@
-// === ВИПРАВЛЕННЯ 1: get_token має бути СИНХРОННИМ (без async) ===
 function get_token() {
     return localStorage.getItem('accessToken');
 }

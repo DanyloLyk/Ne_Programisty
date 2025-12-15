@@ -8,7 +8,7 @@ class Feedback(db.Model):
     description = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    user = db.relationship('User', backref=db.backref('feedback', lazy='dynamic'))
+    # user = db.relationship('User', backref=db.backref('feedback', lazy='dynamic'))
     def to_dict(self):
         """Перетворює відгук у словник для API"""
         return {
