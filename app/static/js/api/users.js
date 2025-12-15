@@ -36,17 +36,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const isModerator = window.isModeratorMode();
             
             const statusBadgeClass = {
-                "Admin": "bg-danger",
-                "Moder": "bg-warning",
+                "Admin": "bg-admin",
+                "Moder": "bg-moder",
                 "User": "bg-info"
             }[user.status] || "bg-secondary";
+            
+            const statusIcon = {
+                "Admin": "👨‍💼 ",
+                "Moder": "👨‍⚖️ ",
+                "User": ""
+            }[user.status] || "";
 
             const privilegeBadgeClass = {
                 "VIP": "bg-purple",
-                "Diamond": "bg-primary",
-                "Gold": "bg-warning",
+                "Diamond": "bg-diamond",
+                "Gold": "bg-gold",
                 "Default": "bg-secondary"
             }[user.privilege] || "bg-secondary";
+            
+            const privilegeIcon = {
+                "VIP": "👑 ",
+                "Diamond": "💎 ",
+                "Gold": "⭐ ",
+                "Default": ""
+            }[user.privilege] || "";
 
             colDiv.innerHTML = `
                 <div class="card h-100 shadow-sm border border-warning">
@@ -67,15 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="text-muted small mb-2">
                             <i class="fa-solid fa-envelope me-1"></i> ${user.email}
                         </p>
-                        <div class="mb-2">
-                            <span class="badge ${statusBadgeClass} me-1">${user.status}</span>
-                            <span class="badge ${privilegeBadgeClass}">${user.privilege}</span>
+                        <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge ${statusBadgeClass}">${statusIcon}${user.status}</span>
+                            <span class="badge ${privilegeBadgeClass}">${privilegeIcon}${user.privilege}</span>
+                            ${user.discount_percent ? `
+                                <span class="discount-badge">
+                                    <i class="fa-solid fa-percent me-1"></i> Знижка: ${user.discount_percent}%
+                                </span>
+                            ` : ""}
                         </div>
-                        ${user.discount_percent ? `
-                            <p class="text-warning small mb-0">
-                                <i class="fa-solid fa-percent me-1"></i> Знижка: ${user.discount_percent}%
-                            </p>
-                        ` : ""}
                     </div>
                 </div>
             `;
@@ -149,14 +162,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/register/`, {
+            const response = await fetch(`${API_BASE}/users/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     nickname,
                     email,
                     password,
-                    password_confirm: passwordConfirm
+                    password_confirm: passwordConfirm,
+                    status,
+                    privilege
                 })
             });
 
@@ -192,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const headers = window.getAuthHeaders();
-            const response = await fetch(`${API_BASE}/user/${userId}`, {
+            const response = await fetch(`${API_BASE}/users/${userId}`, {
                 method: "PATCH",
                 headers,
                 body: JSON.stringify(data)
@@ -220,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmBtn.onclick = async () => {
             try {
                 const headers = window.getAuthHeaders();
-                const response = await fetch(`${API_BASE}/user/${userId}`, {
+                const response = await fetch(`${API_BASE}/users/${userId}`, {
                     method: "DELETE",
                     headers
                 });

@@ -9,8 +9,27 @@ migrate = Migrate()
 
 
 def create_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
+    # instance_relative_config=True каже Flask'у, що конфіги можуть бути в папці instance
+    app = Flask(__name__, instance_relative_config=True) 
+    default_db_path = os.path.join(app.instance_path, 'mydatabase.db')    
+    db_path = os.environ.get('DATABASE_PATH', default_db_path)
+    
+    if not db_path.startswith('sqlite'):
+        if os.path.isabs(db_path):
+            app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+        else:
+            app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = db_path
+
+    try:
+        db_dir = os.path.dirname(db_path)
+        if not os.path.exists(db_dir):
+            os.makedirs(db_dir, exist_ok=True)
+            print(f"📁 Created database directory: {db_dir}") # Для дебагу в логах
+    except OSError as e:
+        print(f"❌ Error creating directory {db_dir}: {e}")
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images')
     app.config['JWT_SECRET_KEY'] = '7ca594aa165516b25042703fbc5f3f16'
@@ -109,6 +128,8 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        from app.seed_data import seed_data
+        seed_data(db)
 
     return app
 

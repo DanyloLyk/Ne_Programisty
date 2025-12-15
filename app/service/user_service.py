@@ -24,14 +24,14 @@ class UserService:
         return None
 
     @staticmethod
-    def registration(nickname: str, email: str, password: str, password_confirm: str):
+    def registration(nickname: str, email: str, password: str, password_confirm: str, status: str, privilege: str):
         """
         Returns: (User, None) або (None, error_message)
         """
-        if not nickname or not email or not password:
+        if not nickname or not email or not password or not status or not privilege:
             return None, "Всі поля є обов'язковими"
             
-        return user_rules.add_user(nickname, email, password, password_confirm)
+        return user_rules.add_user(nickname, email, password, password_confirm, status, privilege)
 
     @staticmethod
     def delete_user(user_id: int) -> bool:

@@ -9,53 +9,40 @@
 <script>
 // Виконуємо автоматичний логін після завантаження DOM
 document.addEventListener('DOMContentLoaded', async function() {
-    // Перевіряємо чи є токен
-    const existingToken = localStorage.getItem('accessToken');
     
+    // Перевірка на сторінку API
+    if (!window.location.pathname.includes('/api')) {
+        return;
+    }
+
+    const existingToken = get_token(); // Тепер це рядок, а не Promise!
+
     if (!existingToken) {
-        // Чекаємо поки api.js завантажиться (максимум 1 секунда)
-        let attempts = 0;
-        const maxAttempts = 10;
-        
-        const tryLogin = async () => {
-            if (typeof login === 'function') {
-                try {
-                    await login();
-                    console.log('Автоматичний логін виконано');
-                    // Перезавантажуємо сторінку після успішного логіну
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                } catch (error) {
-                    console.error('Помилка автоматичного логіну:', error);
-                }
-            } else if (attempts < maxAttempts) {
-                attempts++;
-                setTimeout(tryLogin, 100);
-            }
-        };
-        
-        tryLogin();
+        console.log('Токен відсутній, виконуємо вхід...');
+        await login();
+        window.location.reload();
     } else {
-        console.log('Токен вже існує:', existingToken.substring(0, 20) + '...');
-        // Перевіряємо чи токен валідний, викликаючи API
+        // === ВИПРАВЛЕННЯ 2: Правильна валідація ===
+        console.log('Перевірка існуючого токена...');
         try {
             const testResponse = await fetch('/api/v1/cart', {
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${existingToken}`,
+                    'Authorization': `Bearer ${existingToken}`, // Тут буде нормальний рядок
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }
             });
-            if (testResponse.status === 401) {
-                console.log('Токен невалідний, виконуємо повторний логін...');
+
+            // Якщо 401 (протух) АБО 404 (не знайдено) АБО 422 (кривий формат) -> перелогін
+            if (testResponse.status === 401 || testResponse.status === 404 || testResponse.status === 422) {
+                console.warn(`⚠️ Токен невалідний (Status: ${testResponse.status}). Оновлюємо...`);
                 localStorage.removeItem('accessToken');
-                if (typeof login === 'function') {
-                    await login();
-                    window.location.reload();
-                }
+                await login();
+            } else if (testResponse.ok) {
+                console.log('✅ Токен валідний.');
             } else {
-                console.log('Токен валідний');
+                console.log('❓ Невідома помилка при перевірці токена:', testResponse.status);
             }
         } catch (error) {
             console.error('Помилка перевірки токена:', error);
@@ -144,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <h2 class="fw-bold mb-4 text-dark">Завітай до нас!</h2>
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="card border-dark shadow-sm h-100 contact-card">
+                        <div class="card shadow-sm h-100 bg-body-secondary border border-warning contact-card card-hover-animate">
                             <div class="card-body">
                                 <i class="fa-solid fa-location-dot fa-3x text-dark mb-3"></i>
                                 <h5 class="card-title text-dark fw-bold">Адреса</h5>
@@ -156,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-dark shadow-sm h-100 contact-card">
+                        <div class="card shadow-sm h-100 bg-body-secondary border border-warning contact-card card-hover-animate">
                             <div class="card-body">
                                 <i class="fa-solid fa-phone fa-3x text-dark mb-3"></i>
                                 <h5 class="card-title text-dark fw-bold">Телефон</h5>
@@ -167,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-dark shadow-sm h-100 contact-card">
+                        <div class="card shadow-sm h-100 bg-body-secondary border border-warning contact-card card-hover-animate">
                             <div class="card-body">
                                 <i class="fa-solid fa-envelope fa-3x text-dark mb-3"></i>
                                 <h5 class="card-title text-dark fw-bold">Email</h5>
@@ -372,7 +359,21 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <img id="newsModalImage" class="w-100 rounded mb-3 shadow-sm" style="max-height: 300px; object-fit: cover;">
+                <!-- Carousel для фото новини -->
+                <div id="newsModalCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                    <div class="carousel-inner" id="newsModalImages">
+                        </div>
+                    
+                    <button class="carousel-control-prev" type="button" data-bs-target="#newsModalCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#newsModalCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
                 <p id="newsModalDescription" class="fs-5"></p>
                 <hr>
                 <p id="newsModalMore" class="text-muted small"></p>
@@ -380,6 +381,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 </div>
+
 
 <!-- Модальне вікно додавання новини -->
 <div class="modal fade" id="addNewsModal" tabindex="-1">
@@ -755,7 +757,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </h5>
                 <div class="d-flex gap-2">
                     <button id="clear-cart" class="btn btn-outline-danger">Очистити</button>
-                    <button class="btn btn-success" data-bs-dismiss="modal">Оформити</button>
+                    <button id="checkout-btn" class="btn btn-success">Оформити</button>
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ class CartItem(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('desktop.id'), nullable=False)
     quantity = db.Column(db.Integer, default=1, nullable=False)
 
-    user = db.relationship('User', backref='cart_items', lazy='select')
+    # user = db.relationship('User', backref='cart_items', lazy='select')
     item = db.relationship('Desktop', backref='in_carts', lazy='select')
 
     def __repr__(self):

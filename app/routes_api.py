@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, g, request, session
+from flask import Blueprint, render_template, jsonify, g, request, session, url_for
 from functools import wraps
 from app.models import cart
 from app.models.user import User
@@ -209,9 +209,11 @@ def forgot_password():
     if error:
         return jsonify({"message": error}), 404
         
+    reset_link = request.host_url.rstrip('/') + url_for('main.reset_password_page', token=token)
     return jsonify({
-        "message": "Посилання для скидання пароля відправлено (дивись консоль сервера)",
-        "debug_token": token # Повертаємо токен, щоб тобі було зручно копіювати
+        "message": "Посилання для скидання пароля відправлено на вашу електронну пошту.", 
+        "reset_link": reset_link,
+        "debug_token": token
     }), 200
 
 
@@ -263,14 +265,14 @@ def reset_password():
         
     return jsonify({"message": "Пароль успішно змінено! Тепер ви можете увійти."}), 200
 
-# ----------------- User -----------------
+# ----------------- Users -----------------
 @api.route("/users/", methods=["GET"])
 def get_users():
     """
     Отримати список усіх користувачів
     ---
     tags:
-      - User
+      - Users
     summary: Повертає публічну інформацію про всіх користувачів
     responses:
         200:
@@ -312,10 +314,10 @@ def get_users():
 @jwt_required()
 def get_user(user_id):
     """
-    Отримати профіль користувача за ID
+    Отримати профіль користувача за ID(Авторизація)
     ---
     tags:
-      - User
+      - Users
     summary: Детальна інформація про конкретного користувача
     parameters:
       - name: user_id
@@ -361,13 +363,13 @@ def get_user(user_id):
         return jsonify({"message": "Користувача не знайдено"}), 404
     
 
-@api.route("/register/", methods=["POST"])
-def registration():
+@api.route("/users/", methods=["POST"])
+def add_user():
     """
     Реєстрація нового користувача
     ---
     tags:
-      - User
+      - Users
     summary: Створення нового акаунту
     description: >
       Реєструє нового користувача. Вимагає унікальний email та нікнейм.
@@ -384,6 +386,8 @@ def registration():
             - email
             - password
             - password_confirm
+            - status
+            - privilege
           properties:
             nickname:
               type: string
@@ -398,6 +402,14 @@ def registration():
             password_confirm:
               type: string
               description: Підтвердження паролю
+            status:
+              type: string
+              enum: [User, Admin, Moder]
+              description: Роль користувача
+            privilege:
+              type: string
+              enum: [Default, Gold, Diamond, VIP]
+              description: Привілеї користувача
     responses:
         200:
             description: Успішна реєстрація
@@ -421,24 +433,34 @@ def registration():
     email = data.get("email")
     password = data.get("password")
     password_confirm = data.get("password_confirm")
-    
-    # Оновлений виклик сервісу (повертає user, error)
-    user, error_message = UserService.registration(nickname, email, password, password_confirm)
-    
-    if error_message:
-        # Повертаємо конкретну помилку (400 Bad Request)
-        return jsonify({"message": error_message}), 400
-        
-    return jsonify({"message": "Успішна реєстрація"}), 200
+    status = data.get("status")
+    privilege = data.get("privilege")
 
-@api.route("/user/<int:user_id>", methods=["DELETE"])
+    # Оновлений виклик сервісу (повертає user, error)
+    new_user, error_message = UserService.registration(nickname, email, password, password_confirm, status, privilege)
+    if new_user:
+      response = {
+          "message": "Успішна реєстрація користувача"
+      }
+      # Якщо result не пустий (це список warning-ів)
+      if error_message:
+          response["message"] += " з попередженнями"
+          response["warnings"] = error_message # Передаємо список окремим полем
+
+      return jsonify(response), 200
+    else:
+      # Якщо new_user is None, значить error_message - це рядок з критичною помилкою
+      return jsonify({"message": error_message}), 400
+
+
+@api.route("/users/<int:user_id>", methods=["DELETE"])
 @admin_required
 def delete_user(user_id):
     """
     Видалити користувача (Тільки Адмін)
     ---
     tags:
-      - User
+      - Users
     summary: Видалення користувача за його ID
     parameters:
       - name: user_id 
@@ -465,14 +487,14 @@ def delete_user(user_id):
         return jsonify({"message": "Користувача не знайдено"}), 404 
     
 
-@api.route("/user/<int:user_id>", methods=["PATCH"])
+@api.route("/users/<int:user_id>", methods=["PATCH"])
 @admin_required
 def edit_user(user_id):
     """
     Редагувати дані користувача (Тільки Адмін)
     ---
     tags:
-      - User
+      - Users
     summary: Оновлення інформації про користувача
     parameters:
       - name: user_id
@@ -732,15 +754,15 @@ def api_add_news():
         
     return jsonify({"message": "Новина створена", "id": news.id}), 201
 
-# ----------------- Cart -----------------
-@api.route("/cart", methods=["GET"])
+# ----------------- Carts -----------------
+@api.route("/carts", methods=["GET"])
 @jwt_required()
 def get_cart():
     """
-    Отримати власний кошик (Детальні дані)
+    Отримати власний кошик (Детальні дані, авторизація)
     ---
     tags:
-      - Cart
+      - Carts
     summary: Отримує деталізований список товарів (з ціною, назвою, тощо) у кошику поточного автентифікованого користувача.
     description: >
       Використовує ID користувача з JWT-токена. Завжди повертає повну інформацію про товари, включаючи їх назви та ціни.
@@ -786,14 +808,14 @@ def get_cart():
     cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/cart/<int:user_id>", methods=["GET"])
+@api.route("/carts/<int:user_id>", methods=["GET"])
 @admin_required # <-- Додано обов'язковий декоратор для безпеки
 def get_cart_for_user(user_id):
     """
-    Отримати детальний кошик для заданого користувача по ID
+    Отримати детальний кошик для заданого користувача по ID (Тільки Адмін)
     ---
     tags:
-      - Cart
+      - Carts
     summary: Отримує деталізований список товарів у кошику вказаного користувача. Доступно лише адміністраторам.
     description: >
       Використовується адміністратором для перегляду кошика будь-якого користувача за його ID.
@@ -851,14 +873,14 @@ def get_cart_for_user(user_id):
     cart_details = CartService.get_cart(user_id) 
     return jsonify(cart_details)
 
-@api.route("/cart", methods=["POST"])
+@api.route("/carts", methods=["POST"])
 @admin_required
 def add_to_cart():
     """
-    Додати товар до кошика
+    Додати товар до кошика (Адмін або вказаний користувач)
     ---
     tags:
-      - Cart
+      - Carts
     summary: Додає товар до кошика автентифікованого або вказаного користувача.
     description: >
       Якщо user_id передано в тілі запиту, товар додається до кошика цього користувача (потрібні права адміністратора). 
@@ -929,9 +951,50 @@ def add_to_cart():
         "user_id": cart_item.user_id
     })
     
-@api.route("/cart", methods=["DELETE"])
+@api.route("/carts", methods=["DELETE"])
 @jwt_required()
 def remove_from_cart():
+    """
+    Видалити товар з кошика (Авторизація)
+    ---
+    tags:
+      - Carts
+    summary: Видаляє конкретний товар з кошика поточного автентифікованого користувача.
+    description: >
+      Використовується для видалення товару (item_id) з кошика користувача, 
+      ідентифікатор якого береться з JWT-токена.
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            item_id:
+              type: integer
+              format: int64
+              description: Ідентифікатор товару, який потрібно видалити з кошика.
+              required: true
+          required:
+            - item_id
+    responses:
+      200:
+        description: Товар успішно видалено з кошика.
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Товар успішно видалено з кошика.
+      400:
+        description: Недійсні дані або відсутність обов'язкових полів (item_id).
+      401:
+        description: Користувач не авторизований.
+      404:
+        description: Товар не знайдено в кошику користувача.
+    security:
+      - Bearer: []
+    """
     data = request.get_json()
     item_id = data.get("item_id")
 
@@ -956,14 +1019,14 @@ def remove_from_cart():
         return jsonify({"error": f"Товар з ID {item_id} не знайдено у вашому кошику."}), 404
 
 
-@api.route("/cart/clear", methods=["DELETE"])
+@api.route("/carts/clear", methods=["DELETE"])
 @jwt_required()
 def clear_cart_endpoint():
     """
     Очистити весь кошик
     ---
     tags:
-      - Cart
+      - Carts
     summary: Повністю видаляє всі товари з кошика поточного автентифікованого користувача.
     description: Операція не вимагає тіла запиту, оскільки ідентифікатор користувача береться з JWT токена.
     parameters:
@@ -1007,14 +1070,14 @@ def clear_cart_endpoint():
         print(f"Помилка при очищенні кошика користувача {current_user_id}: {e}")
         return jsonify({"error": "Не вдалося очистити кошик через внутрішню помилку сервера."}), 500
 
-@api.route("/cart/quantity", methods=["PUT"])
+@api.route("/carts/quantity", methods=["PUT"])
 @jwt_required()
 def update_cart_item_quantity():
     """
     Оновити кількість товару в кошику
     ---
     tags:
-      - Cart
+      - Carts
     summary: Оновлює кількість конкретного товару в кошику поточного користувача.
     description: >
       Використовується для зміни кількості товару (item_id) у кошику користувача, 
@@ -1438,10 +1501,10 @@ def add_feedback_by_user(user_id):
     return jsonify(new_feedback.to_dict()), 201
 
 @api.route("/feedbacks/<int:feedback_id>", methods=["PATCH"])
-@jwt_required()
+@admin_required
 def edit_feedback_by_id(feedback_id):
     """
-    Редагувати свій відгук
+    Редагувати відгук по ID відгуку (Адмін)
     ---
     tags:
       - Feedbacks
@@ -1482,7 +1545,7 @@ def edit_feedback_by_id(feedback_id):
 
 
 @api.route("/feedbacks/<int:feedback_id>", methods=["DELETE"])
-@admin_required # Видаляти краще тільки адміну (або автору, але це складніше)
+@admin_required # Видаляти краще тільки адміну 
 def delete_feedback_by_id(feedback_id):
     """
     Видалити відгук (Тільки Адмін)
@@ -1526,7 +1589,7 @@ def get_all_orders():
       - Bearer: []
     """
     orders = OrdersService.get_all_orders()
-    return jsonify([order.to_dict() for order in orders]), 200
+    return jsonify(orders), 200
 
 @api.route("/orders/my", methods=["GET"]) # Змінив URL, щоб не плутатись з ID
 @jwt_required()

@@ -19,6 +19,9 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # Беремо чистий Linux знову
 FROM python:3.11-alpine
 
+# Щоб показувало відразу логи, а не збирало їх
+ENV PYTHONUNBUFFERED=1
+
 # Робоча папка
 WORKDIR /app
 

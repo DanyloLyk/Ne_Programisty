@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isModerator = window.isModeratorMode();
             
             colDiv.innerHTML = `
-                <div class="card h-100 shadow-sm border border-warning">
+                <div class="card h-100 shadow-sm border-0">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title text-warning">${feedback.title}</h5>
@@ -53,12 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </div>
                             ` : ""}
                         </div>
-                        <p class="card-text text-warning small mb-2">${feedback.description}</p>
-                        <div class="mt-auto">
-                            <small class="text-warning">
-                                <i class="fa-solid fa-user me-1"></i>
-                                ${feedback.user?.nickname || "Анонімний користувач"}
-                            </small>
+                        <p class="text-muted small mb-2">${feedback.description}</p>
+                        <div class="mt-auto pt-3 border-top border-subtle">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-warning fw-bold">
+                                    <i class="fa-solid fa-user me-1"></i>
+                                    ${feedback.user?.nickname || "Анонімний користувач"}
+                                </small>
+                                ${feedback.created_at ? `<small class="text-muted"><i class="fa-solid fa-calendar me-1"></i>${new Date(feedback.created_at).toLocaleDateString('uk-UA')}</small>` : ""}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -181,6 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
             `Ви впевнені, що хочете видалити цей ${type}?`;
         
         const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
         confirmBtn.onclick = async () => {
             try {
                 const headers = window.getAuthHeaders();
@@ -198,6 +204,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Помилка видалення відгуку:", err);
                 window.showToast("Не вдалося видалити відгук", 'danger');
             }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
+            confirmDeleteModal.hide();
         };
 
         confirmDeleteModal.show();

@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartItemsContainer = document.getElementById("cart-items");
     const cartTotalField = document.getElementById("cart-total");
     const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
+    const confirmDeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
 
     const API = "/api/v1";
 
@@ -145,9 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".delete-item-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const itemId = btn.dataset.itemId;
-                if (confirm("Видалити товар?")) {
-                    deleteItem(itemId);
-                }
+                showDeleteConfirmCatalog(itemId, "товар");
             });
         });
     }
@@ -201,12 +200,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function showDeleteConfirmCatalog(itemId, type) {
+        document.getElementById("confirmDeleteText").textContent = 
+            `Ви впевнені, що хочете видалити цей ${type}?`;
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                const headers = authHeaders();
+                const response = await fetch(`${API}/desktops/${itemId}`, {
+                    method: "DELETE",
+                    headers
+                });
+
+                if (!response.ok) throw new Error("Failed to delete item");
+
+                confirmDeleteModal.hide();
+                await loadDesktops();
+                window.showToast("Товар видалено", 'success');
+            } catch (err) {
+                console.error("Помилка видалення товару:", err);
+                window.showToast("Не вдалося видалити товар", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+
+        confirmDeleteModal.show();
+    }
+
     // -------------------------
     // Cart API
     // -------------------------
     async function loadCart() {
         try {
-            const r = await fetch(`${API}/cart`, { headers: authHeaders() });
+            const r = await fetch(`${API}/carts`, { headers: authHeaders() });
             if (!r.ok) {
                 if (r.status === 401) {
                     console.warn("Неавторизований при loadCart");
@@ -227,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function addToCart(itemId, quantity = 1) {
         try {
-            const r = await fetch(`${API}/cart`, {
+            const r = await fetch(`${API}/carts`, {
                 method: "POST",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId), quantity: Number(quantity) })
@@ -255,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const r = await fetch(`${API}/cart/quantity`, {
+            const r = await fetch(`${API}/carts/quantity`, {
                 method: "PUT",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId), quantity: Number(newQuantity) })
@@ -275,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function removeFromCart(itemId) {
         try {
-            const r = await fetch(`${API}/cart`, {
+            const r = await fetch(`${API}/carts`, {
                 method: "DELETE",
                 headers: authHeaders(),
                 body: JSON.stringify({ item_id: Number(itemId) })
@@ -374,8 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const del = e.target.closest(".cart-delete");
         if (del) {
             const itemId = del.dataset.itemId;
-            if (!confirm("Видалити позицію з кошика?")) return;
-            removeFromCart(itemId);
+            showDeleteConfirmCart(itemId, "товар");
             return;
         }
     });
@@ -393,29 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    document.getElementById("clear-cart")?.addEventListener("click", async () => {
-        if (!confirm("Ви дійсно хочете очистити весь кошик?")) return;
-
-        try {
-            const r = await fetch(`${API}/cart/clear`, {
-                method: "DELETE",
-                headers: authHeaders()
-            });
-
-            const data = await safeParseJSON(r);
-
-            if (r.ok) {
-                window.showToast(data.message || "Ваш кошик успішно очищено.", 'success');
-                await loadCart();  // оновлюємо відображення кошика
-            } else if (r.status === 401) {
-                window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
-            } else {
-                window.showToast(data?.error || `Не вдалося очистити кошик (${r.status})`, 'danger');
-            }
-        } catch (e) {
-            console.error(e);
-            window.showToast("Помилка при очищенні кошика. Перевірте підключення.", 'danger');
-        }
+    document.getElementById("clear-cart")?.addEventListener("click", () => {
+        showDeleteConfirmClearCart();
     });
 
     // Додавання товару (тільки для модератора)
@@ -520,11 +535,171 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Слухаємо зміни режиму модератора
+    function showDeleteConfirmCart(itemId, type) {
+        document.getElementById("confirmDeleteText").textContent = 
+            `Ви впевнені, що хочете видалити цей ${type} з кошика?`;
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                await removeFromCart(itemId);
+                confirmDeleteModal.hide();
+                window.showToast("Товар видалено з кошика", 'success');
+            } catch (err) {
+                console.error("Помилка видалення товару:", err);
+                window.showToast("Не вдалося видалити товар", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        closeBtn.onclick = () => {
+            confirmDeleteModal.hide();
+        };
+        
+        confirmDeleteModal.show();
+    }
+
+    function showDeleteConfirmClearCart() {
+        document.getElementById("confirmDeleteText").textContent = 
+            "Ви впевнені, що хочете очистити весь кошик?";
+        
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        const cancelBtn = document.querySelector("#confirmDeleteModal .btn-secondary");
+        const closeBtn = document.querySelector("#confirmDeleteModal .btn-close");
+        
+        confirmBtn.onclick = async () => {
+            try {
+                const r = await fetch(`${API}/carts/clear`, {
+                    method: "DELETE",
+                    headers: authHeaders()
+                });
+
+                const data = await safeParseJSON(r);
+
+                if (r.ok) {
+                    confirmDeleteModal.hide();
+                    window.showToast(data.message || "Ваш кошик успішно очищено.", 'success');
+                    await loadCart();
+                } else if (r.status === 401) {
+                    window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
+                } else {
+                    window.showToast(data?.error || `Не вдалося очистити кошик (${r.status})`, 'danger');
+                }
+            } catch (e) {
+                console.error("Помилка при очищенні кошика:", e);
+                window.showToast("Помилка при очищенні кошика. Перевірте підключення.", 'danger');
+            }
+        };
+        
+        cancelBtn.onclick = () => confirmDeleteModal.hide();
+        closeBtn.onclick = () => confirmDeleteModal.hide();
+        
+        confirmDeleteModal.show();
+    }
+
     window.addEventListener("moderatorModeChanged", () => {
         loadDesktops();
     });
 
+    // -------------------------
+    // Оформлення замовлення
+    // -------------------------
+    document.getElementById("checkout-btn")?.addEventListener("click", async () => {
+        const checkoutBtn = document.getElementById("checkout-btn");
+        const originalText = checkoutBtn?.textContent;
+        
+        try {
+            // Перевіряємо чи кошик не порожній
+            const cartTotal = cartTotalField.textContent.trim();
+            if (cartTotal === "0 ₴" || !cartTotal || cartTotal === "0") {
+                window.showToast("Кошик порожній. Додайте товари перед оформленням замовлення.", 'warning');
+                return;
+            }
+
+            // Перевіряємо чи є товари в кошику через API
+            const cartCheck = await fetch(`${API}/carts`, { headers: authHeaders() });
+            if (cartCheck.ok) {
+                const cartData = await cartCheck.json();
+                if (!cartData.items || cartData.items.length === 0) {
+                    window.showToast("Кошик порожній. Додайте товари перед оформленням замовлення.", 'warning');
+                    return;
+                }
+            }
+
+            // Показуємо індикатор завантаження
+            if (checkoutBtn) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Оформлення...';
+            }
+
+            // Викликаємо API для створення замовлення
+            const response = await fetch(`${API}/orders`, {
+                method: "POST",
+                headers: authHeaders()
+            });
+
+            if (!response.ok) {
+                const err = await safeParseJSON(response);
+                if (response.status === 401) {
+                    window.showToast("Користувач не авторизований. Будь ласка, увійдіть.", 'warning');
+                    cartModal.hide();
+                    return;
+                }
+                throw new Error(err?.message || `Помилка створення замовлення (${response.status})`);
+            }
+
+            const result = await response.json();
+            
+            // Показуємо повідомлення про успіх
+            window.showToast(result.message || "Замовлення успішно створено!", 'success');
+
+            // Закриваємо модальне вікно
+            cartModal.hide();
+
+            // Очищаємо кошик після успішного оформлення
+            try {
+                const clearResponse = await fetch(`${API}/carts/clear`, {
+                    method: "DELETE",
+                    headers: authHeaders()
+                });
+                
+                if (clearResponse.ok) {
+                    await loadCart();
+                }
+            } catch (clearErr) {
+                console.error("Помилка очищення кошика:", clearErr);
+            }
+
+            // Оновлюємо список замовлень (якщо є такий блок)
+            if (window.loadOrders && typeof window.loadOrders === 'function') {
+                setTimeout(() => {
+                    window.loadOrders();
+                }, 500);
+            } else {
+                // Викликаємо подію для оновлення замовлень
+                window.dispatchEvent(new CustomEvent('orderCreated'));
+            }
+
+        } catch (err) {
+            console.error("Помилка оформлення замовлення:", err);
+            window.showToast(err.message || "Не вдалося оформити замовлення", 'danger');
+        } finally {
+            // Відновлюємо кнопку
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.textContent = originalText || "Оформити";
+            }
+        }
+    });
+                
     // init
     loadDesktops();
     loadCart();
 });
+

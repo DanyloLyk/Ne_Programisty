@@ -11,24 +11,43 @@ def get_user_by_id(user_id):
 def get_user_by_username(username):
     return User.query.filter_by(nickname=username).first()
 
-def add_user(nickname, email, password, password_confirm):
-    # 1. Валідація паролів
+def add_user(nickname, email, password, password_confirm, status, privilege):
+    mistakes = ["Помилки при реєстрації користувача:"]
+    
+    # 1. Валідація електронної пошти
+    if '@' not in email or '.' not in email:
+        return None, "Некоректний формат email"
+
+    # 2. Валідація паролів
     if password != password_confirm:
         return None, "Паролі не співпадають"
 
-    # 2. Перевірка на існування (email АБО nickname)
+    # 3. Перевірка на існування (email АБО nickname)
     existing_user = User.query.filter((User.email == email) | (User.nickname == nickname)).first()
     if existing_user:        
         return None, "Користувач з таким email або нікнеймом вже існує"
 
+    if status not in ['User', 'Admin', 'Moder']:
+        status = 'User'  # Встановлюємо статус за замовчуванням
+        mistakes.append("Некоректний статус користувача. Допустимі значення: User, Admin, Moder. Поточний статус: User")
+    
+    # 4. Валідація привілеїв та статусів
+    if privilege not in ['Default', 'Gold', 'Diamond', 'VIP']:
+        privilege = 'Default'  # Встановлюємо привілеї за замовчуванням
+        mistakes.append("Некоректний рівень привілеїв користувача. Допустимі значення: Default, Gold, Diamond, VIP. Поточний рівень: Default")
+    
+    # 5. Створення користувача
     try:
-        new_user = User(nickname=nickname, email=email)
+        new_user = User(nickname=nickname, email=email, status=status, privilege=privilege)
         new_user.set_password(password)  
         
         db.session.add(new_user)
         db.session.commit()
         
-        return new_user, None
+        if len(mistakes) > 1:
+            return new_user, mistakes  # Повертаємо користувача з попередженнями
+        else:
+            return new_user, None
     except Exception as e:
         db.session.rollback()
         return None, f"Помилка бази даних: {str(e)}"
