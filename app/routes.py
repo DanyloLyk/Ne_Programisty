@@ -528,7 +528,18 @@ def logout():
     session.clear()  # Очищаємо сесію
     flash("Ви вийшли з системи", "info")
     return redirect(url_for('main.index'))  # Перенаправлення на головну сторінку
+
+
+@main.route('/reset-password', methods=['GET'])
+def reset_password_page():
+    token = request.args.get('token')
+    if not token:
+        flash('Токен відновлення відсутній.', 'danger')
+        return redirect(url_for('main.index'))
     
+    return render_template('reset_password.html', token=token)
+
+
 @main.route('/admin')
 @privilege_required('Admin', 'Moder')
 def admin():
@@ -841,6 +852,7 @@ def update_order_status(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify(success=False, error=str(e))
+    
 @main.route('/delete_feedback/<int:feedback_id>', methods=['DELETE'])
 def delete_feedback(feedback_id):
     try:
@@ -865,9 +877,17 @@ def set_user_email_in_session(user_id):
     else:
         session.pop('user_email', None)
     return email
+
 @main.route('/user_email/<int:user_id>')
 def user_email_route(user_id):
     email = get_user_email_by_id(user_id)
     if email:
         return jsonify(success=True, email=email)
     return jsonify(success=False, error="User not found"), 404
+
+@main.route('/api')
+def api_template():
+    """
+    Сторінка замовлення
+    """
+    return render_template('api.html')

@@ -1,27 +1,84 @@
 from .. import db
 from sqlalchemy.orm import validates
+from datetime import datetime
 
 class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True)
     
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # <-- тільки один раз
-    user = db.relationship("User", backref="orders")  # <-- зв’язок з User
+    # 👇 UNCOMMENTED THIS LINE. This is required for the relationship to work.
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
-    total_amount = db.Column(db.Float, nullable=False)  # Загальна сума замовлення
-    status = db.Column(db.String(50), default='In process', nullable=False)  # completed, cancelled, etc.
+    # The backref="orders" is handled by the User model's relationship, so we don't need
+    # to define a relationship here unless we want specific loading behavior.
+    
+    total_amount = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(50), default='In process', nullable=False)
+    
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-
-    # Список предметів замовлення: [{'item_id': int, 'quantity': int, 'discount': float (0.1-1.0)}]
+    # Список предметів: [{'item_id': 1, 'quantity': 2, 'discount': 1.0}]
     items = db.Column(db.JSON, nullable=False, default=list)
+
+    def to_dict(self):
+        from app.models.desktop import Desktop 
+        
+        enriched_items = []
+        
+        # Перебираємо збережені items (це JSON з бази)
+        for item in self.items:
+            item_data = item.copy()
+            
+            # Дістаємо актуальні дані про товар
+            product = Desktop.query.get(item['item_id'])
+            
+            if product:
+                item_data['name'] = product.name
+                # Оскільки у Desktop price це Float, конвертація str() не обов'язкова, 
+                # але для надійності залишимо float()
+                price_val = float(product.price)
+                item_data['price'] = price_val
+                
+                # Рахуємо суму: Ціна * Кількість * Знижка
+                discount = float(item.get('discount', 1.0))
+                quantity = int(item['quantity'])
+                
+                item_data['sum'] = round(price_val * quantity * discount, 2)
+            else:
+                # Якщо товар видалили з магазину, щоб історія не ламалась
+                item_data['name'] = "Товар видалено"
+                item_data['price'] = 0.0
+                item_data['sum'] = 0.0
+            
+            enriched_items.append(item_data)
+
+        data = {
+            'id': self.id,
+            'user_id': self.user_id,
+            'total_amount': self.total_amount,
+            'status': self.status,
+            'items': enriched_items,
+            # Тепер created_at точно існує
+            'created_at': self.created_at.isoformat() if self.created_at else datetime.now().isoformat()
+        }
+
+        # Додаємо інфо про юзера, якщо є зв'язок
+        if hasattr(self, 'user') and self.user:
+            data['user'] = {
+                'id': self.user.id,
+                'nickname': self.user.nickname,
+                'email': self.user.email
+            }
+        else:
+            data['user'] = None
+            
+        return data
     
     @validates('items')
     def validate_items(self, key, items):
-        """Валідація списку предметів замовлення"""
         if not isinstance(items, list):
             raise ValueError("items повинен бути списком")
-        
         if len(items) == 0:
             raise ValueError("items не може бути порожнім")
         
@@ -31,70 +88,44 @@ class Order(db.Model):
             if not isinstance(item, dict):
                 raise ValueError(f"Елемент {idx} повинен бути словником")
             
-            # Перевірка наявності всіх необхідних ключів
             item_keys = set(item.keys())
             if not required_keys.issubset(item_keys):
-                missing = required_keys - item_keys
-                raise ValueError(f"Елемент {idx} не містить обов'язкових ключів: {missing}")
+                raise ValueError(f"Елемент {idx} не містить ключів: {required_keys - item_keys}")
             
-            # Валідація item_id
             if not isinstance(item['item_id'], int) or item['item_id'] <= 0:
-                raise ValueError(f"Елемент {idx}: item_id повинен бути додатнім цілим числом")
+                raise ValueError(f"Елемент {idx}: item_id має бути > 0")
             
-            # Валідація quantity
             if not isinstance(item['quantity'], int) or item['quantity'] <= 0:
-                raise ValueError(f"Елемент {idx}: quantity повинен бути додатнім цілим числом")
+                raise ValueError(f"Елемент {idx}: quantity має бути > 0")
             
-            # Валідація discount
-            discount = item['discount']
-            if not isinstance(discount, (int, float)):
-                raise ValueError(f"Елемент {idx}: discount повинен бути числом")
+            # Приводимо discount до float
+            try:
+                discount_float = float(item['discount'])
+            except (ValueError, TypeError):
+                raise ValueError(f"Елемент {idx}: discount має бути числом")
+
+            if not (0.0 <= discount_float <= 1.0):
+                raise ValueError(f"Елемент {idx}: discount має бути від 0.0 до 1.0")
             
-            discount_float = float(discount)
-            if not (0.1 <= discount_float <= 1.0):
-                raise ValueError(f"Елемент {idx}: discount повинен бути в діапазоні від 0.1 до 1.0")
-            
-            # Оновлюємо значення discount на float для консистентності
             item['discount'] = discount_float
         
         return items
     
     @staticmethod
     def add_order(user_id, cart_items, discount=1.0):
-        """
-        Створює замовлення з кошика користувача
+        if not cart_items:
+            raise ValueError("Кошик порожній")
         
-        Args:
-            user_id: ID користувача
-            cart_items: Список CartItem об'єктів
-            discount: Загальна знижка на замовлення (0.1-1.0), за замовчуванням 1.0 (без знижки)
-        
-        Returns:
-            Order: Створене замовлення
-        """
-        if not cart_items or len(cart_items) == 0:
-            raise ValueError("Кошик порожній, неможливо створити замовлення")
-        
-        # Валідація discount
         discount_float = float(discount)
-        if not (0.1 <= discount_float <= 1.0):
-            raise ValueError("discount повинен бути в діапазоні від 0.1 до 1.0")
-        
-        # Формуємо список items для замовлення
         order_items = []
         total_amount = 0.0
         
         for cart_item in cart_items:
-            # Отримуємо товар для отримання поточної ціни
             desktop = cart_item.item
             if not desktop:
-                raise ValueError(f"Товар з id={cart_item.item_id} не знайдено")
+                continue # Або raise error, якщо критично
             
-            # Конвертуємо ціну в число, видаляючи пробіли та коми
-            price_str = str(desktop.price).replace(' ', '').replace(',', '.')
-            price = float(price_str) if price_str else 0.0
-            
-            # Розраховуємо суму з урахуванням знижки
+            price = float(desktop.price)
             item_total = price * cart_item.quantity * discount_float
             
             order_items.append({
@@ -105,16 +136,12 @@ class Order(db.Model):
             
             total_amount += item_total
         
-        # Створюємо замовлення
-        order = Order(
+        return Order(
             user_id=user_id,
             total_amount=round(total_amount, 2),
             items=order_items,
             status='In process'
         )
-        
-        return order
     
     def __repr__(self):
-        return f'<Order id={self.id} user={self.user_id} total={self.total_amount}>'
-
+        return f'<Order id={self.id} user={self.user_id}>'

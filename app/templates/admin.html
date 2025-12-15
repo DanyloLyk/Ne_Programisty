@@ -144,7 +144,7 @@
                     <tbody>
 
                         {% for order in orders %}
-                        <script>console.log("Order", {{ order.total_amount }});</script>
+                        <script>console.log("Order", "{{ order.total_amount }}");</script>
                         <tr>
                             <td>#{{ order.id }}</td>
 

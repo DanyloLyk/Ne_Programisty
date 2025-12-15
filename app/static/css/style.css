@@ -48,6 +48,14 @@
 .navbar.fixed-top {
   z-index: 1050; /* або навіть більше, якщо треба */
 }
+#confirmDeleteModal.modal {
+  z-index: 2500 !important;
+}
+
+#confirmDeleteModal + .modal-backdrop {
+  z-index: 2490 !important;
+}
+
 
 /* Анімація underline при hover */
 .nav-link {
@@ -532,7 +540,29 @@ body {
 
 /* ефект при наведенні — застосовується тільки коли кнопка всередині НЕ наведена
    (клас .btn-hover додається JS при наведені на .buy-btn) */
-.card-hover-animate:not(.btn-hover):hover {
+/* Контактні картки - БЕЗ НІЯКИХ ЕФЕКТІВ ПРИ HOVER */
+.section-contacts .card-hover-animate:not(.btn-hover):hover {
+  background-color: inherit !important;
+  border-color: inherit !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-title,
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-text,
+.section-contacts .card-hover-animate:not(.btn-hover):hover .card-subtitle,
+.section-contacts .card-hover-animate:not(.btn-hover):hover p {
+  color: inherit !important;
+}
+
+.section-contacts .card-hover-animate:not(.btn-hover):hover .text-warning {
+  color: inherit !important;
+  font-weight: inherit !important;
+}
+
+/* Інші картки - мають hover ефекти */
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover {
   background-color: #ffc107 !important; /* жовтий фон */
   border-color: #ffc107 !important;
   color: #212529 !important; /* чорний колір для всього тексту */
@@ -540,21 +570,21 @@ body {
 }
 
 /* щоб усередині картки весь текст став чорним */
-.card-hover-animate:not(.btn-hover):hover .card-title,
-.card-hover-animate:not(.btn-hover):hover .card-text,
-.card-hover-animate:not(.btn-hover):hover .card-subtitle,
-.card-hover-animate:not(.btn-hover):hover p {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-title,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-text,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .card-subtitle,
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover p {
   color: #212529 !important;
 }
 
 /* опціонально — щоб ціна теж стала контрастною */
-.card-hover-animate:not(.btn-hover):hover .text-warning {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .text-warning {
   color: #212529 !important;
   font-weight: 700;
 }
 
 /* Забезпечити, що hover картки НЕ змінює фон кнопки — кнопка має свій власний hover */
-.card-hover-animate:not(.btn-hover):hover .buy-btn:not(:hover) {
+.card-hover-animate:not(.section-contacts .card-hover-animate):not(.btn-hover):hover .buy-btn:not(:hover) {
   /* не змінюємо фон кнопки при hover картки, але дозволяємо кнопці мати свій hover */
   background: transparent !important;
   color: inherit !important;
@@ -562,7 +592,7 @@ body {
 }
 
 /* Якщо потрібно — зробити кнопку темною при hover картки (навіть коли сама кнопка не наведена) */
-.card-hover-animate:hover .buy-btn {
+.card-hover-animate:not(.section-contacts .card-hover-animate):hover .buy-btn {
   background-color: black !important;
   color: white !important;
   border-color: black !important;
@@ -742,4 +772,728 @@ body {
 
 .mobile-user-row span:last-child {
   font-weight: 600;
+}
+
+/* ========================================== */
+/* Landing Page Styles */
+/* ========================================== */
+
+/* Блоки лендінгу з різними фонами */
+.landing-section {
+  transition: background-color 0.5s ease, color 0.5s ease;
+  min-height: 400px;
+}
+
+.section-about,
+.section-catalog,
+.section-orders,
+.section-users {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.section-contacts,
+.section-news,
+.section-feedback {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+/* Кнопка перемикання режиму модератора */
+.moderator-toggle-btn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+  z-index: 1051;
+}
+
+.moderator-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.moderator-toggle-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.moderator-toggle-btn:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.6);
+}
+
+.moderator-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.moderator-toggle-btn i {
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.moderator-toggle-btn:hover i {
+  transform: rotate(360deg) scale(1.2);
+}
+
+/* Анімація появи кнопок редагування/видалення */
+.edit-item-btn,
+.edit-news-btn,
+.edit-feedback-btn,
+.edit-user-btn,
+.delete-item-btn,
+.delete-news-btn,
+.delete-feedback-btn,
+.delete-user-btn,
+.delete-order-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.edit-item-btn::before,
+.edit-news-btn::before,
+.edit-feedback-btn::before,
+.edit-user-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 193, 7, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.edit-item-btn:hover::before,
+.edit-news-btn:hover::before,
+.edit-feedback-btn:hover::before,
+.edit-user-btn:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.delete-item-btn::before,
+.delete-news-btn::before,
+.delete-feedback-btn::before,
+.delete-user-btn::before,
+.delete-order-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.delete-item-btn:hover::before,
+.delete-news-btn:hover::before,
+.delete-feedback-btn:hover::before,
+.delete-user-btn:hover::before,
+.delete-order-btn:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.edit-item-btn:hover,
+.edit-news-btn:hover,
+.edit-feedback-btn:hover,
+.edit-user-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.delete-item-btn:hover,
+.delete-news-btn:hover,
+.delete-feedback-btn:hover,
+.delete-user-btn:hover,
+.delete-order-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+/* Анімація появи карточок */
+.card {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Затримка для карточок */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Видалення анімації для карток у кошику */
+#cart-items .card {
+  animation: none !important;
+}
+
+/* Стилі для модальних вікон */
+.modal-content {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Плавна анімація для кнопок в карточках */
+.card .btn {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.card .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Стилі для жовтих блоків */
+.bg-warning .card {
+  border-color: #212529 !important;
+}
+
+.bg-warning .card-title {
+  color: #212529 !important;
+}
+
+.bg-warning .text-dark {
+  color: #212529 !important;
+}
+
+/* Стилі для карток контактів - на білій темі жовті, без hover ефектів */
+.section-contacts .contact-card {
+  background-color: #ffc107 !important;
+  border-color: #212529 !important;
+}
+
+.section-contacts .contact-card .card-body,
+.section-contacts .contact-card .card-title,
+.section-contacts .contact-card .card-text,
+.section-contacts .contact-card i,
+.section-contacts .contact-card a {
+  color: #212529 !important;
+}
+
+/* Стилі для карток контактів в темній темі */
+[data-bs-theme="dark"] .section-contacts .contact-card {
+  background-color: #ffc107 !important;
+  border-color: #212529 !important;
+}
+
+[data-bs-theme="dark"] .section-contacts .contact-card .card-body,
+[data-bs-theme="dark"] .section-contacts .contact-card .card-title,
+[data-bs-theme="dark"] .section-contacts .contact-card .card-text,
+[data-bs-theme="dark"] .section-contacts .contact-card i,
+[data-bs-theme="dark"] .section-contacts .contact-card a {
+  color: #212529 !important;
+}
+
+/* Стилі для модального вікна новини */
+.modal-header.bg-warning .modal-title {
+  color: #212529 !important;
+}
+
+/* Стилі для опису новин - білий/чорний залежно від теми */
+.section-news .card-text {
+  color: var(--bs-secondary) !important;
+}
+
+[data-bs-theme="dark"] .section-news .card-text {
+  color: var(--bs-secondary) !important;
+}
+
+/* Стилі для темного режиму в новинах та відгуках */
+[data-bs-theme="dark"] .section-news .card,
+[data-bs-theme="dark"] .section-feedback .card:not(.border-adaptive) {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107 !important;
+}
+
+/* Текст завжди жовтий в новинах та відгуках */
+.section-news .card-title,
+.section-feedback .card-title,
+.section-feedback .form-label {
+  color: #ffc107 !important;
+}
+
+[data-bs-theme="dark"] .section-news .card-title,
+[data-bs-theme="dark"] .section-feedback .card-title,
+[data-bs-theme="dark"] .section-feedback .form-label {
+  color: #ffc107 !important;
+}
+
+/* Кнопки в новинах та відгуках */
+.section-news .btn-warning,
+.section-feedback .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.section-news .btn-warning:hover,
+.section-feedback .btn-warning:hover {
+  background-color: #ffca2c;
+  border-color: #ffca2c;
+  color: #212529;
+}
+
+.section-news .btn-outline-warning,
+.section-feedback .btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.section-news .btn-outline-warning:hover,
+.section-feedback .btn-outline-warning:hover {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+/* Форма відгуку */
+.section-feedback .form-control {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .section-feedback .form-control {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+}
+
+.section-feedback .form-control:focus {
+  background-color: var(--bs-body-bg);
+  border-color: #ffc107;
+  color: var(--bs-body-color);
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Анімація для scroll-animate */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-animate.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Стилі для кнопок в режимі модератора */
+.moderator-only {
+  display: none;
+}
+
+.moderator-mode .moderator-only {
+  display: block !important;
+}
+
+/* Плавна анімація при зміні режиму */
+.moderator-only {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   1. ГОЛОВНІ КАРУСЕЛІ (Каталог, Новини, Замовлення на головній)
+   ========================================================================== */
+
+/* Спільні стилі для кнопок-кружечків */
+#desktopCarousel .carousel-control-prev,
+#desktopCarousel .carousel-control-next,
+#newsCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-next,
+#ordersCarousel .carousel-control-prev,
+#ordersCarousel .carousel-control-next {
+    /* Розмір кружечка */
+    width: 50px !important;
+    height: 50px !important;
+    
+    /* ВМИКАЄМО FLEX, ЩОБ ІКОНКА БУЛА ТОЧНО ПО ЦЕНТРУ */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Фон і форма */
+    background-color: #ffc107 !important; 
+    border-radius: 50% !important;        
+    
+    /* Позиціонування */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    
+    /* Рівномірна тінь (без зміщення) */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    border: 2px solid #ffc107 !important; /* Рамка в колір фону для чіткості */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Зсув вліво */
+#desktopCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-prev,
+#ordersCarousel .carousel-control-prev {
+    left: -65px !important; 
+}
+
+/* Зсув вправо */
+#desktopCarousel .carousel-control-next,
+#newsCarousel .carousel-control-next,
+#ordersCarousel .carousel-control-next {
+    right: -65px !important;
+}
+
+/* Ефект при наведенні */
+#desktopCarousel .carousel-control-prev:hover,
+#desktopCarousel .carousel-control-next:hover,
+#newsCarousel .carousel-control-prev:hover,
+#newsCarousel .carousel-control-next:hover,
+#ordersCarousel .carousel-control-prev:hover,
+#ordersCarousel .carousel-control-next:hover {
+    transform: translateY(-50%) scale(1.15) !important;
+    background-color: #ffc107 !important;
+    
+    /* Рівномірне сяйво навколо всієї кнопки */
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6) !important;
+}
+
+/* Ефект при натисканні */
+#desktopCarousel .carousel-control-prev:active,
+#desktopCarousel .carousel-control-next:active {
+    transform: translateY(-50%) scale(0.95) !important;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* САМІ ІКОНКИ (СТРІЛОЧКИ) */
+#desktopCarousel .carousel-control-prev-icon,
+#desktopCarousel .carousel-control-next-icon,
+#newsCarousel .carousel-control-prev-icon,
+#newsCarousel .carousel-control-next-icon,
+#ordersCarousel .carousel-control-prev-icon,
+#ordersCarousel .carousel-control-next-icon {
+    filter: invert(1) grayscale(100) !important;
+    width: 2rem !important; /* Фіксований розмір */
+    height: 2rem !important;
+    background-size: 100% !important;
+    margin: 0 !important; /* Прибираємо можливі відступи */
+}
+
+/* Адаптивність */
+@media (max-width: 1200px) {
+    #desktopCarousel .carousel-control-prev,
+    #desktopCarousel .carousel-control-next,
+    #newsCarousel .carousel-control-prev,
+    #newsCarousel .carousel-control-next,
+    #ordersCarousel .carousel-control-prev,
+    #ordersCarousel .carousel-control-next {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   1.1. СПЕЦІАЛЬНИЙ ФІКС ДЛЯ СЕКЦІЇ НОВИН (Жовтий фон -> Темні кнопки)
+   ========================================================================== */
+
+/* Перефарбовуємо фон кружечка в темний (#212529 - це колір тексту Bootstrap Dark) */
+#newsCarousel .carousel-control-prev,
+#newsCarousel .carousel-control-next {
+    background-color: #212529 !important; 
+    border-color: #212529 !important;
+    /* Робимо тінь помітнішою, бо фон жовтий */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* При наведенні стає чисто чорним */
+#newsCarousel .carousel-control-prev:hover,
+#newsCarousel .carousel-control-next:hover {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6) !important;
+    transform: translateY(-50%) scale(1.15) !important;
+}
+
+/* Фарбуємо саму стрілочку всередині в ЖОВТИЙ (#ffc107) */
+#newsCarousel .carousel-control-prev-icon {
+    /* Вимикаємо фільтри */
+    filter: none !important;
+    opacity: 1 !important;
+    
+    /* Вставляємо SVG з жовтим кольором (fill='%23ffc107') */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffc107'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e") !important;
+}
+
+#newsCarousel .carousel-control-next-icon {
+    /* Вимикаємо фільтри */
+    filter: none !important;
+    opacity: 1 !important;
+    
+    /* Вставляємо SVG з жовтим кольором (fill='%23ffc107') */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffc107'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+
+/* ==========================================================================
+   2. КАРУСЕЛІ В МОДАЛКАХ ("Pro" варіант - кружечки)
+   ========================================================================== */
+
+/* Стилі для контейнера кнопок (тепер це кружечок) */
+.modal .carousel-control-prev,
+.modal .carousel-control-next {
+    position: absolute !important;
+    top: 50% !important; /* Центруємо по вертикалі */
+    transform: translateY(-50%) !important;
+    z-index: 1;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Робимо їх компактними кружечками */
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    
+    /* Напівпрозорий темний фон */
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border: 0 !important;
+    opacity: 1 !important; /* Завжди видно */
+    transition: all 0.3s ease !important;
+}
+
+/* Відступи від країв картинки */
+.modal .carousel-control-prev {
+    left: 15px !important;
+}
+
+.modal .carousel-control-next {
+    right: 15px !important;
+}
+
+/* Ховер ефект - кружечок стає темнішим і трохи збільшується */
+.modal .carousel-control-prev:hover,
+.modal .carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+/* САМІ ІКОНКИ (СТРІЛОЧКИ)
+   Тут ми залишаємо їх БІЛИМИ (стандартними), бо вони на темному кружечку.
+*/
+.modal .carousel-control-prev-icon,
+.modal .carousel-control-next-icon {
+    filter: none !important; /* Ніяких фільтрів, чистий білий */
+    width: 2rem !important;
+    height: 2rem !important;
+    background-size: 100% !important;
+}
+
+/* Стилі для таблиць */
+.table {
+  animation: fadeIn 0.4s ease-in;
+}
+
+/* Стилі для форм */
+.form-control:focus,
+.form-select:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+/* Анімація для badge */
+.badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Стилі для карточок замовлень */
+.card.border-warning {
+  transition: all 0.3s ease;
+}
+
+.card.border-warning:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Стилі для відгуків */
+#feedbacks-list .card {
+  transition: all 0.3s ease;
+}
+
+#feedbacks-list .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Стилі для користувачів */
+#users-list .card {
+  transition: all 0.3s ease;
+}
+
+#users-list .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.2);
+}
+
+/* VIP бейджи з фіолетовим кольором */
+.bg-purple {
+  background-color: #7c3aed !important;
+  color: white !important;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+}
+
+.bg-purple:hover {
+  background-color: #6d28d9 !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.8);
+}
+
+/* Diamond бейджи з синім кольором */
+.bg-diamond {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%) !important;
+  color: white !important;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+.bg-diamond:hover {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.8);
+}
+
+/* Gold бейджи з жовтим кольором */
+.bg-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #1f2937 !important;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.bg-gold:hover {
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
+}
+
+/* Admin бейджи з червоним кольором */
+.bg-admin {
+  background-color: #dc2626 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.bg-admin:hover {
+  background-color: #b91c1c !important;
+}
+
+/* Moder бейджи з помаранчевим кольором */
+.bg-moder {
+  background-color: #f59e0b !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.bg-moder:hover {
+  background-color: #d97706 !important;
+}
+
+/* Стиль для знижки з обводкою та сяйвом (менший) */
+.discount-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%) !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 0.75rem; /* трохи менший шрифт */
+  padding: 0.25rem 0.45rem; /* зменшено паддінг */
+  border-radius: 0.3rem; /* трохи менше скруглення */
+  border: 1.5px solid #be185d;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.5), inset 0 0 6px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.discount-badge:hover {
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: scale(1.03);
+}
+
+
+/* Responsive стилі */
+@media (max-width: 768px) {
+  .moderator-toggle-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .edit-item-btn,
+  .edit-news-btn,
+  .delete-item-btn,
+  .delete-news-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Smooth Theme Transition for ALL elements */
+body, 
+.card, 
+.modal-content, 
+.landing-section, 
+.form-control, 
+h1, h2, h3, h4, h5, h6, p, span, i, div {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
