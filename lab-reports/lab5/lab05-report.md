@@ -1076,7 +1076,7 @@ Werkzeug,3.1.3,WSGI утиліти (сервер)
 ```
 
 - **Скріншот з Postman :**
-![Опис](screenshots/)
+![Опис](screenshots/ShortListUsers.jpg)
 
 #### 8.2. Статус API v2 (Health Check)
 
@@ -1099,7 +1099,7 @@ Werkzeug,3.1.3,WSGI утиліти (сервер)
 ```
 
 - **Скріншот з Postman :**
-![Опис](screenshots/)
+![Опис](screenshots/V2GeneralApi.jpg)
 
 ## Результати тестування в Postman 
 
