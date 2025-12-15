@@ -62,16 +62,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }[user.privilege] || "";
 
             colDiv.innerHTML = `
-                <div class="card h-100 shadow-sm bg-body-secondary border border-warning card-hover-animate">
+                <div class="card h-100 shadow-sm border border-warning">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title text-warning">${user.nickname}</h5>
                             ${isModerator ? `
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-warning edit-user-btn" data-user-id="${user.id}" title="Редагувати">
+                                    <button class="btn btn-sm btn-outline-warning edit-user-btn" data-user-id="${user.id}">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${user.id}" title="Видалити">
+                                    <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${user.id}">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
@@ -80,17 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="text-muted small mb-2">
                             <i class="fa-solid fa-envelope me-1"></i> ${user.email}
                         </p>
-                        <div class="mb-2">
-                            <span class="badge ${statusBadgeClass} me-1">${statusIcon}${user.status}</span>
+                        <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge ${statusBadgeClass}">${statusIcon}${user.status}</span>
                             <span class="badge ${privilegeBadgeClass}">${privilegeIcon}${user.privilege}</span>
-                        </div>
-                        ${user.discount_percent ? `
-                            <p class="mt-2">
+                            ${user.discount_percent ? `
                                 <span class="discount-badge">
                                     <i class="fa-solid fa-percent me-1"></i> Знижка: ${user.discount_percent}%
                                 </span>
-                            </p>
-                        ` : ""}
+                            ` : ""}
+                        </div>
                     </div>
                 </div>
             `;

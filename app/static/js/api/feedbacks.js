@@ -55,11 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                         <p class="text-muted small mb-2">${feedback.description}</p>
                         <div class="mt-auto pt-3 border-top border-subtle">
-                            <small class="text-warning fw-bold">
-                                <i class="fa-solid fa-user me-1"></i>
-                                ${feedback.user?.nickname || "Анонімний користувач"}
-                            </small>
-                            ${feedback.created_at ? `<div class="text-muted small mt-1"><i class="fa-solid fa-calendar me-1"></i>${new Date(feedback.created_at).toLocaleDateString('uk-UA')}</div>` : ""}
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-warning fw-bold">
+                                    <i class="fa-solid fa-user me-1"></i>
+                                    ${feedback.user?.nickname || "Анонімний користувач"}
+                                </small>
+                                ${feedback.created_at ? `<small class="text-muted"><i class="fa-solid fa-calendar me-1"></i>${new Date(feedback.created_at).toLocaleDateString('uk-UA')}</small>` : ""}
+                            </div>
                         </div>
                     </div>
                 </div>
