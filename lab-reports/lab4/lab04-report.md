@@ -3,7 +3,7 @@
 ## Реалізація бази даних для вебпроєкту
 
 ### Інформація про команду
-- Назва команди:
+- Назва команди: Ne_Programisty
 
 - Учасники:
   - Лкащук Данило Миколайович - Team Lead / Fullstack Developer 
@@ -667,7 +667,7 @@ def get_order(order_id):
 
 ### Каталог товарів
 
-![Каталог товарів](screenshots/catalog.html)
+![Каталог товарів](screenshots/catalog.png)
 
 ### Список новин
 
