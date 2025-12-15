@@ -874,7 +874,7 @@ def get_cart_for_user(user_id):
     return jsonify(cart_details)
 
 @api.route("/carts", methods=["POST"])
-@admin_required
+@jwt_required()
 def add_to_cart():
     """
     Додати товар до кошика (Адмін або вказаний користувач)
