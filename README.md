@@ -12,6 +12,7 @@
   [![Nginx](https://img.shields.io/badge/Nginx-Proxy-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
   [![Swagger](https://img.shields.io/badge/Swagger-API_Docs-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](/apidocs)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+  [![PyTest](https://img.shields.io/badge/Pytest-black?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/en/stable/)
 
   [🌐 Демо (render.com)](https://ne-programisty.onrender.com/) • [📚 Документація API](https://ne-programisty.onrender.com/apidocs) • [🐛 Повідомити про баг](https://ne-programisty.onrender.com/feedback)
 
