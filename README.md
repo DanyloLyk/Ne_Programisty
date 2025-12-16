@@ -206,6 +206,7 @@ git clone https://github.com/DanyloLyk/Ne_Programisty.git
 **Крок 3. Встановлення залежностей**
 
 ```bash
+cd Ne_Programisty
 pip install -r requirements.txt
 ```
 
