@@ -51,9 +51,9 @@
 ```text
 Ne_Programisty/
 ├── app/
-│   ├── domain/          # 🧠 Бізнес-правила та валідація (Domain Layer)
+│   ├── domain/          # 🧠 Data Access Layer(Спілкування з БД)
 │   ├── models/          # 🗄️ ORM моделі бази даних
-│   ├── service/         # ⚙️ Шар сервісів (бізнес-логіка)
+│   ├── service/         # ⚙️ Шар сервісів (Service Layer(бізнес-логіка))
 │   ├── routes.py        # 📍 Маршрути (Контролери)
 │   ├── routes_api.py    # 🔌 API endpoints
 │   ├── static/          # 🎨 CSS, JS, Images (Assets)
@@ -68,7 +68,7 @@ Ne_Programisty/
 ├── requirements.txt     # 📦 Залежності Python
 ├── app.py               # 🚀 Точка входу в застосунок
 └── README.md            # 📖 Цей файл
-````
+```
 
 ## 🏗 Архітектура системи
 
@@ -77,37 +77,62 @@ Ne_Programisty/
 ```mermaid
 graph TD
     %% Вузли
-    User((👤 Клієнт))
-    Nginx[🦁 Nginx Reverse Proxy :80]
-    Flask[🐍 Flask App Container :5000]
-    DB[(💾 SQLite Volume)]
+    Client((👤 Користувач))
+    Routes[📍 Routes / Blueprints<br><i>(Контролери)</i>]
+    Service[⚙️ Service Layer<br><i>(Валідація та Логіка)</i>]
+    Domain[🗄️ Domain / Repository<br><i>(Робота з БД)</i>]
+    Models[📄 SQLAlchemy Models<br><i>(Структура даних)</i>]
+    DB[(💾 SQLite Database)]
+
+    %% Стилі
+    style Client fill:#f9f,stroke:#333,stroke-width:2px
+    style DB fill:#bbf,stroke:#333,stroke-width:2px
 
     %% Зв'язки
-    User -- HTTP Request --> Nginx
-    Nginx -- Proxy Pass --> Flask
-
-    %% Підграф (Внутрішня структура Flask)
-    subgraph Flask_App [Flask Application]
-        direction TB
-        Routes[📍 Routes / Blueprints]
-        Service[⚙️ Service Layer]
-        Models[🗄️ SQLAlchemy Models]
-        
-        Routes --> Service
-        Service --> Models
-    end
-
-    Flask --> Routes
-    Models <-- Read / Write --> DB
+    Client -- HTTP Request --> Routes
+    Routes -- DTO / Data --> Service
+    Service -- Clean Data --> Domain
+    Domain -- ORM Query --> Models
+    Models <-- SQL --> DB
 ```
 
-### Рефакторинг (Clean Code)
+## 🧱 Опис шарів (Project Structure)
 
-Ми виділили бізнес-логіку в окремі модулі (`app/service/` та `app/domain/`), щоб контролери (`routes.py`) залишалися "тонкими".
+Ми організували код так, щоб кожен шар виконував свою унікальну функцію:
 
-  * **Models:** Визначають структуру БД (`app/models/`).
-  * **Services:** Виконують бізнес-операції (напр., `CartService`, `OrderService`).
-  * **Domain Rules:** Валідація та бізнес-правила (`app/domain/`).
+1. ### 📍 Routes (app/routes_api.py):
+
+    - Приймає HTTP-запити від клієнта.
+
+    - Викликає відповідні методи з Service.
+
+    - Повертає відповідь (HTML сторінку або JSON).
+
+    - Тут немає жодної бізнес-логіки.
+
+2. ### ⚙️ Service (app/service/):
+
+    - Головний мозок застосунку.
+
+    - Валідує вхідні дані (наприклад, перевіряє, чи ціна > 0, чи існує картинка).
+
+    - Приймає рішення: можна виконувати операцію чи ні.
+
+    - Передає очищені дані в шар Domain.
+
+3. ### 🗄️ Domain / Repository (app/domain/):
+
+    - Шар доступу до даних (DAL).
+
+    - Відповідає за безпосередню комунікацію з базою даних.
+
+    - Виконує db.session.add, commit, query.
+
+    - Інкапсулює (ховає) складні SQL/ORM запити від сервісів.
+
+4. ### 📄 Models (app/models/):
+
+    - Містить Python-класи, які описують таблиці БД (SQLAlchemy Models).
 
 ## 🧪 Тестування та Якість
 
