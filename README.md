@@ -76,24 +76,33 @@ Ne_Programisty/
 
 ```mermaid
 graph TD
-    %% Вузли
-    Client((👤 Користувач))
-    Routes["📍 Routes / Blueprints<br><i>(Контролери)</i>"]
-    Service["⚙️ Service Layer<br><i>(Валідація та Логіка)</i>"]
-    Domain["🗄️ Domain / Repository<br><i>(Робота з БД)</i>"]
-    Models["📄 SQLAlchemy Models<br><i>(Структура даних)</i>"]
-    DB[(💾 SQLite Database)]
+    %% --- ЗОВНІШНІЙ СВІТ ---
+    Client((👤 Клієнт))
+    
+    %% --- ІНФРАСТРУКТУРА (Docker Compose) ---
+    Nginx[🦁 Nginx Reverse Proxy :80]
+    
+    %% --- КОНТЕЙНЕР FLASK (Всередині) ---
+    subgraph FlaskContainer [🐍 Flask App Container :5000]
+        direction TB
+        Routes["📍 Routes / Blueprints<br><i>(Контролери)</i>"]
+        Service["⚙️ Service Layer<br><i>(Валідація та Логіка)</i>"]
+        Domain["🗄️ Domain / Repository<br><i>(Робота з БД)</i>"]
+        Models["📄 SQLAlchemy Models<br><i>(Структура даних)</i>"]
+        
+        %% Зв'язки всередині Python коду
+        Routes -- "DTO / Data" --> Service
+        Service -- "Clean Data" --> Domain
+        Domain -- "ORM Query" --> Models
+    end
 
-    %% Стилі
-    style Client fill:#f9f,stroke:#333,stroke-width:2px
-    style DB fill:#bbf,stroke:#333,stroke-width:2px
+    %% --- БАЗА ДАНИХ ---
+    DB[(💾 SQLite Volume)]
 
-    %% Зв'язки
-    Client -- HTTP Request --> Routes
-    Routes -- DTO / Data --> Service
-    Service -- Clean Data --> Domain
-    Domain -- ORM Query --> Models
-    Models <-- SQL --> DB
+    %% --- ЗВ'ЯЗКИ МІЖ СЕРВІСАМИ ---
+    Client -- "HTTP Request" --> Nginx
+    Nginx -- "Proxy Pass" --> Routes
+    Models <-- "Read / Write (SQL)" --> DB
 ```
 
 ## 🧱 Опис шарів (Project Structure)
