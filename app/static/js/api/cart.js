@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.showToast("Товар видалено", 'success');
             } catch (err) {
                 console.error("Помилка видалення товару:", err);
-                window.showToast("Не вдалося видалити товар", 'danger');
+                window.showToast("Не вдалося видалити товар: товар є у когось в кошику", 'danger');
             }
         };
         

@@ -30,10 +30,15 @@ def create_app(config_name=None):
     db_path = os.environ.get("DATABASE_PATH", default_db_path)
 
     if not db_path.startswith("sqlite"):
-        if os.path.isabs(db_path):
-            app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
-        else:
-            app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+        # Отримуємо повний шлях (наприклад /home/danylo/Projects/.../instance/database.db)
+        abs_db_path = os.path.abspath(db_path)
+        
+        # Для Linux/Mac абсолютний шлях у URI має починатися з 4-х слешів (sqlite:////...)
+        # f"sqlite:///{abs_db_path}" дасть sqlite:////home/..., бо abs_db_path починається з /
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{abs_db_path}"
+        
+        # Оновлюємо db_path для створення папки
+        db_path = abs_db_path
     else:
         app.config["SQLALCHEMY_DATABASE_URI"] = db_path
 
