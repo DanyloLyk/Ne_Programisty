@@ -78,10 +78,10 @@ Ne_Programisty/
 graph TD
     %% Вузли
     Client((👤 Користувач))
-    Routes[📍 Routes / Blueprints<br><i>(Контролери)</i>]
-    Service[⚙️ Service Layer<br><i>(Валідація та Логіка)</i>]
-    Domain[🗄️ Domain / Repository<br><i>(Робота з БД)</i>]
-    Models[📄 SQLAlchemy Models<br><i>(Структура даних)</i>]
+    Routes["📍 Routes / Blueprints<br><i>(Контролери)</i>"]
+    Service["⚙️ Service Layer<br><i>(Валідація та Логіка)</i>"]
+    Domain["🗄️ Domain / Repository<br><i>(Робота з БД)</i>"]
+    Models["📄 SQLAlchemy Models<br><i>(Структура даних)</i>"]
     DB[(💾 SQLite Database)]
 
     %% Стилі
